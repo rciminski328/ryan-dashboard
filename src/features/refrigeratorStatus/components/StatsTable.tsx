@@ -4,19 +4,27 @@ export default function StatsTable({
   labels,
   stats,
 }: {
-  labels: Record<keyof typeof stats, string>;
+  labels: {
+    label: string;
+    field: keyof typeof stats;
+    format?: (number) => string | number;
+  }[];
   stats: Record<string, number>;
 }) {
-  const MOCK_VALS = { max: 1, min: 2, average: 2, median: 2, std_dev: 2 };
   return (
     <Table size='small' style={{ width: '100%' }}>
       <TableBody>
-        {Object.keys(stats).map((stat) => (
-          <TableRow key={stat}>
-            <TableCell align='left'>{labels[stat]}</TableCell>
-            <TableCell align='left'>{stats[stat].toFixed(2)}</TableCell>
-          </TableRow>
-        ))}
+        {Object.keys(stats).map((stat) => {
+          const item = labels.find((label) => label.field === stat);
+          return (
+            <TableRow key={stat}>
+              <TableCell align='left'>{item.label}</TableCell>
+              <TableCell align='left'>
+                {item.format ? item.format(stats[stat]) : stats[stat]}
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );

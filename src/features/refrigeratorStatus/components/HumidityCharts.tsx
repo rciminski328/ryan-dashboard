@@ -4,10 +4,10 @@ import TrendChart from './TrendChart';
 import clsx from 'clsx';
 import { chartHeight } from '../../../utils';
 import StatsTable from './StatsTable';
-import { useTemperatureHistoryQuery } from '../api/temperatureHistory';
+import { useHumidityHistoryQuery } from '../api/humidityHistory';
 import { humidityAndTempLabels } from '../utils';
 
-const tempChartStyles = makeStyles((theme) => ({
+const humidityChartStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
   },
@@ -20,17 +20,17 @@ const tempChartStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TemperatureCharts({
+export default function HumidityCharts({
   assetId,
   current,
 }: {
   assetId: string;
   current: number;
 }) {
-  const classes = tempChartStyles();
+  const classes = humidityChartStyles();
   const {
     data: { stats },
-  } = useTemperatureHistoryQuery({ assetId });
+  } = useHumidityHistoryQuery({ assetId });
 
   return (
     <Grid container item spacing={1} className={classes.container}>
@@ -55,10 +55,10 @@ export default function TemperatureCharts({
         alignItems='center'
       >
         <Grid item>
-          <Typography variant='body2'>Current Temperature</Typography>
+          <Typography variant='body2'>Current Humidity</Typography>
         </Grid>
         <Grid item>
-          <Typography variant='h6'>{current}</Typography> does celsius go below?
+          <Typography variant='h6'>{current} </Typography>
         </Grid>
       </Grid>
 
@@ -71,7 +71,7 @@ export default function TemperatureCharts({
         justifyContent='center'
       >
         <Grid item>
-          <Typography variant='body2'>Temperature Stats (24 Hrs)</Typography>
+          <Typography variant='body2'>Humidity Stats (24 Hrs)</Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={humidityAndTempLabels} stats={stats} />
