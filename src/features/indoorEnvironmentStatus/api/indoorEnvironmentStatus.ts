@@ -47,6 +47,9 @@ async function fetchIndoorEnvironmentStatus({
   return asset as unknown as IndoorEnvironmentStatusAsset;
 }
 
+/**
+ * Represents the current status of a "store" asset
+ */
 export function useIndoorEnvironmentStatusQuery(params: { assetId: string }) {
   return useQuery(indoorEnvironmentStatusQueryKeys.byAsset(params), {
     queryFn: fetchIndoorEnvironmentStatus,

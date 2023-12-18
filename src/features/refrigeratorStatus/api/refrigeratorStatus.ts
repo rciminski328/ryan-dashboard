@@ -44,6 +44,9 @@ async function fetchRefrigeratorStatus({
   return asset as unknown as RefrigeratorStatusAsset;
 }
 
+/**
+ * Represents the current status of a refrigerator asset
+ */
 export function useRefrigeratorStatusQuery(params: { assetId: string }) {
   return useQuery(refrigeratorStatusQueryKeys.byAsset(params), {
     queryFn: fetchRefrigeratorStatus,
