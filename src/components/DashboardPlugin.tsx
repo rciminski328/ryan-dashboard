@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import RefrigeratorStatus from '../features/refrigeratorStatus/RefrigeratorStatus';
 import { makeStyles } from '@material-ui/core';
 import { useStoreStatusQuery } from '../features/storeStatus/api/storeStatus';
 import { useDoorOpenHistoryQuery } from '../features/refrigeratorStatus/api/doorOpenHistory';
@@ -7,6 +6,7 @@ import { useHumidityHistoryQuery } from '../features/refrigeratorStatus/api/humi
 import { useRefrigeratorStatusQuery } from '../features/refrigeratorStatus/api/refrigeratorStatus';
 import { useTemperatureHistoryQuery } from '../features/refrigeratorStatus/api/temperatureHistory';
 import { Skeleton } from '@material-ui/lab';
+import RefrigeratorStatus from '../features/refrigeratorStatus/components/RefrigeratorStatus';
 
 const usePluginStyles = makeStyles((theme) => ({
   plugin: {
@@ -34,7 +34,6 @@ export default function DashboardPlugin() {
     assetId: refrigeratorAssetId,
   });
   const classes = usePluginStyles();
-
   if (
     indoorEnvironmentStatusQuery.isLoading ||
     refrigeratorStatusQuery.isLoading ||

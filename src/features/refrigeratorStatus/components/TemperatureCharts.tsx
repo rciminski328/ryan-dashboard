@@ -2,7 +2,7 @@ import { Divider, Grid, Typography, makeStyles } from '@material-ui/core';
 import { AssetType } from '@clearblade/ia-mfe-core';
 import TrendChart from './TrendChart';
 import clsx from 'clsx';
-import { chartHeight } from '../../utils';
+import { chartHeight } from '../../../utils';
 import StatsTable from './StatsTable';
 
 const tempChartStyles = makeStyles((theme) => ({

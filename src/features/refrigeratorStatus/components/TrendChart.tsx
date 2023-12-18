@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
-import { chartHeight } from '../../utils';
+import { chartHeight } from '../../../utils';
 
 export default function TrendChart() {
   const data = [
