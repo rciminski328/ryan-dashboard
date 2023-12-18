@@ -2,12 +2,12 @@ import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
 
-interface PlotTemperatureResponse {
+interface PlotHumidityResponse {
   results: {
     historyEndDate: string;
     historyStartDate: string;
     lineData: {
-      temperature: {
+      humidity: {
         x: string[];
         y: number[];
       };
@@ -16,20 +16,18 @@ interface PlotTemperatureResponse {
   };
 }
 
-const temperatureHistoryQueryKeys = {
+const humidityHistoryQueryKeys = {
   byAsset: (params: { assetId: string }) =>
-    [{ scope: "temperatureHistory", params }] as const,
+    [{ scope: "humidityHistory", params }] as const,
 };
 
-async function fetchTemperatureHistory({
+async function fetchHumidityHistory({
   queryKey: [
     {
       params: { assetId },
     },
   ],
-}: QueryFunctionContext<
-  ReturnType<typeof temperatureHistoryQueryKeys.byAsset>
->) {
+}: QueryFunctionContext<ReturnType<typeof humidityHistoryQueryKeys.byAsset>>) {
   const authInfo = getAuthInfo();
   const resp = await fetch(
     `${getPlatformInfo().url}/api/v/1/code/${
@@ -44,7 +42,7 @@ async function fetchTemperatureHistory({
         name: "plotsV2.read",
         body: {
           defaultPlotParams: {
-            attributes: ["temperature"],
+            attributes: ["humidity"],
             endDate: "",
             entityId: assetId,
             entityType: "asset",
@@ -61,13 +59,13 @@ async function fetchTemperatureHistory({
     throw errText;
   }
 
-  const data: PlotTemperatureResponse = await resp.json();
+  const data: PlotHumidityResponse = await resp.json();
 
-  return data.results.lineData.temperature;
+  return data.results.lineData.humidity;
 }
 
-export function useTemperatureHistoryQuery(params: { assetId: string }) {
-  return useQuery(temperatureHistoryQueryKeys.byAsset(params), {
-    queryFn: fetchTemperatureHistory,
+export function useHumidityHistoryQuery(params: { assetId: string }) {
+  return useQuery(humidityHistoryQueryKeys.byAsset(params), {
+    queryFn: fetchHumidityHistory,
   });
 }
