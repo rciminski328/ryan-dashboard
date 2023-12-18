@@ -2,7 +2,7 @@ import { Divider, Grid, Typography, makeStyles } from '@material-ui/core';
 import { AssetType } from '@clearblade/ia-mfe-core';
 import TrendChart from './TrendChart';
 import clsx from 'clsx';
-import { chartHeight } from '../../../utils';
+import { graphChartHeight } from '../../../utils';
 import StatsTable from './StatsTable';
 import { useDoorOpenHistoryQuery } from '../api/doorOpenHistory';
 
@@ -12,7 +12,7 @@ const doorChartStyles = makeStyles((theme) => ({
   },
   section: {
     border: `1px solid ${theme.palette.divider}`,
-    height: chartHeight,
+    height: graphChartHeight,
   },
   table: {
     width: '100%',

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
-import { chartHeight } from '../../../utils';
+import { graphChartHeight } from '../../../utils';
 
 export default function TrendChart() {
   const data = [
@@ -37,7 +37,7 @@ export default function TrendChart() {
         }}
         layout={{
           width: 320,
-          height: chartHeight,
+          height: graphChartHeight,
           title: 'A Fancy Plot',
           // datarevision: revision,
         }}

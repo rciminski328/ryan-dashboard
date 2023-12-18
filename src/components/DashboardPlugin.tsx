@@ -1,42 +1,43 @@
-import { useEffect, useState } from "react";
-import { makeStyles } from "@material-ui/core";
-import { useStoreStatusQuery } from "../features/storeStatus/api/storeStatus";
+import { useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core';
+import { useStoreStatusQuery } from '../features/storeStatus/api/storeStatus';
 import {
   doorOpenHistoryQueryKeys,
   useDoorOpenHistoryQuery,
-} from "../features/refrigeratorStatus/api/doorOpenHistory";
+} from '../features/refrigeratorStatus/api/doorOpenHistory';
 import {
   humidityHistoryQueryKeys,
   useHumidityHistoryQuery,
-} from "../features/refrigeratorStatus/api/humidityHistory";
+} from '../features/refrigeratorStatus/api/humidityHistory';
 import {
   RefrigeratorAsset,
   refrigeratorStatusQueryKeys,
   useRefrigeratorStatusQuery,
-} from "../features/refrigeratorStatus/api/refrigeratorStatus";
+} from '../features/refrigeratorStatus/api/refrigeratorStatus';
 import {
   temperatureHistoryQueryKeys,
   useTemperatureHistoryQuery,
-} from "../features/refrigeratorStatus/api/temperatureHistory";
-import { Skeleton } from "@material-ui/lab";
-import RefrigeratorStatus from "../features/refrigeratorStatus/components/RefrigeratorStatus";
-import { useMessaging } from "@clearblade/ia-mfe-react";
-import { useQueryClient } from "react-query";
+} from '../features/refrigeratorStatus/api/temperatureHistory';
+import { Skeleton } from '@material-ui/lab';
+import RefrigeratorStatus from '../features/refrigeratorStatus/components/RefrigeratorStatus';
+import { useMessaging } from '@clearblade/ia-mfe-react';
+import { useQueryClient } from 'react-query';
+import IndoorAirQuality from '../features/storeStatus/components/IndoorAirQuality';
 
 const usePluginStyles = makeStyles((theme) => ({
   plugin: {
     marginTop: theme.spacing(1),
-    width: "100%",
+    width: '100%',
   },
 }));
 
 export default function DashboardPlugin() {
   // dev refrigerator
-  const refrigeratorAssetId = "628aef25-734f-4075-8d0d-2150ed842406";
+  const refrigeratorAssetId = '628aef25-734f-4075-8d0d-2150ed842406';
   // production refrigerator
   // const refrigeratorAssetId = "3d0b744b-8b83-4767-9cb3-9f394caf70b6";
   // dev store
-  const storeAssetId = "f47fa820-6005-410b-88b3-652f7c8bc7eb";
+  const storeAssetId = 'f47fa820-6005-410b-88b3-652f7c8bc7eb';
   // production store
   // const storeAssetId = "31913feb-50ba-46bb-90cc-f17d94bcffe4"
   const indoorEnvironmentStatusQuery = useStoreStatusQuery({
@@ -76,6 +77,7 @@ export default function DashboardPlugin() {
   return (
     <div className={classes.plugin}>
       <RefrigeratorStatus assetId={refrigeratorAssetId} />
+      <IndoorAirQuality assetId={refrigeratorAssetId} />
     </div>
   );
 }
@@ -96,7 +98,7 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
       queryClient.setQueryData<RefrigeratorAsset>(
         refrigeratorStatusQueryKeys.byAsset({ assetId }),
         (data) => {
-          if (typeof data === "undefined") {
+          if (typeof data === 'undefined') {
             return assetData;
           }
 
@@ -111,7 +113,7 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
         }
       );
 
-      if (typeof assetData.custom_data.temperature !== "undefined") {
+      if (typeof assetData.custom_data.temperature !== 'undefined') {
         queryClient.setQueryData<HistoricalData>(
           temperatureHistoryQueryKeys.byAsset({ assetId }),
           (data) => {
@@ -124,7 +126,7 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
         );
       }
 
-      if (typeof assetData.custom_data.humidity !== "undefined") {
+      if (typeof assetData.custom_data.humidity !== 'undefined') {
         queryClient.setQueryData<HistoricalData>(
           humidityHistoryQueryKeys.byAsset({ assetId }),
           (data) => {
@@ -137,7 +139,7 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
         );
       }
 
-      if (typeof assetData.custom_data.doorOpen !== "undefined") {
+      if (typeof assetData.custom_data.doorOpen !== 'undefined') {
         queryClient.setQueryData<HistoricalData>(
           doorOpenHistoryQueryKeys.byAsset({ assetId }),
           (data) => {
