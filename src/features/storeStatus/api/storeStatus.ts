@@ -5,10 +5,7 @@ import {
 } from "@clearblade/ia-mfe-core";
 import { QueryFunctionContext, useQuery } from "react-query";
 
-export type IndoorEnvironmentStatusAsset = Omit<
-  Asset["frontend"],
-  "custom_data"
-> & {
+export type StoreAsset = Omit<Asset["frontend"], "custom_data"> & {
   custom_data: {
     co2: number;
     temperature: number;
@@ -17,20 +14,20 @@ export type IndoorEnvironmentStatusAsset = Omit<
   };
 };
 
-const indoorEnvironmentStatusQueryKeys = {
+const storeStatusQueryKeys = {
   byAsset: (params: { assetId: string }) =>
-    [{ scope: "indoorEnvironmentStatus", params }] as const,
+    [{ scope: "storeStatus", params }] as const,
 };
 
-async function fetchIndoorEnvironmentStatus({
+async function fetchStoreStatus({
   queryKey: [
     {
       params: { assetId },
     },
   ],
 }: QueryFunctionContext<
-  ReturnType<typeof indoorEnvironmentStatusQueryKeys.byAsset>
->): Promise<IndoorEnvironmentStatusAsset> {
+  ReturnType<typeof storeStatusQueryKeys.byAsset>
+>): Promise<StoreAsset> {
   const data = await fetchAssets(new AbortController(), {
     query: createFrontendAssetsQuery({
       Filters: [
@@ -44,14 +41,14 @@ async function fetchIndoorEnvironmentStatus({
     throw new Error(`No asset found with id '${assetId}'`);
   }
 
-  return asset as unknown as IndoorEnvironmentStatusAsset;
+  return asset as unknown as StoreAsset;
 }
 
 /**
- * Represents the current status of a "store" asset
+ * Represents the current status of a store asset
  */
-export function useIndoorEnvironmentStatusQuery(params: { assetId: string }) {
-  return useQuery(indoorEnvironmentStatusQueryKeys.byAsset(params), {
-    queryFn: fetchIndoorEnvironmentStatus,
+export function useStoreStatusQuery(params: { assetId: string }) {
+  return useQuery(storeStatusQueryKeys.byAsset(params), {
+    queryFn: fetchStoreStatus,
   });
 }

@@ -5,7 +5,7 @@ import {
 } from "@clearblade/ia-mfe-core";
 import { QueryFunctionContext, useQuery } from "react-query";
 
-export type RefrigeratorStatusAsset = Omit<Asset["frontend"], "custom_data"> & {
+export type RefrigeratorAsset = Omit<Asset["frontend"], "custom_data"> & {
   custom_data: {
     temperature: number;
     humidity: number;
@@ -27,7 +27,7 @@ async function fetchRefrigeratorStatus({
   ],
 }: QueryFunctionContext<
   ReturnType<typeof refrigeratorStatusQueryKeys.byAsset>
->): Promise<RefrigeratorStatusAsset> {
+>): Promise<RefrigeratorAsset> {
   const data = await fetchAssets(new AbortController(), {
     query: createFrontendAssetsQuery({
       Filters: [
@@ -41,7 +41,7 @@ async function fetchRefrigeratorStatus({
     throw new Error(`No asset found with id '${assetId}'`);
   }
 
-  return asset as unknown as RefrigeratorStatusAsset;
+  return asset as unknown as RefrigeratorAsset;
 }
 
 /**
