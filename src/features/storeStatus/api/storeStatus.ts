@@ -3,7 +3,9 @@ import {
   createFrontendAssetsQuery,
   fetchAssets,
 } from "@clearblade/ia-mfe-core";
-import { QueryFunctionContext, useQuery } from "react-query";
+import { useMessaging } from "@clearblade/ia-mfe-react";
+import { useEffect } from "react";
+import { QueryFunctionContext, useQuery, useQueryClient } from "react-query";
 
 export type StoreAsset = Omit<Asset["frontend"], "custom_data"> & {
   custom_data: {
@@ -47,8 +49,37 @@ async function fetchStoreStatus({
 /**
  * Represents the current status of a store asset
  */
-export function useStoreStatusQuery(params: { assetId: string }) {
-  return useQuery(storeStatusQueryKeys.byAsset(params), {
+export function useStoreStatusQuery({ assetId }: { assetId: string }) {
+  const { subscribe, unsubscribe } = useMessaging();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const topics = [`_dbupdate/_monitor/_asset/${assetId}/locationAndStatus`];
+
+    subscribe(topics, (msg) => {
+      const assetData = msg.payload as StoreAsset;
+      queryClient.setQueryData<StoreAsset>(
+        storeStatusQueryKeys.byAsset({ assetId }),
+        (data) => {
+          if (typeof data === "undefined") {
+            return assetData;
+          }
+
+          return {
+            ...data,
+            last_updated: assetData.last_updated,
+            custom_data: {
+              ...data.custom_data,
+              ...assetData.custom_data,
+            },
+          };
+        }
+      );
+    });
+
+    return () => unsubscribe(topics);
+  }, [assetId, subscribe, unsubscribe]);
+
+  return useQuery(storeStatusQueryKeys.byAsset({ assetId }), {
     queryFn: fetchStoreStatus,
   });
 }
