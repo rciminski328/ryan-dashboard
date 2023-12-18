@@ -1,7 +1,7 @@
-import { QueryFunctionContext, useQuery } from 'react-query';
-import { getPlatformInfo } from '../../../utils/getPlatformInfo';
-import { getAuthInfo } from '../../../utils/authInfo';
-import { getStats } from '../../../utils/getStats';
+import { QueryFunctionContext, useQuery } from "react-query";
+import { getPlatformInfo } from "../../../utils/getPlatformInfo";
+import { getAuthInfo } from "../../../utils/authInfo";
+import { getStats } from "../../../utils/getStats";
 
 interface PlotTemperatureResponse {
   results: {
@@ -17,9 +17,9 @@ interface PlotTemperatureResponse {
   };
 }
 
-const temperatureHistoryQueryKeys = {
+export const temperatureHistoryQueryKeys = {
   byAsset: (params: { assetId: string }) =>
-    [{ scope: 'temperatureHistory', params }] as const,
+    [{ scope: "temperatureHistory", params }] as const,
 };
 
 async function fetchTemperatureHistory({
@@ -37,21 +37,21 @@ async function fetchTemperatureHistory({
       authInfo.systemKey
     }/fetchTableItems`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'ClearBlade-UserToken': authInfo.userToken,
+        "ClearBlade-UserToken": authInfo.userToken,
       },
       body: JSON.stringify({
-        name: 'plotsV2.read',
+        name: "plotsV2.read",
         body: {
           defaultPlotParams: {
-            attributes: ['temperature'],
-            endDate: '',
+            attributes: ["temperature"],
+            endDate: "",
             entityId: assetId,
-            entityType: 'asset',
-            startDate: '',
+            entityType: "asset",
+            startDate: "",
           },
-          pluginName: 'default',
+          pluginName: "default",
         },
       }),
     }
@@ -64,15 +64,16 @@ async function fetchTemperatureHistory({
 
   const data: PlotTemperatureResponse = await resp.json();
 
-  return {
-    data: data.results.lineData.temperature,
-    stats: getStats(data.results.lineData.temperature.y),
-  };
+  return data.results.lineData.temperature;
 }
 
 export function useTemperatureHistoryQuery(params: { assetId: string }) {
   return useQuery(temperatureHistoryQueryKeys.byAsset(params), {
     queryFn: fetchTemperatureHistory,
     refetchOnMount: false,
+    select: (data) => ({
+      data,
+      stats: getStats(data.y),
+    }),
   });
 }

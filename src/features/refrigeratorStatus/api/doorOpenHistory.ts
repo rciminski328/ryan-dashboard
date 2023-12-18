@@ -17,7 +17,7 @@ interface PlotDoorOpenResponse {
   };
 }
 
-const doorOpenHistoryQueryKeys = {
+export const doorOpenHistoryQueryKeys = {
   byAsset: (params: { assetId: string }) =>
     [{ scope: "doorOpenHistory", params }] as const,
 };
@@ -62,10 +62,7 @@ async function fetchDoorOpenHistory({
 
   const data: PlotDoorOpenResponse = await resp.json();
 
-  return {
-    data: data.results.lineData.doorOpen,
-    stats: getDoorOpenStats(data.results.lineData.doorOpen),
-  };
+  return data.results.lineData.doorOpen;
 }
 
 function getDoorOpenStats(data: { x: string[]; y: number[] }): {
@@ -106,5 +103,6 @@ function getDoorOpenStats(data: { x: string[]; y: number[] }): {
 export function useDoorOpenHistoryQuery(params: { assetId: string }) {
   return useQuery(doorOpenHistoryQueryKeys.byAsset(params), {
     queryFn: fetchDoorOpenHistory,
+    select: (data) => ({ data, stats: getDoorOpenStats(data) }),
   });
 }

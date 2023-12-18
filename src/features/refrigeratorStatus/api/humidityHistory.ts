@@ -17,7 +17,7 @@ interface PlotHumidityResponse {
   };
 }
 
-const humidityHistoryQueryKeys = {
+export const humidityHistoryQueryKeys = {
   byAsset: (params: { assetId: string }) =>
     [{ scope: "humidityHistory", params }] as const,
 };
@@ -62,14 +62,12 @@ async function fetchHumidityHistory({
 
   const data: PlotHumidityResponse = await resp.json();
 
-  return {
-    data: data.results.lineData.humidity,
-    stats: getStats(data.results.lineData.humidity.y),
-  };
+  return data.results.lineData.humidity;
 }
 
 export function useHumidityHistoryQuery(params: { assetId: string }) {
   return useQuery(humidityHistoryQueryKeys.byAsset(params), {
     queryFn: fetchHumidityHistory,
+    select: (data) => ({ data, stats: getStats(data.y) }),
   });
 }
