@@ -1,7 +1,7 @@
 // import Plot from 'react-plotly.js';
 
-import { useIndoorEnvironmentStatusQuery } from "../features/indoorEnvironmentStatus/api/fetchIndoorEnvironmentStatus";
-import { useRefrigeratorStatusQuery } from "../features/refrigeratorStatus/api/fetchRefrigeratorStatus";
+import { useIndoorEnvironmentStatusQuery } from "../features/indoorEnvironmentStatus/api/indoorEnvironmentStatus";
+import { useRefrigeratorStatusQuery } from "../features/refrigeratorStatus/api/refrigeratorStatus";
 
 export default function DashboardPlugin() {
   const indoorEnvironmentStatusQuery = useIndoorEnvironmentStatusQuery({
