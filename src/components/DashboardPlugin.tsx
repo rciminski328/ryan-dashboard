@@ -112,11 +112,9 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
       );
 
       if (typeof assetData.custom_data.temperature !== "undefined") {
-        console.log("update temp");
         queryClient.setQueryData<HistoricalData>(
           temperatureHistoryQueryKeys.byAsset({ assetId }),
           (data) => {
-            console.log("updater", data);
             return {
               ...data,
               x: [...data.x, assetData.last_updated],
