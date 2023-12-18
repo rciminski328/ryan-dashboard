@@ -1,21 +1,13 @@
-import { useEffect, useState } from 'react';
-import Plot from 'react-plotly.js';
-import { graphChartHeight } from '../../../utils';
+import Plot from "react-plotly.js";
+import { graphChartHeight } from "../../../utils";
 
-export default function TrendChart() {
-  const data = [
-    {
-      x: [1, 2, 3],
-      y: [2, 6, 3],
-      type: 'scatter',
-      mode: 'lines+markers',
-      marker: { color: 'red' },
-    },
-    { type: 'line', x: [1, 2, 3], y: [2, 5, 3] },
-  ];
-
+export default function TrendChart({
+  data,
+}: {
+  data: { type: "line"; x: string[]; y: number[] }[];
+}) {
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: "100%", height: "100%" }}>
       <Plot
         data={data}
         //   onInitialized={(f) => setLayout(f.layout)}
@@ -38,7 +30,7 @@ export default function TrendChart() {
         layout={{
           width: 320,
           height: graphChartHeight - 20,
-          title: 'A Fancy Plot',
+          title: "A Fancy Plot",
           // datarevision: revision,
         }}
         useResizeHandler

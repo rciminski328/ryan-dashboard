@@ -1,21 +1,19 @@
-import { Divider, Grid, Typography, makeStyles } from '@material-ui/core';
-import { AssetType } from '@clearblade/ia-mfe-core';
-import TrendChart from './TrendChart';
-import clsx from 'clsx';
-import { graphChartHeight } from '../../../utils';
-import StatsTable from './StatsTable';
-import { useDoorOpenHistoryQuery } from '../api/doorOpenHistory';
+import { Grid, Typography, makeStyles } from "@material-ui/core";
+import TrendChart from "./TrendChart";
+import { graphChartHeight } from "../../../utils";
+import StatsTable from "./StatsTable";
+import { useDoorOpenHistoryQuery } from "../api/doorOpenHistory";
 
 const doorChartStyles = makeStyles((theme) => ({
   container: {
-    width: '100%',
+    width: "100%",
   },
   section: {
     border: `1px solid ${theme.palette.divider}`,
     height: graphChartHeight,
   },
   table: {
-    width: '100%',
+    width: "100%",
   },
 }));
 
@@ -28,16 +26,16 @@ export default function DoorCharts({
 }) {
   const classes = doorChartStyles();
   const {
-    data: { stats },
+    data: { stats, data },
   } = useDoorOpenHistoryQuery({ assetId });
   const labels = [
     {
-      field: 'times',
-      label: 'Times',
+      field: "times",
+      label: "Times",
     },
     {
-      field: 'averageDurationMs',
-      label: 'Average Duration',
+      field: "averageDurationMs",
+      label: "Average Duration",
       format: (val) => `${(val / 1000).toFixed(2)} sec`,
     },
   ];
@@ -46,29 +44,29 @@ export default function DoorCharts({
     <Grid container item spacing={1} className={classes.container}>
       <Grid
         container
-        direction='column'
+        direction="column"
         item
         xs={6}
         className={classes.section}
       >
         <Grid item>
-          <TrendChart />
+          <TrendChart data={[{ ...data, type: "line" }]} />
         </Grid>
       </Grid>
 
       <Grid
         container
-        direction='column'
+        direction="column"
         item
         xs={3}
         className={classes.section}
-        alignItems='center'
+        alignItems="center"
       >
         <Grid item>
-          <Typography variant='body2'>Current Status</Typography>
+          <Typography variant="body2">Current Status</Typography>
         </Grid>
         <Grid item>
-          <Typography variant='h6'>{current ? 'OPEN' : 'CLOSED'}</Typography>
+          <Typography variant="h6">{current ? "OPEN" : "CLOSED"}</Typography>
         </Grid>
       </Grid>
 
@@ -76,12 +74,12 @@ export default function DoorCharts({
         container
         item
         xs={3}
-        wrap='wrap'
+        wrap="wrap"
         className={classes.section}
-        justifyContent='center'
+        justifyContent="center"
       >
         <Grid item>
-          <Typography variant='body2'>Door Open Stats (24 Hrs)</Typography>
+          <Typography variant="body2">Door Open Stats (24 Hrs)</Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={labels} stats={stats} />
