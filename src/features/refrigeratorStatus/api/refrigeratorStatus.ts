@@ -2,12 +2,12 @@ import {
   Asset,
   createFrontendAssetsQuery,
   fetchAssets,
-} from "@clearblade/ia-mfe-core";
-import { useMessaging } from "@clearblade/ia-mfe-react";
-import { useEffect } from "react";
-import { QueryFunctionContext, useQuery, useQueryClient } from "react-query";
+} from '@clearblade/ia-mfe-core';
+import { useMessaging } from '@clearblade/ia-mfe-react';
+import { useEffect } from 'react';
+import { QueryFunctionContext, useQuery, useQueryClient } from 'react-query';
 
-export type RefrigeratorAsset = Omit<Asset["frontend"], "custom_data"> & {
+export type RefrigeratorAsset = Omit<Asset['frontend'], 'custom_data'> & {
   custom_data: {
     temperature: number;
     humidity: number;
@@ -18,7 +18,7 @@ export type RefrigeratorAsset = Omit<Asset["frontend"], "custom_data"> & {
 
 const refrigeratorStatusQueryKeys = {
   byAsset: (params: { assetId: string }) =>
-    [{ scope: "refrigeratorStatus", params }] as const,
+    [{ scope: 'refrigeratorStatus', params }] as const,
 };
 
 async function fetchRefrigeratorStatus({
@@ -33,13 +33,13 @@ async function fetchRefrigeratorStatus({
   const data = await fetchAssets(new AbortController(), {
     query: createFrontendAssetsQuery({
       Filters: [
-        [{ type: "default", operator: "=", field: "id", value: assetId }],
+        [{ type: 'default', operator: '=', field: 'id', value: assetId }],
       ],
     }),
   });
 
   const asset = data.DATA[0];
-  if (typeof asset === "undefined") {
+  if (typeof asset === 'undefined') {
     throw new Error(`No asset found with id '${assetId}'`);
   }
 
@@ -60,7 +60,7 @@ export function useRefrigeratorStatusQuery({ assetId }: { assetId: string }) {
       queryClient.setQueryData<RefrigeratorAsset>(
         refrigeratorStatusQueryKeys.byAsset({ assetId }),
         (data) => {
-          if (typeof data === "undefined") {
+          if (typeof data === 'undefined') {
             return assetData;
           }
 
@@ -81,5 +81,6 @@ export function useRefrigeratorStatusQuery({ assetId }: { assetId: string }) {
 
   return useQuery(refrigeratorStatusQueryKeys.byAsset({ assetId }), {
     queryFn: fetchRefrigeratorStatus,
+    refetchOnMount: false,
   });
 }

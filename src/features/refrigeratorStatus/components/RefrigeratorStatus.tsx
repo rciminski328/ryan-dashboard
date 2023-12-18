@@ -11,6 +11,9 @@ import {
 import TemperatureCharts from './TemperatureCharts';
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { useRefrigeratorStatusQuery } from '../api/refrigeratorStatus';
+import HumidityCharts from './HumidityCharts';
+import DoorCharts from './DoorCharts';
 
 const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
   (theme) => ({
@@ -21,12 +24,9 @@ const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
 );
 
 export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
-  const MOCK_STATUS = true;
-  const MOCKATTR = {
-    attribute_name: 'blah',
-    attribute_label: 'blahlabel',
-  } as AssetType['frontend']['schema'][number];
-  const classes = refrigeratorStatusStyles({ status: MOCK_STATUS });
+  const { data } = useRefrigeratorStatusQuery({ assetId });
+  const status = data.custom_data.isRunning;
+  const classes = refrigeratorStatusStyles({ status });
 
   return (
     <Card>
@@ -53,16 +53,17 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
           <Grid item>
             <Box display='flex' flexWrap='nowrap' alignItems='center'>
               <FiberManualRecordIcon className={classes.statusIcon} />
-              <Typography variant='body2'>
-                {MOCK_STATUS ? 'On' : 'Off'}
-              </Typography>
+              <Typography variant='body2'>{status ? 'On' : 'Off'}</Typography>
             </Box>
           </Grid>
         </Grid>
 
-        <TemperatureCharts attribute={MOCKATTR} assetId={assetId} />
-        <TemperatureCharts attribute={MOCKATTR} assetId={assetId} />
-        <TemperatureCharts attribute={MOCKATTR} assetId={assetId} />
+        <TemperatureCharts
+          assetId={assetId}
+          current={data.custom_data.temperature}
+        />
+        <HumidityCharts assetId={assetId} current={data.custom_data.humidity} />
+        <DoorCharts assetId={assetId} current={data.custom_data.doorOpen} />
       </Grid>
     </Card>
   );

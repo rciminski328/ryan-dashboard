@@ -4,10 +4,9 @@ import TrendChart from './TrendChart';
 import clsx from 'clsx';
 import { chartHeight } from '../../../utils';
 import StatsTable from './StatsTable';
-import { useTemperatureHistoryQuery } from '../api/temperatureHistory';
-import { humidityAndTempLabels } from '../utils';
+import { useDoorOpenHistoryQuery } from '../api/doorOpenHistory';
 
-const tempChartStyles = makeStyles((theme) => ({
+const doorChartStyles = makeStyles((theme) => ({
   container: {
     width: '100%',
   },
@@ -20,17 +19,28 @@ const tempChartStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function TemperatureCharts({
+export default function DoorCharts({
   assetId,
   current,
 }: {
   assetId: string;
-  current: number;
+  current: boolean;
 }) {
-  const classes = tempChartStyles();
+  const classes = doorChartStyles();
   const {
     data: { stats },
-  } = useTemperatureHistoryQuery({ assetId });
+  } = useDoorOpenHistoryQuery({ assetId });
+  const labels = [
+    {
+      field: 'times',
+      label: 'Times',
+    },
+    {
+      field: 'averageDurationMs',
+      label: 'Average Duration',
+      format: (val) => `${(val / 1000).toFixed(2)} sec`,
+    },
+  ];
 
   return (
     <Grid container item spacing={1} className={classes.container}>
@@ -55,10 +65,10 @@ export default function TemperatureCharts({
         alignItems='center'
       >
         <Grid item>
-          <Typography variant='body2'>Current Temperature</Typography>
+          <Typography variant='body2'>Current Status</Typography>
         </Grid>
         <Grid item>
-          <Typography variant='h6'>{current}</Typography> does celsius go below?
+          <Typography variant='h6'>{current ? 'OPEN' : 'CLOSED'}</Typography>
         </Grid>
       </Grid>
 
@@ -71,10 +81,10 @@ export default function TemperatureCharts({
         justifyContent='center'
       >
         <Grid item>
-          <Typography variant='body2'>Temperature Stats (24 Hrs)</Typography>
+          <Typography variant='body2'>Door Open Stats (24 Hrs)</Typography>
         </Grid>
         <Grid item className={classes.table}>
-          <StatsTable labels={humidityAndTempLabels} stats={stats} />
+          <StatsTable labels={labels} stats={stats} />
         </Grid>
       </Grid>
     </Grid>
