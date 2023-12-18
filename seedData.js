@@ -44,7 +44,7 @@ async function publishData() {
         type: "store",
         custom_data: {
           co2: getRandomInt(300, 400),
-          tempurature: getRandomInt(60, 70),
+          temperature: getRandomInt(60, 70),
           humidity: getRandomInt(10, 30),
           occupancy: getRandomInt(10, 50),
         },
