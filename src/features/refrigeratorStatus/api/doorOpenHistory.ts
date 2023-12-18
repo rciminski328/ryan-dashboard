@@ -1,6 +1,7 @@
 import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
+import { average } from "simple-statistics";
 
 interface PlotDoorOpenResponse {
   results: {
@@ -61,7 +62,45 @@ async function fetchDoorOpenHistory({
 
   const data: PlotDoorOpenResponse = await resp.json();
 
-  return data.results.lineData.doorOpen;
+  return {
+    data: data.results.lineData.doorOpen,
+    stats: getDoorOpenStats(data.results.lineData.doorOpen),
+  };
+}
+
+function getDoorOpenStats(data: { x: string[]; y: number[] }): {
+  times: number;
+  averageDurationMs: number;
+} {
+  try {
+    const durations: number[] = [];
+    let times = 0;
+    const doorOpen = 1;
+    const doorClose = 0;
+    let previousDoorOpenIndex: number | null = null;
+
+    for (let i = 0; i < data.x.length; i++) {
+      if (data.y[i] === doorOpen) {
+        times++;
+        previousDoorOpenIndex = i;
+      } else if (data.y[i] === doorClose && previousDoorOpenIndex !== null) {
+        const doorCloseDate = new Date(data.x[i]);
+        const doorOpenDate = new Date(data.x[previousDoorOpenIndex]);
+        durations.push(doorCloseDate.getTime() - doorOpenDate.getTime());
+      }
+    }
+
+    return {
+      times,
+      averageDurationMs: average(durations),
+    };
+  } catch (e) {
+    console.warn("Failed to get door open stats", e);
+    return {
+      times: 0,
+      averageDurationMs: 0,
+    };
+  }
 }
 
 export function useDoorOpenHistoryQuery(params: { assetId: string }) {
