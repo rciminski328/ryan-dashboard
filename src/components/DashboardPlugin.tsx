@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import { useStoreStatusQuery } from '../features/storeStatus/api/storeStatus';
 import {
   doorOpenHistoryQueryKeys,
@@ -75,10 +75,14 @@ export default function DashboardPlugin() {
     return <div>Error</div>;
 
   return (
-    <div className={classes.plugin}>
-      <RefrigeratorStatus assetId={refrigeratorAssetId} />
-      <IndoorAirQuality assetId={refrigeratorAssetId} />
-    </div>
+    <Grid container className={classes.plugin} spacing={3}>
+      <Grid item>
+        <IndoorAirQuality assetId={storeAssetId} />
+      </Grid>
+      <Grid item>
+        <RefrigeratorStatus assetId={refrigeratorAssetId} />
+      </Grid>
+    </Grid>
   );
 }
 

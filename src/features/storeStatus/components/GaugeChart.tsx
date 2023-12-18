@@ -14,7 +14,7 @@ export default function GaugeChart({
     {
       domain: { x: [0, 1], y: [0, 1] },
       value,
-      title: { text: title },
+      title: { text: `${title} (${units})` },
       type: 'indicator',
       mode: 'gauge+number',
     },
@@ -29,8 +29,8 @@ export default function GaugeChart({
         }}
         layout={{
           margin: { t: 0, b: 0 },
-          //   width: 320,
-          height: gaugeChartHeight,
+          width: 300,
+          height: gaugeChartHeight + 40,
           // datarevision: revision,
         }}
         useResizeHandler

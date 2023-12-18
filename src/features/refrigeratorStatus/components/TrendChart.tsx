@@ -37,7 +37,7 @@ export default function TrendChart() {
         }}
         layout={{
           width: 320,
-          height: graphChartHeight,
+          height: graphChartHeight - 20,
           title: 'A Fancy Plot',
           // datarevision: revision,
         }}
