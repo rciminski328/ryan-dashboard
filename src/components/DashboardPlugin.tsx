@@ -53,7 +53,7 @@ export default function DashboardPlugin() {
 
   return (
     <div className={classes.plugin}>
-      <RefrigeratorStatus assetId='placeholder' />
+      <RefrigeratorStatus assetId={refrigeratorAssetId} />
     </div>
   );
 }

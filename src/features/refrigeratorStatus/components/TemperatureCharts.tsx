@@ -4,6 +4,7 @@ import TrendChart from './TrendChart';
 import clsx from 'clsx';
 import { chartHeight } from '../../../utils';
 import StatsTable from './StatsTable';
+import { useTemperatureHistoryQuery } from '../api/temperatureHistory';
 
 const tempChartStyles = makeStyles((theme) => ({
   container: {
@@ -20,10 +21,23 @@ const tempChartStyles = makeStyles((theme) => ({
 
 export default function TemperatureCharts({
   attribute,
+  assetId,
 }: {
   attribute: AssetType['frontend']['schema'][number];
+  assetId: string;
 }) {
   const classes = tempChartStyles();
+  const {
+    data: { stats },
+  } = useTemperatureHistoryQuery({ assetId });
+  const labels = {
+    max: 'Max',
+    min: 'Min',
+    average: 'Average',
+    median: 'Median',
+    stdDev: 'Std Dev',
+  };
+
   return (
     <Grid container item spacing={1} className={classes.container}>
       <Grid
@@ -56,7 +70,7 @@ export default function TemperatureCharts({
           <Typography variant='body2'>Temperature Stats (24 Hrs)</Typography>
         </Grid>
         <Grid item className={classes.table}>
-          <StatsTable />
+          <StatsTable labels={labels} stats={stats} />
         </Grid>
       </Grid>
     </Grid>

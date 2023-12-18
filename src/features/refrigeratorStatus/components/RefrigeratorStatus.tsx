@@ -60,9 +60,9 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
           </Grid>
         </Grid>
 
-        <TemperatureCharts attribute={MOCKATTR} />
-        <TemperatureCharts attribute={MOCKATTR} />
-        <TemperatureCharts attribute={MOCKATTR} />
+        <TemperatureCharts attribute={MOCKATTR} assetId={assetId} />
+        <TemperatureCharts attribute={MOCKATTR} assetId={assetId} />
+        <TemperatureCharts attribute={MOCKATTR} assetId={assetId} />
       </Grid>
     </Card>
   );
