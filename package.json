@@ -64,6 +64,7 @@
     "react-dom": "^17.0.2",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.21.0",
+    "simple-statistics": "^7.8.3",
     "single-spa": "^5.9.5",
     "single-spa-react": "^4.3.1"
   },

@@ -1,6 +1,7 @@
 import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
+import { getStats } from "../../../utils/getStats";
 
 interface PlotTemperatureResponse {
   results: {
@@ -63,7 +64,10 @@ async function fetchTemperatureHistory({
 
   const data: PlotTemperatureResponse = await resp.json();
 
-  return data.results.lineData.temperature;
+  return {
+    data: data.results.lineData.temperature,
+    stats: getStats(data.results.lineData.temperature.y),
+  };
 }
 
 export function useTemperatureHistoryQuery(params: { assetId: string }) {

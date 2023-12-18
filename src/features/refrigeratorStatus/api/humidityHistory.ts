@@ -1,6 +1,7 @@
 import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
+import { getStats } from "../../../utils/getStats";
 
 interface PlotHumidityResponse {
   results: {
@@ -61,7 +62,10 @@ async function fetchHumidityHistory({
 
   const data: PlotHumidityResponse = await resp.json();
 
-  return data.results.lineData.humidity;
+  return {
+    data: data.results.lineData.humidity,
+    stats: getStats(data.results.lineData.humidity.y),
+  };
 }
 
 export function useHumidityHistoryQuery(params: { assetId: string }) {
