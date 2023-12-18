@@ -1,6 +1,7 @@
 // import Plot from 'react-plotly.js';
 
 import { useIndoorEnvironmentStatusQuery } from "../features/indoorEnvironmentStatus/api/indoorEnvironmentStatus";
+import { useDoorOpenHistoryQuery } from "../features/refrigeratorStatus/api/doorOpenHistory";
 import { useHumidityHistoryQuery } from "../features/refrigeratorStatus/api/humidityHistory";
 import { useRefrigeratorStatusQuery } from "../features/refrigeratorStatus/api/refrigeratorStatus";
 import { useTemperatureHistoryQuery } from "../features/refrigeratorStatus/api/temperatureHistory";
@@ -18,6 +19,9 @@ export default function DashboardPlugin() {
     assetId: refrigeratorAssetId,
   });
   const humidityHistoryQuery = useHumidityHistoryQuery({
+    assetId: refrigeratorAssetId,
+  });
+  const doorOpenHistoryQuery = useDoorOpenHistoryQuery({
     assetId: refrigeratorAssetId,
   });
   return <></>;
