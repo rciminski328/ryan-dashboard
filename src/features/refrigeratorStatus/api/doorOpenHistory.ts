@@ -104,5 +104,7 @@ export function useDoorOpenHistoryQuery(params: { assetId: string }) {
   return useQuery(doorOpenHistoryQueryKeys.byAsset(params), {
     queryFn: fetchDoorOpenHistory,
     select: (data) => ({ data, stats: getDoorOpenStats(data) }),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }

@@ -50,5 +50,7 @@ async function fetchRefrigeratorStatus({
 export function useRefrigeratorStatusQuery({ assetId }: { assetId: string }) {
   return useQuery(refrigeratorStatusQueryKeys.byAsset({ assetId }), {
     queryFn: fetchRefrigeratorStatus,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }

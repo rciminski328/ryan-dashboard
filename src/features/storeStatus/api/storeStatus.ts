@@ -81,5 +81,7 @@ export function useStoreStatusQuery({ assetId }: { assetId: string }) {
 
   return useQuery(storeStatusQueryKeys.byAsset({ assetId }), {
     queryFn: fetchStoreStatus,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }

@@ -69,5 +69,7 @@ export function useHumidityHistoryQuery(params: { assetId: string }) {
   return useQuery(humidityHistoryQueryKeys.byAsset(params), {
     queryFn: fetchHumidityHistory,
     select: (data) => ({ data, stats: getStats(data.y) }),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }

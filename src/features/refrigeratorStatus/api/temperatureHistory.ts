@@ -71,6 +71,7 @@ export function useTemperatureHistoryQuery(params: { assetId: string }) {
   return useQuery(temperatureHistoryQueryKeys.byAsset(params), {
     queryFn: fetchTemperatureHistory,
     refetchOnMount: false,
+    refetchOnWindowFocus: false,
     select: (data) => ({
       data,
       stats: getStats(data.y),
