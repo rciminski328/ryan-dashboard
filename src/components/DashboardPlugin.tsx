@@ -7,8 +7,8 @@ import { useRefrigeratorStatusQuery } from "../features/refrigeratorStatus/api/r
 import { useTemperatureHistoryQuery } from "../features/refrigeratorStatus/api/temperatureHistory";
 
 export default function DashboardPlugin() {
-  const refrigeratorAssetId = "3d0b744b-8b83-4767-9cb3-9f394caf70b6";
-  const storeAssetId = "31913feb-50ba-46bb-90cc-f17d94bcffe4";
+  const refrigeratorAssetId = "628aef25-734f-4075-8d0d-2150ed842406";
+  const storeAssetId = "f47fa820-6005-410b-88b3-652f7c8bc7eb";
   const indoorEnvironmentStatusQuery = useStoreStatusQuery({
     assetId: storeAssetId,
   });
