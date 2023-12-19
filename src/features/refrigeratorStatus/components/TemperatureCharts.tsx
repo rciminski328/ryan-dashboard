@@ -1,6 +1,5 @@
-import { Grid, Typography, makeStyles } from "@material-ui/core";
+import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
-import { graphChartHeight } from "../../../utils";
 import StatsTable from "./StatsTable";
 import { useTemperatureHistoryQuery } from "../api/temperatureHistory";
 import { humidityAndTempLabels } from "../utils";
@@ -11,7 +10,6 @@ const tempChartStyles = makeStyles((theme) => ({
   },
   section: {
     border: `1px solid ${theme.palette.divider}`,
-    height: graphChartHeight,
   },
   table: {
     width: "100%",
@@ -40,7 +38,10 @@ export default function TemperatureCharts({
         className={classes.section}
       >
         <Grid item>
-          <TrendChart data={[{ ...data, type: "line" }]} />
+          <TrendChart
+            title="Temperature Trend (°F)"
+            data={[{ ...data, type: "line" }]}
+          />
         </Grid>
       </Grid>
 
@@ -52,12 +53,13 @@ export default function TemperatureCharts({
         className={classes.section}
         alignItems="center"
       >
-        <Grid item>
-          <Typography variant="body2">Current Temperature</Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="h6">{current}</Typography> does celsius go below?
-        </Grid>
+        <Typography variant="subtitle1">Current Temperature</Typography>
+        <Box flex={1} display={"flex"} alignItems={"center"}>
+          <Typography variant="h4">{current}°F</Typography>
+        </Box>
+        <Typography variant="caption">
+          Raw Sensor: {fahrenheitToCelsius(current).toFixed(1)}°C
+        </Typography>
       </Grid>
 
       <Grid
@@ -69,7 +71,9 @@ export default function TemperatureCharts({
         justifyContent="center"
       >
         <Grid item>
-          <Typography variant="body2">Temperature Stats (24 Hrs)</Typography>
+          <Typography variant="subtitle1">
+            Temperature Stats (24 Hrs)
+          </Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={humidityAndTempLabels} stats={stats} />
@@ -77,4 +81,8 @@ export default function TemperatureCharts({
       </Grid>
     </Grid>
   );
+}
+
+function fahrenheitToCelsius(fahrenheit: number) {
+  return ((fahrenheit - 32) * 5) / 9;
 }

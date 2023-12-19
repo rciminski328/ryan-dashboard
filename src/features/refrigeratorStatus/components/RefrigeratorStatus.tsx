@@ -1,19 +1,21 @@
-import { AssetType } from "@clearblade/ia-mfe-core";
 import {
   Box,
   Card,
   Grid,
-  Switch,
   Theme,
   Typography,
   makeStyles,
 } from "@material-ui/core";
 import TemperatureCharts from "./TemperatureCharts";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import { useRefrigeratorStatusQuery } from "../api/refrigeratorStatus";
 import HumidityCharts from "./HumidityCharts";
 import DoorCharts from "./DoorCharts";
+import {
+  // @ts-ignore
+  RelativeAbsoluteDateRangePicker,
+} from "@clearblade/ia-mfe-react";
+import { useState } from "react";
 
 const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
   (theme) => ({
@@ -27,6 +29,11 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   const { data } = useRefrigeratorStatusQuery({ assetId });
   const status = data.custom_data.isRunning;
   const classes = refrigeratorStatusStyles({ status });
+  const [timeRange, setTimeRange] = useState({
+    type: "relative",
+    count: 1,
+    units: 86400,
+  });
 
   return (
     <Card>
@@ -46,15 +53,23 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
           alignItems="center"
         >
           <Grid item>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h5" noWrap>
               Refrigerator Status
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid item xs={4}>
             <Box display="flex" flexWrap="nowrap" alignItems="center">
               <FiberManualRecordIcon className={classes.statusIcon} />
-              <Typography variant="body2">{status ? "On" : "Off"}</Typography>
+              <Typography variant="subtitle1">
+                {status ? "On" : "Off"}
+              </Typography>
             </Box>
+          </Grid>
+          <Grid item>
+            <RelativeAbsoluteDateRangePicker
+              currentRange={timeRange}
+              onApplyRange={setTimeRange}
+            />
           </Grid>
         </Grid>
 

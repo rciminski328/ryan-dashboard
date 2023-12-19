@@ -1,4 +1,4 @@
-import { Card, Grid, makeStyles } from "@material-ui/core";
+import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import GaugeChart from "./GaugeChart";
 import { useStoreStatusQuery } from "../api/storeStatus";
 import { gaugeChartHeight } from "../../../utils";
@@ -8,7 +8,6 @@ const useIndoorAirQualityStyles = makeStyles((theme) => ({
     width: "100%",
   },
   section: {
-    border: `1px solid ${theme.palette.divider}`,
     height: gaugeChartHeight,
   },
 }));
@@ -20,8 +19,12 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
   const classes = useIndoorAirQualityStyles();
   return (
     <Card>
+      <Box textAlign={"center"} mb={2}>
+        <Typography variant="h5">Indoor Air Quality</Typography>
+      </Box>
       <Grid
         container
+        direction="column"
         alignItems="center"
         justifyContent="center"
         spacing={2}
@@ -31,7 +34,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
         <Grid item className={classes.section}>
           <GaugeChart
             title="Temperature"
-            units="F"
+            units="°F"
             value={data.custom_data.temperature}
           />
         </Grid>
@@ -43,7 +46,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
           />
         </Grid>
         <Grid item className={classes.section}>
-          <GaugeChart title="CO2" units="PPM" value={data.custom_data.co2} />
+          <GaugeChart title="CO2" units=" PPM" value={data.custom_data.co2} />
         </Grid>
       </Grid>
     </Card>

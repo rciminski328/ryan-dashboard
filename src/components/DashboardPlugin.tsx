@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Grid, makeStyles } from "@material-ui/core";
 import { useStoreStatusQuery } from "../features/storeStatus/api/storeStatus";
 import {
@@ -20,11 +20,7 @@ import {
 } from "../features/refrigeratorStatus/api/temperatureHistory";
 import { Skeleton } from "@material-ui/lab";
 import RefrigeratorStatus from "../features/refrigeratorStatus/components/RefrigeratorStatus";
-import {
-  useMessaging,
-  // @ts-ignore
-  RelativeAbsoluteDateRangePicker,
-} from "@clearblade/ia-mfe-react";
+import { useMessaging } from "@clearblade/ia-mfe-react";
 import { useQueryClient } from "react-query";
 import IndoorAirQuality from "../features/storeStatus/components/IndoorAirQuality";
 
@@ -44,12 +40,6 @@ export default function DashboardPlugin() {
   const storeAssetId = "f47fa820-6005-410b-88b3-652f7c8bc7eb";
   // production store
   // const storeAssetId = "31913feb-50ba-46bb-90cc-f17d94bcffe4"
-
-  const [timeRange, setTimeRange] = useState({
-    type: "relative",
-    count: 1,
-    units: 86400,
-  });
 
   const indoorEnvironmentStatusQuery = useStoreStatusQuery({
     assetId: storeAssetId,
@@ -86,19 +76,11 @@ export default function DashboardPlugin() {
     return <div>Error</div>;
 
   return (
-    <Grid container className={classes.plugin} spacing={3}>
-      <Grid item xs={12}>
-        <Grid item xs={3}>
-          <RelativeAbsoluteDateRangePicker
-            currentRange={timeRange}
-            onApplyRange={setTimeRange}
-          />
-        </Grid>
-      </Grid>
-      <Grid item>
+    <Grid container className={classes.plugin} spacing={1}>
+      <Grid item xs={3}>
         <IndoorAirQuality assetId={storeAssetId} />
       </Grid>
-      <Grid item>
+      <Grid item xs={9}>
         <RefrigeratorStatus assetId={refrigeratorAssetId} />
       </Grid>
     </Grid>

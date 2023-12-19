@@ -1,6 +1,5 @@
-import { Grid, Typography, makeStyles } from "@material-ui/core";
+import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
-import { graphChartHeight } from "../../../utils";
 import StatsTable from "./StatsTable";
 import { useHumidityHistoryQuery } from "../api/humidityHistory";
 import { humidityAndTempLabels } from "../utils";
@@ -11,7 +10,6 @@ const humidityChartStyles = makeStyles((theme) => ({
   },
   section: {
     border: `1px solid ${theme.palette.divider}`,
-    height: graphChartHeight,
   },
   table: {
     width: "100%",
@@ -40,7 +38,10 @@ export default function HumidityCharts({
         className={classes.section}
       >
         <Grid item>
-          <TrendChart data={[{ ...data, type: "line" }]} />
+          <TrendChart
+            title="Humidity Trend (%)"
+            data={[{ ...data, type: "line" }]}
+          />
         </Grid>
       </Grid>
 
@@ -52,12 +53,10 @@ export default function HumidityCharts({
         className={classes.section}
         alignItems="center"
       >
-        <Grid item>
-          <Typography variant="body2">Current Humidity</Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="h6">{current} </Typography>
-        </Grid>
+        <Typography variant="subtitle1">Current Humidity</Typography>
+        <Box flex={1} display={"flex"} alignItems={"center"}>
+          <Typography variant="h4">{current}%</Typography>
+        </Box>
       </Grid>
 
       <Grid
@@ -69,7 +68,7 @@ export default function HumidityCharts({
         justifyContent="center"
       >
         <Grid item>
-          <Typography variant="body2">Humidity Stats (24 Hrs)</Typography>
+          <Typography variant="subtitle1">Humidity Stats (24 Hrs)</Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={humidityAndTempLabels} stats={stats} />
