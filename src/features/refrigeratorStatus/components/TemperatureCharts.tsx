@@ -1,6 +1,5 @@
 import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
-import { graphChartHeight } from "../../../utils";
 import StatsTable from "./StatsTable";
 import { useTemperatureHistoryQuery } from "../api/temperatureHistory";
 import { humidityAndTempLabels } from "../utils";

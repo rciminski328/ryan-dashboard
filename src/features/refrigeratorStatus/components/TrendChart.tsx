@@ -17,36 +17,38 @@ export default function TrendChart({
         </Box>
       </Grid>
       <Grid item>
-        <Plot
-          data={data}
-          //   onInitialized={(f) => setLayout(f.layout)}
-          //   config={{
-          //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //     // @ts-ignore
-          //     locales: {
-          //       [navigator.language]: getLocaleDictionary(navigator.language),
-          //     }, // Absent from config type but needed to provide plotly translations.
-          //     locale: navigator.language,
-          //     responsive: true,
-          //     displayModeBar: true,
-          //     modeBarButtonsToRemove: ['toImage', 'zoom2d', 'select2d', 'lasso2d'],
-          //     displaylogo: false,
-          //   }}
-          config={{
-            displayModeBar: false,
-            displaylogo: false,
-          }}
-          layout={{
-            width: 500,
-            height: graphChartHeight - 20,
-            margin: {
-              b: 20,
-              l: 20,
-              r: 20,
-              t: 20,
-            },
-          }}
-        />
+        <Box display="flex" justifyContent={"center"}>
+          <Plot
+            data={data}
+            //   onInitialized={(f) => setLayout(f.layout)}
+            //   config={{
+            //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //     // @ts-ignore
+            //     locales: {
+            //       [navigator.language]: getLocaleDictionary(navigator.language),
+            //     }, // Absent from config type but needed to provide plotly translations.
+            //     locale: navigator.language,
+            //     responsive: true,
+            //     displayModeBar: true,
+            //     modeBarButtonsToRemove: ['toImage', 'zoom2d', 'select2d', 'lasso2d'],
+            //     displaylogo: false,
+            //   }}
+            config={{
+              displayModeBar: false,
+              displaylogo: false,
+            }}
+            layout={{
+              width: 800,
+              height: graphChartHeight - 20,
+              margin: {
+                b: 20,
+                l: 20,
+                r: 20,
+                t: 20,
+              },
+            }}
+          />
+        </Box>
       </Grid>
     </Grid>
   );
