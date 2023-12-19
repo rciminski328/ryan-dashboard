@@ -51,7 +51,7 @@ async function publishData() {
       })
     );
 
-    await sleep(5000);
+    await sleep(getRandomInt(4000, 9000));
   }
 }
 
