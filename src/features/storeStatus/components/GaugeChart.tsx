@@ -1,5 +1,5 @@
 import Plot from "react-plotly.js";
-import { gaugeChartHeight, graphChartHeight } from "../../../utils";
+import { gaugeChartHeight } from "../../../utils";
 
 export default function GaugeChart({
   title,

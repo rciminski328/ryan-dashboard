@@ -1,6 +1,5 @@
-import { Grid, Typography, makeStyles } from "@material-ui/core";
+import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
-import { graphChartHeight } from "../../../utils";
 import StatsTable from "./StatsTable";
 import { useDoorOpenHistoryQuery } from "../api/doorOpenHistory";
 
@@ -10,7 +9,6 @@ const doorChartStyles = makeStyles((theme) => ({
   },
   section: {
     border: `1px solid ${theme.palette.divider}`,
-    height: graphChartHeight,
   },
   table: {
     width: "100%",
@@ -65,12 +63,10 @@ export default function DoorCharts({
         className={classes.section}
         alignItems="center"
       >
-        <Grid item>
-          <Typography variant="body2">Current Status</Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="h6">{current ? "OPEN" : "CLOSED"}</Typography>
-        </Grid>
+        <Typography variant="subtitle1">Current Status</Typography>
+        <Box flex={1} display={"flex"} alignItems={"center"}>
+          <Typography variant="h3">{current ? "OPEN" : "CLOSED"}</Typography>
+        </Box>
       </Grid>
 
       <Grid
@@ -82,7 +78,7 @@ export default function DoorCharts({
         justifyContent="center"
       >
         <Grid item>
-          <Typography variant="body2">Door Open Stats (24 Hrs)</Typography>
+          <Typography variant="subtitle1">Door Open Stats (24 Hrs)</Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={labels} stats={stats} />
