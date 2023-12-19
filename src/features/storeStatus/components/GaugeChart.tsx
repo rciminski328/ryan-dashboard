@@ -14,7 +14,8 @@ export default function GaugeChart({
     {
       domain: { x: [0, 1], y: [0, 1] },
       value,
-      title: { text: `${title} (${units})` },
+      title: { text: title },
+      number: { suffix: units },
       type: "indicator",
       mode: "gauge+number",
     },

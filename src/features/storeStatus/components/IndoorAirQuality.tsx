@@ -31,7 +31,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
         <Grid item className={classes.section}>
           <GaugeChart
             title="Temperature"
-            units="F"
+            units="°F"
             value={data.custom_data.temperature}
           />
         </Grid>
@@ -43,7 +43,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
           />
         </Grid>
         <Grid item className={classes.section}>
-          <GaugeChart title="CO2" units="PPM" value={data.custom_data.co2} />
+          <GaugeChart title="CO2" units=" PPM" value={data.custom_data.co2} />
         </Grid>
       </Grid>
     </Card>
