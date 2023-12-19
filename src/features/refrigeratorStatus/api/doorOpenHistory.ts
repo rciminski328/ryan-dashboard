@@ -2,6 +2,7 @@ import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { average } from "simple-statistics";
+import { sleep } from "../../../utils/sleep";
 
 interface PlotDoorOpenResponse {
   results: {

@@ -6,6 +6,7 @@ import {
 import { useMessaging } from "@clearblade/ia-mfe-react";
 import { useEffect } from "react";
 import { QueryFunctionContext, useQuery, useQueryClient } from "react-query";
+import { sleep } from "../../../utils/sleep";
 
 export type StoreAsset = Omit<Asset["frontend"], "custom_data"> & {
   custom_data: {

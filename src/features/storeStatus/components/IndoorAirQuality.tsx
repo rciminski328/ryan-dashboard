@@ -2,6 +2,7 @@ import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import GaugeChart from "./GaugeChart";
 import { useStoreStatusQuery } from "../api/storeStatus";
 import { gaugeChartHeight } from "../../../utils";
+import { Skeleton } from "@material-ui/lab";
 
 const useIndoorAirQualityStyles = makeStyles((theme) => ({
   container: {
@@ -13,10 +14,29 @@ const useIndoorAirQualityStyles = makeStyles((theme) => ({
 }));
 
 export default function IndoorAirQuality({ assetId }: { assetId: string }) {
-  const { data } = useStoreStatusQuery({
+  const storeStatusQuery = useStoreStatusQuery({
     assetId,
   });
   const classes = useIndoorAirQualityStyles();
+
+  if (storeStatusQuery.isLoading) {
+    return (
+      <>
+        <Skeleton variant="rect" height={25} />
+        <Box pt={1} />
+        <Skeleton variant="rect" height={150} />
+        <Box pt={2} />
+        <Skeleton variant="rect" height={150} />
+        <Box pt={2} />
+        <Skeleton variant="rect" height={150} />
+      </>
+    );
+  }
+
+  if (storeStatusQuery.isError) {
+    return <div>Error</div>;
+  }
+
   return (
     <Card>
       <Box textAlign={"center"} mb={2}>
@@ -35,18 +55,22 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
           <GaugeChart
             title="Temperature"
             units="°F"
-            value={data.custom_data.temperature}
+            value={storeStatusQuery.data.custom_data.temperature}
           />
         </Grid>
         <Grid item className={classes.section}>
           <GaugeChart
             title="Humidity"
             units="%"
-            value={data.custom_data.humidity}
+            value={storeStatusQuery.data.custom_data.humidity}
           />
         </Grid>
         <Grid item className={classes.section}>
-          <GaugeChart title="CO2" units=" PPM" value={data.custom_data.co2} />
+          <GaugeChart
+            title="CO2"
+            units=" PPM"
+            value={storeStatusQuery.data.custom_data.co2}
+          />
         </Grid>
       </Grid>
     </Card>
