@@ -1,4 +1,4 @@
-import { Card, Grid, makeStyles } from "@material-ui/core";
+import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import GaugeChart from "./GaugeChart";
 import { useStoreStatusQuery } from "../api/storeStatus";
 import { gaugeChartHeight } from "../../../utils";
@@ -19,6 +19,9 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
   const classes = useIndoorAirQualityStyles();
   return (
     <Card>
+      <Box textAlign={"center"} mb={2}>
+        <Typography variant="h4">Indoor Air Quality</Typography>
+      </Box>
       <Grid
         container
         alignItems="center"

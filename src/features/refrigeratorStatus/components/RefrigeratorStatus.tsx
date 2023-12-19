@@ -46,14 +46,16 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
           alignItems="center"
         >
           <Grid item>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h4" noWrap>
               Refrigerator Status
             </Typography>
           </Grid>
           <Grid item>
             <Box display="flex" flexWrap="nowrap" alignItems="center">
               <FiberManualRecordIcon className={classes.statusIcon} />
-              <Typography variant="body2">{status ? "On" : "Off"}</Typography>
+              <Typography variant="subtitle1">
+                {status ? "On" : "Off"}
+              </Typography>
             </Box>
           </Grid>
         </Grid>
