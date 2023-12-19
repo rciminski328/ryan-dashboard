@@ -103,7 +103,10 @@ function getDoorOpenStats(data: { x: string[]; y: number[] }): {
 export function useDoorOpenHistoryQuery(params: { assetId: string }) {
   return useQuery(doorOpenHistoryQueryKeys.byAsset(params), {
     queryFn: fetchDoorOpenHistory,
-    select: (data) => ({ data, stats: getDoorOpenStats(data) }),
+    select: (data) => ({
+      data: { ...data, x: data.x.map((d) => new Date(d)) },
+      stats: getDoorOpenStats(data),
+    }),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });

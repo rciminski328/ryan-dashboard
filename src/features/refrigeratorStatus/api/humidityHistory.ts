@@ -68,7 +68,10 @@ async function fetchHumidityHistory({
 export function useHumidityHistoryQuery(params: { assetId: string }) {
   return useQuery(humidityHistoryQueryKeys.byAsset(params), {
     queryFn: fetchHumidityHistory,
-    select: (data) => ({ data, stats: getStats(data.y) }),
+    select: (data) => ({
+      data: { ...data, x: data.x.map((d) => new Date(d)) },
+      stats: getStats(data.y),
+    }),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
   });

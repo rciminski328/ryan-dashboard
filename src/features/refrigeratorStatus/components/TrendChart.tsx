@@ -6,7 +6,7 @@ export default function TrendChart({
   data,
   title,
 }: {
-  data: { type: "line"; x: string[]; y: number[] }[];
+  data: { type: "line"; x: Date[]; y: number[] }[];
   title: string;
 }) {
   return (

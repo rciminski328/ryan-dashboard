@@ -73,7 +73,7 @@ export function useTemperatureHistoryQuery(params: { assetId: string }) {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     select: (data) => ({
-      data,
+      data: { ...data, x: data.x.map((d) => new Date(d)) },
       stats: getStats(data.y),
     }),
   });
