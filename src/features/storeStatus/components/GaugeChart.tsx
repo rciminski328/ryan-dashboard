@@ -1,5 +1,6 @@
 import Plot from "react-plotly.js";
 import { gaugeChartHeight } from "../../../utils";
+import { Box, Typography } from "@material-ui/core";
 
 export default function GaugeChart({
   title,
@@ -14,7 +15,6 @@ export default function GaugeChart({
     {
       domain: { x: [0, 1], y: [0, 1] },
       value,
-      title: { text: title },
       number: { suffix: units },
       type: "indicator",
       mode: "gauge+number",
@@ -22,6 +22,9 @@ export default function GaugeChart({
   ];
   return (
     <div style={{ width: "100%", height: "100%" }}>
+      <Box textAlign={"center"}>
+        <Typography variant="subtitle1">{title}</Typography>
+      </Box>
       <Plot
         data={data}
         config={{
@@ -29,16 +32,10 @@ export default function GaugeChart({
           displaylogo: false,
         }}
         layout={{
-          margin: { t: 0, b: 0 },
+          margin: { t: 20, b: 20 },
           width: 300,
-          height: gaugeChartHeight + 40,
-          // datarevision: revision,
+          height: gaugeChartHeight - 40,
         }}
-        useResizeHandler
-
-        // revision={revision}
-        //   useResizeHandler
-        //   className={classes.plot}
       />
     </div>
   );

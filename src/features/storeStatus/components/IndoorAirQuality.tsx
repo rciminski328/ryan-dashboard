@@ -8,7 +8,6 @@ const useIndoorAirQualityStyles = makeStyles((theme) => ({
     width: "100%",
   },
   section: {
-    border: `1px solid ${theme.palette.divider}`,
     height: gaugeChartHeight,
   },
 }));
