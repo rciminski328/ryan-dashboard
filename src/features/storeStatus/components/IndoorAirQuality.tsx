@@ -24,6 +24,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
       </Box>
       <Grid
         container
+        direction="column"
         alignItems="center"
         justifyContent="center"
         spacing={2}

@@ -38,7 +38,7 @@ export default function TrendChart({
               displaylogo: false,
             }}
             layout={{
-              width: 800,
+              width: 600,
               height: graphChartHeight - 20,
               margin: {
                 b: 20,

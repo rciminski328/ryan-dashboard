@@ -76,10 +76,10 @@ export default function DashboardPlugin() {
 
   return (
     <Grid container className={classes.plugin} spacing={1}>
-      <Grid item xs={12}>
+      <Grid item xs={3}>
         <IndoorAirQuality assetId={storeAssetId} />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={9}>
         <RefrigeratorStatus assetId={refrigeratorAssetId} />
       </Grid>
     </Grid>
