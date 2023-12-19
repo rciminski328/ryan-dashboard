@@ -55,7 +55,7 @@ export default function TemperatureCharts({
       >
         <Typography variant="subtitle1">Current Temperature</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
-          <Typography variant="h3">{current}°F</Typography>
+          <Typography variant="h4">{current}°F</Typography>
         </Box>
         <Typography variant="caption">
           Raw Sensor: {fahrenheitToCelsius(current).toFixed(1)}°C

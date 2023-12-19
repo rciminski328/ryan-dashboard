@@ -55,7 +55,7 @@ export default function HumidityCharts({
       >
         <Typography variant="subtitle1">Current Humidity</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
-          <Typography variant="h3">{current}%</Typography>
+          <Typography variant="h4">{current}%</Typography>
         </Box>
       </Grid>
 

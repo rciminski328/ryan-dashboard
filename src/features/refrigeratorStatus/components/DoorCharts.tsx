@@ -65,7 +65,7 @@ export default function DoorCharts({
       >
         <Typography variant="subtitle1">Current Status</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
-          <Typography variant="h3">{current ? "OPEN" : "CLOSED"}</Typography>
+          <Typography variant="h4">{current ? "OPEN" : "CLOSED"}</Typography>
         </Box>
       </Grid>
 

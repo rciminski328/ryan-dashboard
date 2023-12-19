@@ -75,7 +75,7 @@ export default function DashboardPlugin() {
     return <div>Error</div>;
 
   return (
-    <Grid container className={classes.plugin} spacing={3}>
+    <Grid container className={classes.plugin} spacing={1}>
       <Grid item xs={12}>
         <IndoorAirQuality assetId={storeAssetId} />
       </Grid>
