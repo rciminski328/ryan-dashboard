@@ -50,7 +50,10 @@ export default function DoorCharts({
         className={classes.section}
       >
         <Grid item>
-          <TrendChart data={[{ ...data, type: "line" }]} />
+          <TrendChart
+            title="Door Open/Close"
+            data={[{ ...data, type: "line" }]}
+          />
         </Grid>
       </Grid>
 

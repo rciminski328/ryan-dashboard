@@ -3,8 +3,10 @@ import { graphChartHeight } from "../../../utils";
 
 export default function TrendChart({
   data,
+  title,
 }: {
   data: { type: "line"; x: string[]; y: number[] }[];
+  title: string;
 }) {
   return (
     <div style={{ width: "100%", height: "100%" }}>
@@ -30,12 +32,9 @@ export default function TrendChart({
         layout={{
           width: 320,
           height: graphChartHeight - 20,
-          title: "A Fancy Plot",
-          // datarevision: revision,
+          title,
         }}
         useResizeHandler
-
-        // revision={revision}
         //   useResizeHandler
         //   className={classes.plot}
       />

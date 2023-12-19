@@ -40,7 +40,10 @@ export default function TemperatureCharts({
         className={classes.section}
       >
         <Grid item>
-          <TrendChart data={[{ ...data, type: "line" }]} />
+          <TrendChart
+            title="Temperature Trend (°F)"
+            data={[{ ...data, type: "line" }]}
+          />
         </Grid>
       </Grid>
 
