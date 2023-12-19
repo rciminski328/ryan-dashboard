@@ -1,15 +1,12 @@
-import { AssetType } from "@clearblade/ia-mfe-core";
 import {
   Box,
   Card,
   Grid,
-  Switch,
   Theme,
   Typography,
   makeStyles,
 } from "@material-ui/core";
 import TemperatureCharts from "./TemperatureCharts";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
 import { useRefrigeratorStatusQuery } from "../api/refrigeratorStatus";
 import HumidityCharts from "./HumidityCharts";
