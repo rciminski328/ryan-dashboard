@@ -59,7 +59,7 @@ export default function TemperatureCharts({
           <Typography variant="h3">{current}°F</Typography>
         </Box>
         <Typography variant="caption">
-          Raw Sensor: {fahrenheitToCelsius(current)}°C
+          Raw Sensor: {fahrenheitToCelsius(current).toFixed(1)}°C
         </Typography>
       </Grid>
 
