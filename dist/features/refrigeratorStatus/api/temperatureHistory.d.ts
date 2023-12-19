@@ -12,7 +12,7 @@ export declare function useTemperatureHistoryQuery(params: {
     assetId: string;
 }): import("react-query").UseQueryResult<{
     data: {
-        x: string[];
+        x: Date[];
         y: number[];
     };
     stats: {

@@ -2,7 +2,7 @@
 export default function TrendChart({ data, title, }: {
     data: {
         type: "line";
-        x: string[];
+        x: Date[];
         y: number[];
     }[];
     title: string;
