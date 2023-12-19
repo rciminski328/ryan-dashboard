@@ -1,4 +1,4 @@
-import { AssetType } from '@clearblade/ia-mfe-core';
+import { AssetType } from "@clearblade/ia-mfe-core";
 import {
   Box,
   Card,
@@ -7,13 +7,13 @@ import {
   Theme,
   Typography,
   makeStyles,
-} from '@material-ui/core';
-import TemperatureCharts from './TemperatureCharts';
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import { useRefrigeratorStatusQuery } from '../api/refrigeratorStatus';
-import HumidityCharts from './HumidityCharts';
-import DoorCharts from './DoorCharts';
+} from "@material-ui/core";
+import TemperatureCharts from "./TemperatureCharts";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
+import { useRefrigeratorStatusQuery } from "../api/refrigeratorStatus";
+import HumidityCharts from "./HumidityCharts";
+import DoorCharts from "./DoorCharts";
 
 const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
   (theme) => ({
@@ -32,28 +32,28 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
     <Card>
       <Grid
         container
-        alignItems='center'
-        justifyContent='center'
-        direction='column'
+        alignItems="center"
+        justifyContent="center"
+        direction="column"
         spacing={2}
       >
         <Grid
           container
           item
           spacing={2}
-          wrap='nowrap'
-          justifyContent='center'
-          alignItems='center'
+          wrap="nowrap"
+          justifyContent="center"
+          alignItems="center"
         >
           <Grid item>
-            <Typography variant='h6' noWrap>
+            <Typography variant="h6" noWrap>
               Refrigerator Status
             </Typography>
           </Grid>
           <Grid item>
-            <Box display='flex' flexWrap='nowrap' alignItems='center'>
+            <Box display="flex" flexWrap="nowrap" alignItems="center">
               <FiberManualRecordIcon className={classes.statusIcon} />
-              <Typography variant='body2'>{status ? 'On' : 'Off'}</Typography>
+              <Typography variant="body2">{status ? "On" : "Off"}</Typography>
             </Box>
           </Grid>
         </Grid>

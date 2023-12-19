@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableRow } from '@material-ui/core';
+import { Table, TableBody, TableCell, TableRow } from "@material-ui/core";
 
 export default function StatsTable({
   labels,
@@ -12,14 +12,14 @@ export default function StatsTable({
   stats: Record<string, number>;
 }) {
   return (
-    <Table size='small' style={{ width: '100%' }}>
+    <Table size="small" style={{ width: "100%" }}>
       <TableBody>
         {Object.keys(stats).map((stat) => {
           const item = labels.find((label) => label.field === stat);
           return (
             <TableRow key={stat}>
-              <TableCell align='left'>{item.label}</TableCell>
-              <TableCell align='left'>
+              <TableCell align="left">{item.label}</TableCell>
+              <TableCell align="left">
                 {item.format ? item.format(stats[stat]) : stats[stat]}
               </TableCell>
             </TableRow>

@@ -2,12 +2,12 @@ import {
   Asset,
   createFrontendAssetsQuery,
   fetchAssets,
-} from '@clearblade/ia-mfe-core';
-import { useMessaging } from '@clearblade/ia-mfe-react';
-import { useEffect } from 'react';
-import { QueryFunctionContext, useQuery, useQueryClient } from 'react-query';
+} from "@clearblade/ia-mfe-core";
+import { useMessaging } from "@clearblade/ia-mfe-react";
+import { useEffect } from "react";
+import { QueryFunctionContext, useQuery, useQueryClient } from "react-query";
 
-export type StoreAsset = Omit<Asset['frontend'], 'custom_data'> & {
+export type StoreAsset = Omit<Asset["frontend"], "custom_data"> & {
   custom_data: {
     co2: number;
     temperature: number;
@@ -18,7 +18,7 @@ export type StoreAsset = Omit<Asset['frontend'], 'custom_data'> & {
 
 const storeStatusQueryKeys = {
   byAsset: (params: { assetId: string }) =>
-    [{ scope: 'storeStatus', params }] as const,
+    [{ scope: "storeStatus", params }] as const,
 };
 
 async function fetchStoreStatus({
@@ -33,13 +33,13 @@ async function fetchStoreStatus({
   const data = await fetchAssets(new AbortController(), {
     query: createFrontendAssetsQuery({
       Filters: [
-        [{ type: 'default', operator: '=', field: 'id', value: assetId }],
+        [{ type: "default", operator: "=", field: "id", value: assetId }],
       ],
     }),
   });
 
   const asset = data.DATA[0];
-  if (typeof asset === 'undefined') {
+  if (typeof asset === "undefined") {
     throw new Error(`No asset found with id '${assetId}'`);
   }
 
@@ -60,7 +60,7 @@ export function useStoreStatusQuery({ assetId }: { assetId: string }) {
       queryClient.setQueryData<StoreAsset>(
         storeStatusQueryKeys.byAsset({ assetId }),
         (data) => {
-          if (typeof data === 'undefined') {
+          if (typeof data === "undefined") {
             return assetData;
           }
 
@@ -77,7 +77,7 @@ export function useStoreStatusQuery({ assetId }: { assetId: string }) {
     });
 
     return () => unsubscribe(topics);
-  }, [assetId, subscribe, unsubscribe]);
+  }, [assetId, subscribe, unsubscribe, queryClient]);
 
   return useQuery(storeStatusQueryKeys.byAsset({ assetId }), {
     queryFn: fetchStoreStatus,

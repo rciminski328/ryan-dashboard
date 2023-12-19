@@ -1,5 +1,5 @@
-import Plot from 'react-plotly.js';
-import { gaugeChartHeight, graphChartHeight } from '../../../utils';
+import Plot from "react-plotly.js";
+import { gaugeChartHeight, graphChartHeight } from "../../../utils";
 
 export default function GaugeChart({
   title,
@@ -15,12 +15,12 @@ export default function GaugeChart({
       domain: { x: [0, 1], y: [0, 1] },
       value,
       title: { text: `${title} (${units})` },
-      type: 'indicator',
-      mode: 'gauge+number',
+      type: "indicator",
+      mode: "gauge+number",
     },
   ];
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div style={{ width: "100%", height: "100%" }}>
       <Plot
         data={data}
         config={{
