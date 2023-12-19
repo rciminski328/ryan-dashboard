@@ -20,7 +20,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
   return (
     <Card>
       <Box textAlign={"center"} mb={2}>
-        <Typography variant="h6">Indoor Air Quality</Typography>
+        <Typography variant="h5">Indoor Air Quality</Typography>
       </Box>
       <Grid
         container

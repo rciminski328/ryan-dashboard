@@ -43,7 +43,7 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
           alignItems="center"
         >
           <Grid item>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h5" noWrap>
               Refrigerator Status
             </Typography>
           </Grid>
