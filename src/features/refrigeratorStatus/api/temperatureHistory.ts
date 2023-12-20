@@ -4,7 +4,6 @@ import { getAuthInfo } from "../../../utils/authInfo";
 import { getStats } from "../../../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 import { getTimeRangeParametersForPlot } from "../utils";
-import { sleep } from "../../../utils/sleep";
 
 interface PlotTemperatureResponse {
   results: {
