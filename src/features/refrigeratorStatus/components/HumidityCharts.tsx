@@ -3,6 +3,7 @@ import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useHumidityHistoryQuery } from "../api/humidityHistory";
 import { humidityAndTempLabels } from "../utils";
+import { Skeleton } from "@material-ui/lab";
 
 const humidityChartStyles = makeStyles((theme) => ({
   container: {
@@ -24,6 +25,15 @@ export default function HumidityCharts({
   current: number;
 }) {
   const classes = humidityChartStyles();
+
+  if (humidityHistoryQuery.isLoading) {
+    return (
+      <Grid container item spacing={1} className={classes.container}>
+        <Box pt={1} />
+        <Skeleton variant="rect" height={200} width="100%" />
+      </Grid>
+    );
+  }
 
   if (!humidityHistoryQuery.isSuccess) {
     return null;

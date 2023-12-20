@@ -3,6 +3,7 @@ import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useTemperatureHistoryQuery } from "../api/temperatureHistory";
 import { humidityAndTempLabels } from "../utils";
+import { Skeleton } from "@material-ui/lab";
 
 const tempChartStyles = makeStyles((theme) => ({
   container: {
@@ -24,6 +25,15 @@ export default function TemperatureCharts({
   current: number;
 }) {
   const classes = tempChartStyles();
+
+  if (temperatureHistoryQuery.isLoading) {
+    return (
+      <Grid container item spacing={1} className={classes.container}>
+        <Box pt={1} />
+        <Skeleton variant="rect" height={200} width="100%" />
+      </Grid>
+    );
+  }
 
   if (!temperatureHistoryQuery.isSuccess) {
     return null;

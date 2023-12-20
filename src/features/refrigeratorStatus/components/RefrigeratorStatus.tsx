@@ -71,12 +71,7 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   const status = refrigeratorStatusQuery.data?.custom_data.isRunning;
   const classes = refrigeratorStatusStyles({ status: status ?? false });
 
-  if (
-    refrigeratorStatusQuery.isLoading ||
-    temperatureHistoryQuery.isLoading ||
-    humidityHistoryQuery.isLoading ||
-    doorOpenHistoryQuery.isLoading
-  ) {
+  if (refrigeratorStatusQuery.isLoading) {
     return (
       <>
         <Skeleton variant="rect" height={25} />

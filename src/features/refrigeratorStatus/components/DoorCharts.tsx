@@ -2,6 +2,7 @@ import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useDoorOpenHistoryQuery } from "../api/doorOpenHistory";
+import { Skeleton } from "@material-ui/lab";
 
 const doorChartStyles = makeStyles((theme) => ({
   container: {
@@ -34,6 +35,15 @@ export default function DoorCharts({
       format: (val: number) => `${(val / 1000).toFixed(2)} sec`,
     },
   ];
+
+  if (doorOpenHistoryQuery.isLoading) {
+    return (
+      <Grid container item spacing={1} className={classes.container}>
+        <Box pt={1} />
+        <Skeleton variant="rect" height={200} width="100%" />
+      </Grid>
+    );
+  }
 
   if (!doorOpenHistoryQuery.isSuccess) {
     return null;
