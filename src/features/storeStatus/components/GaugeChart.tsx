@@ -1,19 +1,22 @@
-import Plot from "react-plotly.js";
-import { gaugeChartHeight, gaugeChartWidth } from "../../../utils";
 import { Box, Typography, useTheme } from "@material-ui/core";
-import { getThresholdValue } from "../utils";
+import Plot from "react-plotly.js";
 import { ColorThresholds } from "../types";
+import { getThresholdValue } from "../utils";
 
 export default function GaugeChart({
   title,
   value,
   units,
   colorThresholds,
+  minHeight,
+  minWidth,
 }: {
   title: string;
   value: number;
   units: string;
   colorThresholds?: ColorThresholds;
+  minHeight?: number;
+  minWidth?: number;
 }) {
   const theme = useTheme();
   const barColor = colorThresholds
@@ -33,28 +36,28 @@ export default function GaugeChart({
     },
   ];
   return (
-    <>
-      <Box textAlign={"center"}>
-        <Typography variant="subtitle1">{title}</Typography>
-      </Box>
-      <Plot
-        data={data}
-        config={{
-          responsive: true,
-          displayModeBar: false,
-          displaylogo: false,
-        }}
-        layout={{
-          autosize: true,
-          margin: { t: 20, b: 20 },
-        }}
-        style={{
-          width: "100%",
-          height: "100%",
-          minHeight: gaugeChartHeight,
-          minWidth: gaugeChartWidth,
-        }}
-      />
-    </>
+    <Plot
+      data={data}
+      config={{
+        responsive: true,
+        displayModeBar: false,
+        displaylogo: false,
+      }}
+      layout={{
+        autosize: true,
+        margin: { t: 50, b: 50 },
+        title,
+        titlefont: {
+          size: 16,
+          family: theme.typography.fontFamily,
+        },
+      }}
+      style={{
+        width: "100%",
+        height: "100%",
+        minHeight,
+        minWidth,
+      }}
+    />
   );
 }

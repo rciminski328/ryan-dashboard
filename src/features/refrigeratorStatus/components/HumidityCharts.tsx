@@ -2,8 +2,14 @@ import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useHumidityHistoryQuery } from "../api/humidityHistory";
-import { humidityAndTempLabels } from "../utils";
+import {
+  humidityAndTempLabels,
+  smallGaugeChartHeight,
+  smallGaugeChartWidth,
+} from "../utils";
 import { Skeleton } from "@material-ui/lab";
+import GaugeChart from "../../storeStatus/components/GaugeChart";
+import { MOCK_THRESHOLDS } from "../../storeStatus/utils";
 
 const humidityChartStyles = makeStyles((theme) => ({
   container: {
@@ -65,11 +71,18 @@ export default function HumidityCharts({
         xs={3}
         className={classes.section}
         alignItems="center"
+        justifyContent="center"
       >
-        <Typography variant="subtitle1">Current Humidity</Typography>
-        <Box flex={1} display={"flex"} alignItems={"center"}>
-          <Typography variant="h4">{current}%</Typography>
-        </Box>
+        <Grid item>
+          <GaugeChart
+            title="Current Humidity"
+            units=" %"
+            value={current}
+            colorThresholds={MOCK_THRESHOLDS}
+            minHeight={smallGaugeChartHeight}
+            minWidth={smallGaugeChartWidth}
+          />
+        </Grid>
       </Grid>
 
       <Grid

@@ -2,8 +2,14 @@ import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useTemperatureHistoryQuery } from "../api/temperatureHistory";
-import { humidityAndTempLabels } from "../utils";
+import {
+  humidityAndTempLabels,
+  smallGaugeChartHeight,
+  smallGaugeChartWidth,
+} from "../utils";
 import { Skeleton } from "@material-ui/lab";
+import { MOCK_THRESHOLDS } from "../../storeStatus/utils";
+import GaugeChart from "../../storeStatus/components/GaugeChart";
 
 const tempChartStyles = makeStyles((theme) => ({
   container: {
@@ -65,14 +71,23 @@ export default function TemperatureCharts({
         xs={3}
         className={classes.section}
         alignItems="center"
+        justifyContent="center"
       >
-        <Typography variant="subtitle1">Current Temperature</Typography>
-        <Box flex={1} display={"flex"} alignItems={"center"}>
-          <Typography variant="h4">{current}°F</Typography>
-        </Box>
-        <Typography variant="caption">
-          Raw Sensor: {fahrenheitToCelsius(current).toFixed(1)}°C
-        </Typography>
+        <Grid item>
+          <GaugeChart
+            title="Current Temperature"
+            units=" °F"
+            value={current}
+            colorThresholds={MOCK_THRESHOLDS}
+            minHeight={smallGaugeChartHeight}
+            minWidth={smallGaugeChartWidth}
+          />
+        </Grid>
+        <Grid item>
+          <Typography variant="caption">
+            Raw Sensor: {fahrenheitToCelsius(current).toFixed(1)}°C
+          </Typography>
+        </Grid>
       </Grid>
 
       <Grid
