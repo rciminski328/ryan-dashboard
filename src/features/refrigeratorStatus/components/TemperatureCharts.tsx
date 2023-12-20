@@ -84,9 +84,7 @@ export default function TemperatureCharts({
         justifyContent="center"
       >
         <Grid item>
-          <Typography variant="subtitle1">
-            Temperature Stats (24 Hrs)
-          </Typography>
+          <Typography variant="subtitle1">Temperature Stats</Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={humidityAndTempLabels} stats={stats} />

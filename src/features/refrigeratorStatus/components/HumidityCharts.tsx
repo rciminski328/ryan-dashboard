@@ -81,7 +81,7 @@ export default function HumidityCharts({
         justifyContent="center"
       >
         <Grid item>
-          <Typography variant="subtitle1">Humidity Stats (24 Hrs)</Typography>
+          <Typography variant="subtitle1">Humidity Stats</Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={humidityAndTempLabels} stats={stats} />

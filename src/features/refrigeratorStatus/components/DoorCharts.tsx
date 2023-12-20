@@ -91,7 +91,7 @@ export default function DoorCharts({
         justifyContent="center"
       >
         <Grid item>
-          <Typography variant="subtitle1">Door Open Stats (24 Hrs)</Typography>
+          <Typography variant="subtitle1">Door Open Stats</Typography>
         </Grid>
         <Grid item className={classes.table}>
           <StatsTable labels={labels} stats={stats} />
