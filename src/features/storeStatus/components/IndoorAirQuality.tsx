@@ -60,6 +60,11 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
             title="Temperature"
             units="°F"
             value={storeStatusQuery.data.custom_data.temperature}
+            colorThresholds={[
+              { value: "red", min: -Infinity, max: 10 },
+              { value: "green", min: 69, max: Infinity },
+              { value: "yellow", min: 10, max: 69 },
+            ]}
           />
         </Grid>
         <Grid item>
