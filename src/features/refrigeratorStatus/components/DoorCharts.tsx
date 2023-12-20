@@ -2,6 +2,7 @@ import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useDoorOpenHistoryQuery } from "../api/doorOpenHistory";
+import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const doorChartStyles = makeStyles((theme) => ({
   container: {
@@ -16,16 +17,15 @@ const doorChartStyles = makeStyles((theme) => ({
 }));
 
 export default function DoorCharts({
-  assetId,
+  doorOpenHistoryQuery: {
+    data: { data, stats },
+  },
   current,
 }: {
-  assetId: string;
+  doorOpenHistoryQuery: ReturnType<typeof useDoorOpenHistoryQuery>;
   current: boolean;
 }) {
   const classes = doorChartStyles();
-  const {
-    data: { stats, data },
-  } = useDoorOpenHistoryQuery({ assetId });
   const labels = [
     {
       field: "times",

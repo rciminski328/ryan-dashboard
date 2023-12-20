@@ -2,6 +2,8 @@ import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { getStats } from "../../../utils/getStats";
+import { RelativeOrAbsoluteRange } from "../utils/types";
+import { getTimeRangeParametersForPlot } from "../utils";
 
 interface PlotHumidityResponse {
   results: {
@@ -18,14 +20,14 @@ interface PlotHumidityResponse {
 }
 
 export const humidityHistoryQueryKeys = {
-  byAsset: (params: { assetId: string }) =>
+  byAsset: (params: { assetId: string; timeRange: RelativeOrAbsoluteRange }) =>
     [{ scope: "humidityHistory", params }] as const,
 };
 
 async function fetchHumidityHistory({
   queryKey: [
     {
-      params: { assetId },
+      params: { assetId, timeRange },
     },
   ],
 }: QueryFunctionContext<ReturnType<typeof humidityHistoryQueryKeys.byAsset>>) {
@@ -43,11 +45,10 @@ async function fetchHumidityHistory({
         name: "plotsV2.read",
         body: {
           defaultPlotParams: {
+            ...getTimeRangeParametersForPlot(timeRange),
             attributes: ["humidity"],
-            endDate: "",
             entityId: assetId,
             entityType: "asset",
-            startDate: "",
           },
           pluginName: "default",
         },
@@ -65,7 +66,10 @@ async function fetchHumidityHistory({
   return data.results.lineData.humidity;
 }
 
-export function useHumidityHistoryQuery(params: { assetId: string }) {
+export function useHumidityHistoryQuery(params: {
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}) {
   return useQuery(humidityHistoryQueryKeys.byAsset(params), {
     queryFn: fetchHumidityHistory,
     select: (data) => ({

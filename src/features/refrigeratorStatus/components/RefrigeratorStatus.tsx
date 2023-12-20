@@ -35,6 +35,7 @@ import {
   useTemperatureHistoryQuery,
 } from "../api/temperatureHistory";
 import { Skeleton } from "@material-ui/lab";
+import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from "../utils/types";
 
 const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
   (theme) => ({
@@ -47,24 +48,28 @@ const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
 export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   const refrigeratorStatusQuery = useRefrigeratorStatusQuery({ assetId });
 
+  const [timeRange, setTimeRange] = useState<RelativeOrAbsoluteRange>({
+    type: "relative",
+    count: 1,
+    units: TimeUnitMultiplier.DAYS,
+  });
+
   const temperatureHistoryQuery = useTemperatureHistoryQuery({
     assetId,
+    timeRange,
   });
   const humidityHistoryQuery = useHumidityHistoryQuery({
     assetId,
+    timeRange,
   });
   const doorOpenHistoryQuery = useDoorOpenHistoryQuery({
+    timeRange,
     assetId,
   });
-  useLiveDataForRefrigerator({ assetId });
+  useLiveDataForRefrigerator({ assetId, timeRange });
 
   const status = refrigeratorStatusQuery.data?.custom_data.isRunning;
   const classes = refrigeratorStatusStyles({ status });
-  const [timeRange, setTimeRange] = useState({
-    type: "relative",
-    count: 1,
-    units: 86400,
-  });
 
   if (
     refrigeratorStatusQuery.isLoading ||
@@ -134,15 +139,15 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
         </Grid>
 
         <TemperatureCharts
-          assetId={assetId}
+          temperatureHistoryQuery={temperatureHistoryQuery}
           current={refrigeratorStatusQuery.data.custom_data.temperature}
         />
         <HumidityCharts
-          assetId={assetId}
+          humidityHistoryQuery={humidityHistoryQuery}
           current={refrigeratorStatusQuery.data.custom_data.humidity}
         />
         <DoorCharts
-          assetId={assetId}
+          doorOpenHistoryQuery={doorOpenHistoryQuery}
           current={refrigeratorStatusQuery.data.custom_data.doorOpen}
         />
       </Grid>
@@ -155,7 +160,13 @@ interface HistoricalData {
   y: number[];
 }
 
-function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
+function useLiveDataForRefrigerator({
+  assetId,
+  timeRange,
+}: {
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}) {
   const { subscribe, unsubscribe } = useMessaging();
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -183,7 +194,7 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
 
       if (typeof assetData.custom_data.temperature !== "undefined") {
         queryClient.setQueryData<HistoricalData>(
-          temperatureHistoryQueryKeys.byAsset({ assetId }),
+          temperatureHistoryQueryKeys.byAsset({ assetId, timeRange }),
           (data) => {
             return {
               ...data,
@@ -196,7 +207,7 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
 
       if (typeof assetData.custom_data.humidity !== "undefined") {
         queryClient.setQueryData<HistoricalData>(
-          humidityHistoryQueryKeys.byAsset({ assetId }),
+          humidityHistoryQueryKeys.byAsset({ assetId, timeRange }),
           (data) => {
             return {
               ...data,
@@ -209,7 +220,7 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
 
       if (typeof assetData.custom_data.doorOpen !== "undefined") {
         queryClient.setQueryData<HistoricalData>(
-          doorOpenHistoryQueryKeys.byAsset({ assetId }),
+          doorOpenHistoryQueryKeys.byAsset({ assetId, timeRange }),
           (data) => {
             return {
               ...data,
@@ -222,5 +233,5 @@ function useLiveDataForRefrigerator({ assetId }: { assetId: string }) {
     });
 
     return () => unsubscribe(topics);
-  }, [assetId, subscribe, unsubscribe, queryClient]);
+  }, [assetId, subscribe, unsubscribe, queryClient, timeRange]);
 }

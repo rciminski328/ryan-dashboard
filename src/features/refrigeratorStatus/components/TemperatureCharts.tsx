@@ -17,16 +17,15 @@ const tempChartStyles = makeStyles((theme) => ({
 }));
 
 export default function TemperatureCharts({
-  assetId,
+  temperatureHistoryQuery: {
+    data: { stats, data },
+  },
   current,
 }: {
-  assetId: string;
+  temperatureHistoryQuery: ReturnType<typeof useTemperatureHistoryQuery>;
   current: number;
 }) {
   const classes = tempChartStyles();
-  const {
-    data: { stats, data },
-  } = useTemperatureHistoryQuery({ assetId });
 
   return (
     <Grid container item spacing={1} className={classes.container}>

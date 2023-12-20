@@ -3,6 +3,8 @@ import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { average } from "simple-statistics";
 import { sleep } from "../../../utils/sleep";
+import { RelativeOrAbsoluteRange } from "../utils/types";
+import { getTimeRangeParametersForPlot } from "../utils";
 
 interface PlotDoorOpenResponse {
   results: {
@@ -19,14 +21,14 @@ interface PlotDoorOpenResponse {
 }
 
 export const doorOpenHistoryQueryKeys = {
-  byAsset: (params: { assetId: string }) =>
+  byAsset: (params: { assetId: string; timeRange: RelativeOrAbsoluteRange }) =>
     [{ scope: "doorOpenHistory", params }] as const,
 };
 
 async function fetchDoorOpenHistory({
   queryKey: [
     {
-      params: { assetId },
+      params: { assetId, timeRange },
     },
   ],
 }: QueryFunctionContext<ReturnType<typeof doorOpenHistoryQueryKeys.byAsset>>) {
@@ -44,11 +46,10 @@ async function fetchDoorOpenHistory({
         name: "plotsV2.read",
         body: {
           defaultPlotParams: {
+            ...getTimeRangeParametersForPlot(timeRange),
             attributes: ["doorOpen"],
-            endDate: "",
             entityId: assetId,
             entityType: "asset",
-            startDate: "",
           },
           pluginName: "default",
         },
@@ -101,7 +102,10 @@ function getDoorOpenStats(data: { x: string[]; y: number[] }): {
   }
 }
 
-export function useDoorOpenHistoryQuery(params: { assetId: string }) {
+export function useDoorOpenHistoryQuery(params: {
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}) {
   return useQuery(doorOpenHistoryQueryKeys.byAsset(params), {
     queryFn: fetchDoorOpenHistory,
     select: (data) => ({
