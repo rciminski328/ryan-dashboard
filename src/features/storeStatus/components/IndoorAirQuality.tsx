@@ -1,8 +1,19 @@
-import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
-import GaugeChart from "./GaugeChart";
-import { useStoreStatusQuery } from "../api/storeStatus";
+import {
+  Box,
+  Card,
+  Grid,
+  Typography,
+  makeStyles,
+  useTheme,
+} from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
-import { MOCK_THRESHOLDS } from "../utils";
+import { useStoreStatusQuery } from "../api/storeStatus";
+import {
+  getIndoorCO2Thresholds,
+  getIndoorHumidityThresholds,
+  getIndoorTempThresholds,
+} from "../utils";
+import GaugeChart from "./GaugeChart";
 
 export const gaugeChartHeight = 170;
 export const gaugeChartWidth = 300;
@@ -17,6 +28,7 @@ const useIndoorAirQualityStyles = makeStyles((theme) => ({
 }));
 
 export default function IndoorAirQuality({ assetId }: { assetId: string }) {
+  const theme = useTheme();
   const storeStatusQuery = useStoreStatusQuery({
     assetId,
   });
@@ -63,7 +75,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
             title="Temperature"
             units="°F"
             value={storeStatusQuery.data.custom_data.temperature}
-            colorThresholds={MOCK_THRESHOLDS}
+            colorThresholds={getIndoorTempThresholds(theme)}
             minHeight={gaugeChartHeight}
             minWidth={gaugeChartWidth}
           />
@@ -73,7 +85,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
             title="Humidity"
             units="%"
             value={storeStatusQuery.data.custom_data.humidity}
-            colorThresholds={MOCK_THRESHOLDS}
+            colorThresholds={getIndoorHumidityThresholds(theme)}
             minHeight={gaugeChartHeight}
             minWidth={gaugeChartWidth}
           />
@@ -83,7 +95,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
             title="CO2"
             units=" PPM"
             value={storeStatusQuery.data.custom_data.co2}
-            colorThresholds={MOCK_THRESHOLDS}
+            colorThresholds={getIndoorCO2Thresholds(theme)}
             minHeight={gaugeChartHeight}
             minWidth={gaugeChartWidth}
           />

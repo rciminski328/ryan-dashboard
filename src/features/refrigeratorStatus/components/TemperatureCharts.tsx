@@ -1,15 +1,15 @@
-import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
-import TrendChart from "./TrendChart";
-import StatsTable from "./StatsTable";
+import { Box, Grid, Typography, makeStyles, useTheme } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
+import GaugeChart from "../../storeStatus/components/GaugeChart";
 import { useTemperatureHistoryQuery } from "../api/temperatureHistory";
 import {
+  getFridgeTempThresholds,
   humidityAndTempLabels,
   smallGaugeChartHeight,
   smallGaugeChartWidth,
 } from "../utils";
-import { Skeleton } from "@material-ui/lab";
-import { MOCK_THRESHOLDS } from "../../storeStatus/utils";
-import GaugeChart from "../../storeStatus/components/GaugeChart";
+import StatsTable from "./StatsTable";
+import TrendChart from "./TrendChart";
 
 const tempChartStyles = makeStyles((theme) => ({
   container: {
@@ -30,6 +30,7 @@ export default function TemperatureCharts({
   temperatureHistoryQuery: ReturnType<typeof useTemperatureHistoryQuery>;
   current: number;
 }) {
+  const theme = useTheme();
   const classes = tempChartStyles();
 
   if (temperatureHistoryQuery.isLoading) {
@@ -78,7 +79,7 @@ export default function TemperatureCharts({
             title="Current Temperature"
             units=" °F"
             value={current}
-            colorThresholds={MOCK_THRESHOLDS}
+            colorThresholds={getFridgeTempThresholds(theme)}
             minHeight={smallGaugeChartHeight}
             minWidth={smallGaugeChartWidth}
           />

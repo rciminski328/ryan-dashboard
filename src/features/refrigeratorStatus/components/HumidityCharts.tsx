@@ -1,15 +1,15 @@
-import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
-import TrendChart from "./TrendChart";
-import StatsTable from "./StatsTable";
+import { Box, Grid, Typography, makeStyles, useTheme } from "@material-ui/core";
+import { Skeleton } from "@material-ui/lab";
+import GaugeChart from "../../storeStatus/components/GaugeChart";
 import { useHumidityHistoryQuery } from "../api/humidityHistory";
 import {
+  getFridgeHumidityThresholds,
   humidityAndTempLabels,
   smallGaugeChartHeight,
   smallGaugeChartWidth,
 } from "../utils";
-import { Skeleton } from "@material-ui/lab";
-import GaugeChart from "../../storeStatus/components/GaugeChart";
-import { MOCK_THRESHOLDS } from "../../storeStatus/utils";
+import StatsTable from "./StatsTable";
+import TrendChart from "./TrendChart";
 
 const humidityChartStyles = makeStyles((theme) => ({
   container: {
@@ -30,6 +30,7 @@ export default function HumidityCharts({
   humidityHistoryQuery: ReturnType<typeof useHumidityHistoryQuery>;
   current: number;
 }) {
+  const theme = useTheme();
   const classes = humidityChartStyles();
 
   if (humidityHistoryQuery.isLoading) {
@@ -78,7 +79,7 @@ export default function HumidityCharts({
             title="Current Humidity"
             units=" %"
             value={current}
-            colorThresholds={MOCK_THRESHOLDS}
+            colorThresholds={getFridgeHumidityThresholds(theme)}
             minHeight={smallGaugeChartHeight}
             minWidth={smallGaugeChartWidth}
           />
