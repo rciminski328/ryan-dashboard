@@ -15,7 +15,6 @@ interface PlotHumidityResponse {
         y: number[];
       };
     };
-    numberOfUpdates: 15;
   };
 }
 
