@@ -1,5 +1,6 @@
 /// <reference types="react" />
-export default function DoorCharts({ assetId, current, }: {
-    assetId: string;
+import { useDoorOpenHistoryQuery } from "../api/doorOpenHistory";
+export default function DoorCharts({ doorOpenHistoryQuery, current, }: {
+    doorOpenHistoryQuery: ReturnType<typeof useDoorOpenHistoryQuery>;
     current: boolean;
-}): JSX.Element;
+}): JSX.Element | null;

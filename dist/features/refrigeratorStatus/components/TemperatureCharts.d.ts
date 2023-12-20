@@ -1,5 +1,6 @@
 /// <reference types="react" />
-export default function TemperatureCharts({ assetId, current, }: {
-    assetId: string;
+import { useTemperatureHistoryQuery } from "../api/temperatureHistory";
+export default function TemperatureCharts({ temperatureHistoryQuery, current, }: {
+    temperatureHistoryQuery: ReturnType<typeof useTemperatureHistoryQuery>;
     current: number;
-}): JSX.Element;
+}): JSX.Element | null;

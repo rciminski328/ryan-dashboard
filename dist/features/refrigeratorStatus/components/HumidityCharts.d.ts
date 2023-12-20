@@ -1,5 +1,6 @@
 /// <reference types="react" />
-export default function HumidityCharts({ assetId, current, }: {
-    assetId: string;
+import { useHumidityHistoryQuery } from "../api/humidityHistory";
+export default function HumidityCharts({ current, humidityHistoryQuery, }: {
+    humidityHistoryQuery: ReturnType<typeof useHumidityHistoryQuery>;
     current: number;
-}): JSX.Element;
+}): JSX.Element | null;
