@@ -18,14 +18,18 @@ const humidityChartStyles = makeStyles((theme) => ({
 
 export default function HumidityCharts({
   current,
-  humidityHistoryQuery: {
-    data: { data, stats },
-  },
+  humidityHistoryQuery,
 }: {
   humidityHistoryQuery: ReturnType<typeof useHumidityHistoryQuery>;
   current: number;
 }) {
   const classes = humidityChartStyles();
+
+  if (!humidityHistoryQuery.isSuccess) {
+    return null;
+  }
+
+  const { data, stats } = humidityHistoryQuery.data;
 
   return (
     <Grid container item spacing={1} className={classes.container}>
@@ -39,7 +43,7 @@ export default function HumidityCharts({
         <Grid item>
           <TrendChart
             title="Humidity Trend (%)"
-            data={[{ ...data, type: "line" }]}
+            data={[{ ...data, type: "scatter" }]}
           />
         </Grid>
       </Grid>

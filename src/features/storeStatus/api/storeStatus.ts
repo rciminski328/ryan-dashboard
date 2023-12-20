@@ -58,23 +58,25 @@ export function useStoreStatusQuery({ assetId }: { assetId: string }) {
 
     subscribe(topics, (msg) => {
       const assetData = msg.payload as StoreAsset;
-      queryClient.setQueryData<StoreAsset>(
-        storeStatusQueryKeys.byAsset({ assetId }),
-        (data) => {
-          if (typeof data === "undefined") {
-            return assetData;
-          }
+      if (!queryClient.isFetching(storeStatusQueryKeys.byAsset({ assetId }))) {
+        queryClient.setQueryData<StoreAsset | undefined>(
+          storeStatusQueryKeys.byAsset({ assetId }),
+          (data) => {
+            if (typeof data === "undefined") {
+              return assetData;
+            }
 
-          return {
-            ...data,
-            last_updated: assetData.last_updated,
-            custom_data: {
-              ...data.custom_data,
-              ...assetData.custom_data,
-            },
-          };
-        }
-      );
+            return {
+              ...data,
+              last_updated: assetData.last_updated,
+              custom_data: {
+                ...data.custom_data,
+                ...assetData.custom_data,
+              },
+            };
+          }
+        );
+      }
     });
 
     return () => unsubscribe(topics);

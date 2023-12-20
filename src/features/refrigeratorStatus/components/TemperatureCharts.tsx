@@ -17,15 +17,19 @@ const tempChartStyles = makeStyles((theme) => ({
 }));
 
 export default function TemperatureCharts({
-  temperatureHistoryQuery: {
-    data: { stats, data },
-  },
+  temperatureHistoryQuery,
   current,
 }: {
   temperatureHistoryQuery: ReturnType<typeof useTemperatureHistoryQuery>;
   current: number;
 }) {
   const classes = tempChartStyles();
+
+  if (!temperatureHistoryQuery.isSuccess) {
+    return null;
+  }
+
+  const { data, stats } = temperatureHistoryQuery.data;
 
   return (
     <Grid container item spacing={1} className={classes.container}>
@@ -39,7 +43,7 @@ export default function TemperatureCharts({
         <Grid item>
           <TrendChart
             title="Temperature Trend (°F)"
-            data={[{ ...data, type: "line" }]}
+            data={[{ ...data, type: "scatter" }]}
           />
         </Grid>
       </Grid>

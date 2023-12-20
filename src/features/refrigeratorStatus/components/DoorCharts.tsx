@@ -2,7 +2,6 @@ import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useDoorOpenHistoryQuery } from "../api/doorOpenHistory";
-import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const doorChartStyles = makeStyles((theme) => ({
   container: {
@@ -17,9 +16,7 @@ const doorChartStyles = makeStyles((theme) => ({
 }));
 
 export default function DoorCharts({
-  doorOpenHistoryQuery: {
-    data: { data, stats },
-  },
+  doorOpenHistoryQuery,
   current,
 }: {
   doorOpenHistoryQuery: ReturnType<typeof useDoorOpenHistoryQuery>;
@@ -34,9 +31,15 @@ export default function DoorCharts({
     {
       field: "averageDurationMs",
       label: "Average Duration",
-      format: (val) => `${(val / 1000).toFixed(2)} sec`,
+      format: (val: number) => `${(val / 1000).toFixed(2)} sec`,
     },
   ];
+
+  if (!doorOpenHistoryQuery.isSuccess) {
+    return null;
+  }
+
+  const { data, stats } = doorOpenHistoryQuery.data;
 
   return (
     <Grid container item spacing={1} className={classes.container}>
@@ -50,7 +53,7 @@ export default function DoorCharts({
         <Grid item>
           <TrendChart
             title="Door Open/Close"
-            data={[{ ...data, type: "line" }]}
+            data={[{ ...data, type: "scatter" }]}
           />
         </Grid>
       </Grid>
