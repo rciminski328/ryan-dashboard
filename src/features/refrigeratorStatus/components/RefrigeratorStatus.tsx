@@ -129,11 +129,13 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
             </Box>
           </Grid>
           <Grid item>
-            <RelativeAbsoluteDateRangePicker
-              currentRange={timeRange}
-              onApplyRange={setTimeRange}
-              compact
-            />
+            <Box pt={1}>
+              <RelativeAbsoluteDateRangePicker
+                currentRange={timeRange}
+                onApplyRange={setTimeRange}
+                compact
+              />
+            </Box>
           </Grid>
         </Grid>
 
