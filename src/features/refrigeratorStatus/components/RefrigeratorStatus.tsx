@@ -69,14 +69,9 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   useLiveDataForRefrigerator({ assetId, timeRange });
 
   const status = refrigeratorStatusQuery.data?.custom_data.isRunning;
-  const classes = refrigeratorStatusStyles({ status });
+  const classes = refrigeratorStatusStyles({ status: status ?? false });
 
-  if (
-    refrigeratorStatusQuery.isLoading ||
-    temperatureHistoryQuery.isLoading ||
-    humidityHistoryQuery.isLoading ||
-    doorOpenHistoryQuery.isLoading
-  ) {
+  if (refrigeratorStatusQuery.isLoading) {
     return (
       <>
         <Skeleton variant="rect" height={25} />
@@ -97,6 +92,10 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
     doorOpenHistoryQuery.isError
   ) {
     return <div>Error</div>;
+  }
+
+  if (!refrigeratorStatusQuery.isSuccess) {
+    return null;
   }
 
   return (
@@ -173,62 +172,100 @@ function useLiveDataForRefrigerator({
     const topics = [`_dbupdate/_monitor/_asset/${assetId}/locationAndStatus`];
 
     subscribe(topics, (msg) => {
-      const assetData = msg.payload as RefrigeratorAsset;
-      queryClient.setQueryData<RefrigeratorAsset>(
-        refrigeratorStatusQueryKeys.byAsset({ assetId }),
-        (data) => {
-          if (typeof data === "undefined") {
-            return assetData;
-          }
-
-          return {
-            ...data,
-            last_updated: assetData.last_updated,
-            custom_data: {
-              ...data.custom_data,
-              ...assetData.custom_data,
-            },
-          };
+      try {
+        const assetData = msg.payload as RefrigeratorAsset;
+        const last_updated = assetData.last_updated;
+        if (last_updated === null) {
+          console.warn(
+            `Received message from on ${msg.message.destinationName} that contained a null value for last_updated. Ignoring`
+          );
+          return;
         }
-      );
-
-      if (typeof assetData.custom_data.temperature !== "undefined") {
-        queryClient.setQueryData<HistoricalData>(
-          temperatureHistoryQueryKeys.byAsset({ assetId, timeRange }),
+        queryClient.setQueryData<RefrigeratorAsset | undefined>(
+          refrigeratorStatusQueryKeys.byAsset({ assetId }),
           (data) => {
+            if (typeof data === "undefined") {
+              return assetData;
+            }
+
             return {
               ...data,
-              x: [...data.x, assetData.last_updated],
-              y: [...data.y, assetData.custom_data.temperature],
+              last_updated: last_updated,
+              custom_data: {
+                ...data.custom_data,
+                ...assetData.custom_data,
+              },
             };
           }
         );
-      }
 
-      if (typeof assetData.custom_data.humidity !== "undefined") {
-        queryClient.setQueryData<HistoricalData>(
-          humidityHistoryQueryKeys.byAsset({ assetId, timeRange }),
-          (data) => {
-            return {
-              ...data,
-              x: [...data.x, assetData.last_updated],
-              y: [...data.y, assetData.custom_data.humidity],
-            };
-          }
-        );
-      }
+        if (
+          typeof assetData.custom_data.temperature !== "undefined" &&
+          !queryClient.isFetching({
+            queryKey: temperatureHistoryQueryKeys.byAsset({
+              assetId,
+              timeRange,
+            }),
+          })
+        ) {
+          queryClient.setQueryData<HistoricalData | undefined>(
+            temperatureHistoryQueryKeys.byAsset({ assetId, timeRange }),
+            (data) => {
+              if (typeof data === "undefined") {
+                return data;
+              }
+              return {
+                ...data,
+                x: [...data.x, last_updated],
+                y: [...data.y, assetData.custom_data.temperature],
+              };
+            }
+          );
+        }
 
-      if (typeof assetData.custom_data.doorOpen !== "undefined") {
-        queryClient.setQueryData<HistoricalData>(
-          doorOpenHistoryQueryKeys.byAsset({ assetId, timeRange }),
-          (data) => {
-            return {
-              ...data,
-              x: [...data.x, assetData.last_updated],
-              y: [...data.y, assetData.custom_data.doorOpen === true ? 1 : 0],
-            };
-          }
-        );
+        if (
+          typeof assetData.custom_data.humidity !== "undefined" &&
+          !queryClient.isFetching({
+            queryKey: humidityHistoryQueryKeys.byAsset({ assetId, timeRange }),
+          })
+        ) {
+          queryClient.setQueryData<HistoricalData | undefined>(
+            humidityHistoryQueryKeys.byAsset({ assetId, timeRange }),
+            (data) => {
+              if (typeof data === "undefined") {
+                return data;
+              }
+              return {
+                ...data,
+                x: [...data.x, last_updated],
+                y: [...data.y, assetData.custom_data.humidity],
+              };
+            }
+          );
+        }
+
+        if (
+          typeof assetData.custom_data.doorOpen !== "undefined" &&
+          !queryClient.isFetching({
+            queryKey: doorOpenHistoryQueryKeys.byAsset({ assetId, timeRange }),
+          })
+        ) {
+          queryClient.setQueryData<HistoricalData | undefined>(
+            doorOpenHistoryQueryKeys.byAsset({ assetId, timeRange }),
+            (data) => {
+              if (typeof data === "undefined") {
+                return data;
+              }
+              return {
+                ...data,
+                x: [...data.x, last_updated],
+                y: [...data.y, assetData.custom_data.doorOpen === true ? 1 : 0],
+              };
+            }
+          );
+        }
+      } catch (e) {
+        console.error("caught error!", e);
       }
     });
 

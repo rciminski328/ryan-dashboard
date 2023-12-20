@@ -3,6 +3,7 @@ import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useTemperatureHistoryQuery } from "../api/temperatureHistory";
 import { humidityAndTempLabels } from "../utils";
+import { Skeleton } from "@material-ui/lab";
 
 const tempChartStyles = makeStyles((theme) => ({
   container: {
@@ -17,15 +18,28 @@ const tempChartStyles = makeStyles((theme) => ({
 }));
 
 export default function TemperatureCharts({
-  temperatureHistoryQuery: {
-    data: { stats, data },
-  },
+  temperatureHistoryQuery,
   current,
 }: {
   temperatureHistoryQuery: ReturnType<typeof useTemperatureHistoryQuery>;
   current: number;
 }) {
   const classes = tempChartStyles();
+
+  if (temperatureHistoryQuery.isLoading) {
+    return (
+      <Grid container item spacing={1} className={classes.container}>
+        <Box pt={1} />
+        <Skeleton variant="rect" height={200} width="100%" />
+      </Grid>
+    );
+  }
+
+  if (!temperatureHistoryQuery.isSuccess) {
+    return null;
+  }
+
+  const { data, stats } = temperatureHistoryQuery.data;
 
   return (
     <Grid container item spacing={1} className={classes.container}>
@@ -39,7 +53,7 @@ export default function TemperatureCharts({
         <Grid item>
           <TrendChart
             title="Temperature Trend (°F)"
-            data={[{ ...data, type: "line" }]}
+            data={[{ ...data, type: "scatter" }]}
           />
         </Grid>
       </Grid>

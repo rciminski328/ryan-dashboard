@@ -16,8 +16,8 @@ export default function GaugeChart({
       domain: { x: [0, 1], y: [0, 1] },
       value,
       number: { suffix: units },
-      type: "indicator",
-      mode: "gauge+number",
+      type: "indicator" as const,
+      mode: "gauge+number" as const,
     },
   ];
   return (

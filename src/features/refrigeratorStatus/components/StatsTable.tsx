@@ -7,7 +7,7 @@ export default function StatsTable({
   labels: {
     label: string;
     field: keyof typeof stats;
-    format?: (number) => string | number;
+    format?: (number: number) => string | number;
   }[];
   stats: Record<string, number>;
 }) {
@@ -16,6 +16,9 @@ export default function StatsTable({
       <TableBody>
         {Object.keys(stats).map((stat) => {
           const item = labels.find((label) => label.field === stat);
+          if (typeof item === "undefined") {
+            return null;
+          }
           return (
             <TableRow key={stat}>
               <TableCell align="left">{item.label}</TableCell>

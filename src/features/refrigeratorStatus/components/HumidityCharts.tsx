@@ -3,6 +3,7 @@ import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useHumidityHistoryQuery } from "../api/humidityHistory";
 import { humidityAndTempLabels } from "../utils";
+import { Skeleton } from "@material-ui/lab";
 
 const humidityChartStyles = makeStyles((theme) => ({
   container: {
@@ -18,14 +19,27 @@ const humidityChartStyles = makeStyles((theme) => ({
 
 export default function HumidityCharts({
   current,
-  humidityHistoryQuery: {
-    data: { data, stats },
-  },
+  humidityHistoryQuery,
 }: {
   humidityHistoryQuery: ReturnType<typeof useHumidityHistoryQuery>;
   current: number;
 }) {
   const classes = humidityChartStyles();
+
+  if (humidityHistoryQuery.isLoading) {
+    return (
+      <Grid container item spacing={1} className={classes.container}>
+        <Box pt={1} />
+        <Skeleton variant="rect" height={200} width="100%" />
+      </Grid>
+    );
+  }
+
+  if (!humidityHistoryQuery.isSuccess) {
+    return null;
+  }
+
+  const { data, stats } = humidityHistoryQuery.data;
 
   return (
     <Grid container item spacing={1} className={classes.container}>
@@ -39,7 +53,7 @@ export default function HumidityCharts({
         <Grid item>
           <TrendChart
             title="Humidity Trend (%)"
-            data={[{ ...data, type: "line" }]}
+            data={[{ ...data, type: "scatter" }]}
           />
         </Grid>
       </Grid>

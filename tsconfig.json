@@ -2,7 +2,8 @@
   "extends": "ts-config-single-spa",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "declarationDir": "dist"
+    "declarationDir": "dist",
+    "strict": true
   },
   "files": ["src/rad-group-demo.tsx"],
   "include": ["src/**/*"],

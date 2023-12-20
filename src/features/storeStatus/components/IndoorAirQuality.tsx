@@ -37,6 +37,10 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
     return <div>Error</div>;
   }
 
+  if (!storeStatusQuery.isSuccess) {
+    return null;
+  }
+
   return (
     <Card>
       <Box textAlign={"center"} mb={2}>
