@@ -58,7 +58,7 @@ export function useStoreStatusQuery({ assetId }: { assetId: string }) {
 
     subscribe(topics, (msg) => {
       const assetData = msg.payload as StoreAsset;
-      queryClient.setQueryData<StoreAsset>(
+      queryClient.setQueryData<StoreAsset | undefined>(
         storeStatusQueryKeys.byAsset({ assetId }),
         (data) => {
           if (typeof data === "undefined") {
