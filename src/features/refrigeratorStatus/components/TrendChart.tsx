@@ -3,8 +3,7 @@ import { graphChartHeight } from "../../../utils";
 import { Box, Grid, Typography } from "@material-ui/core";
 
 const plotLayout: Partial<Plotly.Layout> = {
-  width: 600,
-  height: graphChartHeight - 20,
+  autosize: true,
   margin: {
     b: 20,
     l: 20,
@@ -66,29 +65,20 @@ export default function TrendChart({
         </Box>
       </Grid>
       <Grid item>
-        <Box display="flex" justifyContent={"center"}>
-          <Plot
-            data={data}
-            //   onInitialized={(f) => setLayout(f.layout)}
-            //   config={{
-            //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            //     // @ts-ignore
-            //     locales: {
-            //       [navigator.language]: getLocaleDictionary(navigator.language),
-            //     }, // Absent from config type but needed to provide plotly translations.
-            //     locale: navigator.language,
-            //     responsive: true,
-            //     displayModeBar: true,
-            //     modeBarButtonsToRemove: ['toImage', 'zoom2d', 'select2d', 'lasso2d'],
-            //     displaylogo: false,
-            //   }}
-            config={{
-              displayModeBar: false,
-              displaylogo: false,
-            }}
-            layout={plotLayout}
-          />
-        </Box>
+        <Plot
+          data={data}
+          config={{
+            displayModeBar: false,
+            displaylogo: false,
+            responsive: true,
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+            minHeight: graphChartHeight,
+          }}
+          layout={plotLayout}
+        />
       </Grid>
     </Grid>
   );

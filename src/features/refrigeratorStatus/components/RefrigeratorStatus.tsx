@@ -41,6 +41,9 @@ const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
     statusIcon: ({ status }) => ({
       color: status ? theme.palette.success.main : theme.palette.text.disabled,
     }),
+    card: {
+      padding: theme.spacing(2),
+    },
   })
 );
 
@@ -98,7 +101,7 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   }
 
   return (
-    <Card>
+    <Card className={classes.card}>
       <Grid
         container
         alignItems="center"

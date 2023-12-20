@@ -1,5 +1,5 @@
 import Plot from "react-plotly.js";
-import { gaugeChartHeight } from "../../../utils";
+import { gaugeChartHeight, gaugeChartWidth } from "../../../utils";
 import { Box, Typography } from "@material-ui/core";
 
 export default function GaugeChart({
@@ -21,22 +21,28 @@ export default function GaugeChart({
     },
   ];
   return (
-    <div style={{ width: "100%", height: "100%" }}>
+    <>
       <Box textAlign={"center"}>
         <Typography variant="subtitle1">{title}</Typography>
       </Box>
       <Plot
         data={data}
         config={{
+          responsive: true,
           displayModeBar: false,
           displaylogo: false,
         }}
         layout={{
+          autosize: true,
           margin: { t: 20, b: 20 },
-          width: 300,
-          height: gaugeChartHeight - 40,
+        }}
+        style={{
+          width: "100%",
+          height: "100%",
+          minHeight: gaugeChartHeight,
+          minWidth: gaugeChartWidth,
         }}
       />
-    </div>
+    </>
   );
 }

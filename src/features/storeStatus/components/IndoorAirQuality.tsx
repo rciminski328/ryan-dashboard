@@ -8,8 +8,8 @@ const useIndoorAirQualityStyles = makeStyles((theme) => ({
   container: {
     width: "100%",
   },
-  section: {
-    height: gaugeChartHeight,
+  card: {
+    padding: theme.spacing(2),
   },
 }));
 
@@ -42,7 +42,7 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
   }
 
   return (
-    <Card>
+    <Card className={classes.card}>
       <Box textAlign={"center"} mb={2}>
         <Typography variant="h5">Indoor Air Quality</Typography>
       </Box>
@@ -51,25 +51,25 @@ export default function IndoorAirQuality({ assetId }: { assetId: string }) {
         direction="column"
         alignItems="center"
         justifyContent="center"
-        spacing={2}
+        spacing={1}
         className={classes.container}
         wrap="nowrap"
       >
-        <Grid item className={classes.section}>
+        <Grid item>
           <GaugeChart
             title="Temperature"
             units="°F"
             value={storeStatusQuery.data.custom_data.temperature}
           />
         </Grid>
-        <Grid item className={classes.section}>
+        <Grid item>
           <GaugeChart
             title="Humidity"
             units="%"
             value={storeStatusQuery.data.custom_data.humidity}
           />
         </Grid>
-        <Grid item className={classes.section}>
+        <Grid item>
           <GaugeChart
             title="CO2"
             units=" PPM"
