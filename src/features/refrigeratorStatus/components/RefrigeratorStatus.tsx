@@ -16,7 +16,6 @@ import {
 import HumidityCharts from "./HumidityCharts";
 import DoorCharts from "./DoorCharts";
 import {
-  // @ts-ignore
   RelativeAbsoluteDateRangePicker,
   useMessaging,
 } from "@clearblade/ia-mfe-react";

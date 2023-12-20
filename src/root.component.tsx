@@ -1,7 +1,4 @@
-import {
-  // @ts-ignore
-  AppProviders,
-} from "@clearblade/ia-mfe-react";
+import { AppProviders } from "@clearblade/ia-mfe-react";
 import DashboardPlugin from "./components/DashboardPlugin";
 
 export default function Root() {
