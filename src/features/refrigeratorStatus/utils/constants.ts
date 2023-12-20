@@ -13,3 +13,6 @@ export const humidityAndTempLabels = [
     format: (val: number) => val.toFixed(1),
   },
 ];
+
+export const smallGaugeChartHeight = 200;
+export const smallGaugeChartWidth = 250;

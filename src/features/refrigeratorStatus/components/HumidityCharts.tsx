@@ -1,9 +1,15 @@
-import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
-import TrendChart from "./TrendChart";
-import StatsTable from "./StatsTable";
-import { useHumidityHistoryQuery } from "../api/humidityHistory";
-import { humidityAndTempLabels } from "../utils";
+import { Box, Grid, Typography, makeStyles, useTheme } from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
+import GaugeChart from "../../storeStatus/components/GaugeChart";
+import { useHumidityHistoryQuery } from "../api/humidityHistory";
+import {
+  getFridgeHumidityThresholds,
+  humidityAndTempLabels,
+  smallGaugeChartHeight,
+  smallGaugeChartWidth,
+} from "../utils";
+import StatsTable from "./StatsTable";
+import TrendChart from "./TrendChart";
 
 const humidityChartStyles = makeStyles((theme) => ({
   container: {
@@ -24,6 +30,7 @@ export default function HumidityCharts({
   humidityHistoryQuery: ReturnType<typeof useHumidityHistoryQuery>;
   current: number;
 }) {
+  const theme = useTheme();
   const classes = humidityChartStyles();
 
   if (humidityHistoryQuery.isLoading) {
@@ -65,11 +72,18 @@ export default function HumidityCharts({
         xs={3}
         className={classes.section}
         alignItems="center"
+        justifyContent="center"
       >
-        <Typography variant="subtitle1">Current Humidity</Typography>
-        <Box flex={1} display={"flex"} alignItems={"center"}>
-          <Typography variant="h4">{current}%</Typography>
-        </Box>
+        <Grid item>
+          <GaugeChart
+            title="Current Humidity"
+            units=" %"
+            value={current}
+            colorThresholds={getFridgeHumidityThresholds(theme)}
+            minHeight={smallGaugeChartHeight}
+            minWidth={smallGaugeChartWidth}
+          />
+        </Grid>
       </Grid>
 
       <Grid
