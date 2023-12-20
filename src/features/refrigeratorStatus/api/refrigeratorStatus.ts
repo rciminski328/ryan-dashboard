@@ -11,6 +11,8 @@ export type RefrigeratorAsset = Omit<Asset["frontend"], "custom_data"> & {
     humidity: number;
     isRunning: boolean;
     doorOpen: boolean;
+    motion?: boolean;
+    motionCount?: number;
   };
 };
 

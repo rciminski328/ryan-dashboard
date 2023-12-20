@@ -1,16 +1,15 @@
 import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
-import { getStats } from "../../../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 import { getTimeRangeParametersForPlot } from "../utils";
 
-interface PlotTemperatureResponse {
+interface PlotMotionResponse {
   results: {
     historyEndDate: string;
     historyStartDate: string;
     lineData: {
-      temperature: {
+      motionCount: {
         x: string[];
         y: number[];
       };
@@ -18,20 +17,18 @@ interface PlotTemperatureResponse {
   };
 }
 
-export const temperatureHistoryQueryKeys = {
+export const motionHistoryQueryKeys = {
   byAsset: (params: { assetId: string; timeRange: RelativeOrAbsoluteRange }) =>
-    [{ scope: "temperatureHistory", params }] as const,
+    [{ scope: "motionHistory", params }] as const,
 };
 
-async function fetchTemperatureHistory({
+async function fetchMotionHistory({
   queryKey: [
     {
       params: { assetId, timeRange },
     },
   ],
-}: QueryFunctionContext<
-  ReturnType<typeof temperatureHistoryQueryKeys.byAsset>
->) {
+}: QueryFunctionContext<ReturnType<typeof motionHistoryQueryKeys.byAsset>>) {
   const authInfo = getAuthInfo();
   const resp = await fetch(
     `${getPlatformInfo().url}/api/v/1/code/${
@@ -47,7 +44,7 @@ async function fetchTemperatureHistory({
         body: {
           defaultPlotParams: {
             ...getTimeRangeParametersForPlot(timeRange),
-            attributes: ["temperature"],
+            attributes: ["motionCount"],
             entityId: assetId,
             entityType: "asset",
           },
@@ -62,22 +59,21 @@ async function fetchTemperatureHistory({
     throw errText;
   }
 
-  const data: PlotTemperatureResponse = await resp.json();
+  const data: PlotMotionResponse = await resp.json();
 
-  return data.results.lineData.temperature;
+  return data.results.lineData.motionCount;
 }
 
-export function useTemperatureHistoryQuery(params: {
+export function useMotionHistoryQuery(params: {
   assetId: string;
   timeRange: RelativeOrAbsoluteRange;
 }) {
-  return useQuery(temperatureHistoryQueryKeys.byAsset(params), {
-    queryFn: fetchTemperatureHistory,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
+  return useQuery(motionHistoryQueryKeys.byAsset(params), {
+    queryFn: fetchMotionHistory,
     select: (data) => ({
       data: { ...data, x: data.x.map((d) => new Date(d)) },
-      stats: getStats(data.y),
     }),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }

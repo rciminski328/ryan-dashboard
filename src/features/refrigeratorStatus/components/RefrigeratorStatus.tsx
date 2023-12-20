@@ -35,6 +35,8 @@ import {
 } from "../api/temperatureHistory";
 import { Skeleton } from "@material-ui/lab";
 import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from "../utils/types";
+import { useMotionHistoryQuery } from "../api/motionHistory";
+import MotionCharts from "./MotionCharts";
 
 const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
   (theme) => ({
@@ -68,6 +70,10 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
     timeRange,
     assetId,
   });
+  const motionHistoryQuery = useMotionHistoryQuery({
+    timeRange,
+    assetId,
+  });
   useLiveDataForRefrigerator({ assetId, timeRange });
 
   const status = refrigeratorStatusQuery.data?.custom_data.isRunning;
@@ -91,7 +97,8 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
     refrigeratorStatusQuery.isError ||
     temperatureHistoryQuery.isError ||
     humidityHistoryQuery.isError ||
-    doorOpenHistoryQuery.isError
+    doorOpenHistoryQuery.isError ||
+    motionHistoryQuery.isError
   ) {
     return <div>Error</div>;
   }
@@ -156,6 +163,10 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
         <DoorCharts
           doorOpenHistoryQuery={doorOpenHistoryQuery}
           current={refrigeratorStatusQuery.data.custom_data.doorOpen}
+        />
+        <MotionCharts
+          motionHistoryQuery={motionHistoryQuery}
+          current={refrigeratorStatusQuery.data.custom_data.motion ?? false}
         />
       </Grid>
     </Card>

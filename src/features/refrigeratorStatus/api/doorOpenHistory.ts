@@ -16,7 +16,6 @@ interface PlotDoorOpenResponse {
         y: number[];
       };
     };
-    numberOfUpdates: 15;
   };
 }
 
