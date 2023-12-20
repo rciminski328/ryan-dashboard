@@ -119,7 +119,7 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
         >
           <Grid item>
             <Typography variant="h5" noWrap>
-              Refrigerator Status
+              Refrigerator Power Status
             </Typography>
           </Grid>
           <Grid item xs={4}>

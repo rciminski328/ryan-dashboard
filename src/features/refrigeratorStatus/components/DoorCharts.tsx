@@ -76,7 +76,7 @@ export default function DoorCharts({
         className={classes.section}
         alignItems="center"
       >
-        <Typography variant="subtitle1">Current Status</Typography>
+        <Typography variant="subtitle1">Current Door Status</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
           <Typography variant="h4">{current ? "OPEN" : "CLOSED"}</Typography>
         </Box>
