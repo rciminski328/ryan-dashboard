@@ -6,7 +6,6 @@ export default function TrendChart({
   data,
   title,
 }: {
-  // data: { type: "line"; x: Date[]; y: number[] }[];
   data: Plotly.Data[];
   title: string;
 }) {
