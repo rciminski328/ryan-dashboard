@@ -2,6 +2,8 @@ import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { getStats } from "../../../utils/getStats";
+import { RelativeOrAbsoluteRange } from "../utils/types";
+import { getTimeRangeParametersForPlot } from "../utils";
 
 interface PlotTemperatureResponse {
   results: {
@@ -18,14 +20,14 @@ interface PlotTemperatureResponse {
 }
 
 export const temperatureHistoryQueryKeys = {
-  byAsset: (params: { assetId: string }) =>
+  byAsset: (params: { assetId: string; timeRange: RelativeOrAbsoluteRange }) =>
     [{ scope: "temperatureHistory", params }] as const,
 };
 
 async function fetchTemperatureHistory({
   queryKey: [
     {
-      params: { assetId },
+      params: { assetId, timeRange },
     },
   ],
 }: QueryFunctionContext<
@@ -45,11 +47,10 @@ async function fetchTemperatureHistory({
         name: "plotsV2.read",
         body: {
           defaultPlotParams: {
+            ...getTimeRangeParametersForPlot(timeRange),
             attributes: ["temperature"],
-            endDate: "",
             entityId: assetId,
             entityType: "asset",
-            startDate: "",
           },
           pluginName: "default",
         },
@@ -67,7 +68,10 @@ async function fetchTemperatureHistory({
   return data.results.lineData.temperature;
 }
 
-export function useTemperatureHistoryQuery(params: { assetId: string }) {
+export function useTemperatureHistoryQuery(params: {
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}) {
   return useQuery(temperatureHistoryQueryKeys.byAsset(params), {
     queryFn: fetchTemperatureHistory,
     refetchOnMount: false,

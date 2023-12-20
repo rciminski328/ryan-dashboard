@@ -8,9 +8,34 @@ import {
 } from "@material-ui/core";
 import TemperatureCharts from "./TemperatureCharts";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import { useRefrigeratorStatusQuery } from "../api/refrigeratorStatus";
+import {
+  RefrigeratorAsset,
+  refrigeratorStatusQueryKeys,
+  useRefrigeratorStatusQuery,
+} from "../api/refrigeratorStatus";
 import HumidityCharts from "./HumidityCharts";
 import DoorCharts from "./DoorCharts";
+import {
+  // @ts-ignore
+  RelativeAbsoluteDateRangePicker,
+  useMessaging,
+} from "@clearblade/ia-mfe-react";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "react-query";
+import {
+  doorOpenHistoryQueryKeys,
+  useDoorOpenHistoryQuery,
+} from "../api/doorOpenHistory";
+import {
+  humidityHistoryQueryKeys,
+  useHumidityHistoryQuery,
+} from "../api/humidityHistory";
+import {
+  temperatureHistoryQueryKeys,
+  useTemperatureHistoryQuery,
+} from "../api/temperatureHistory";
+import { Skeleton } from "@material-ui/lab";
+import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from "../utils/types";
 
 const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
   (theme) => ({
@@ -21,9 +46,58 @@ const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
 );
 
 export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
-  const { data } = useRefrigeratorStatusQuery({ assetId });
-  const status = data.custom_data.isRunning;
+  const refrigeratorStatusQuery = useRefrigeratorStatusQuery({ assetId });
+
+  const [timeRange, setTimeRange] = useState<RelativeOrAbsoluteRange>({
+    type: "relative",
+    count: 1,
+    units: TimeUnitMultiplier.DAYS,
+  });
+
+  const temperatureHistoryQuery = useTemperatureHistoryQuery({
+    assetId,
+    timeRange,
+  });
+  const humidityHistoryQuery = useHumidityHistoryQuery({
+    assetId,
+    timeRange,
+  });
+  const doorOpenHistoryQuery = useDoorOpenHistoryQuery({
+    timeRange,
+    assetId,
+  });
+  useLiveDataForRefrigerator({ assetId, timeRange });
+
+  const status = refrigeratorStatusQuery.data?.custom_data.isRunning;
   const classes = refrigeratorStatusStyles({ status });
+
+  if (
+    refrigeratorStatusQuery.isLoading ||
+    temperatureHistoryQuery.isLoading ||
+    humidityHistoryQuery.isLoading ||
+    doorOpenHistoryQuery.isLoading
+  ) {
+    return (
+      <>
+        <Skeleton variant="rect" height={25} />
+        <Box pt={1} />
+        <Skeleton variant="rect" height={200} />
+        <Box pt={2} />
+        <Skeleton variant="rect" height={200} />
+        <Box pt={2} />
+        <Skeleton variant="rect" height={200} />
+      </>
+    );
+  }
+
+  if (
+    refrigeratorStatusQuery.isError ||
+    temperatureHistoryQuery.isError ||
+    humidityHistoryQuery.isError ||
+    doorOpenHistoryQuery.isError
+  ) {
+    return <div>Error</div>;
+  }
 
   return (
     <Card>
@@ -47,7 +121,7 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
               Refrigerator Status
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid item xs={4}>
             <Box display="flex" flexWrap="nowrap" alignItems="center">
               <FiberManualRecordIcon className={classes.statusIcon} />
               <Typography variant="subtitle1">
@@ -55,15 +129,109 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
               </Typography>
             </Box>
           </Grid>
+          <Grid item>
+            <RelativeAbsoluteDateRangePicker
+              currentRange={timeRange}
+              onApplyRange={setTimeRange}
+              compact
+            />
+          </Grid>
         </Grid>
 
         <TemperatureCharts
-          assetId={assetId}
-          current={data.custom_data.temperature}
+          temperatureHistoryQuery={temperatureHistoryQuery}
+          current={refrigeratorStatusQuery.data.custom_data.temperature}
         />
-        <HumidityCharts assetId={assetId} current={data.custom_data.humidity} />
-        <DoorCharts assetId={assetId} current={data.custom_data.doorOpen} />
+        <HumidityCharts
+          humidityHistoryQuery={humidityHistoryQuery}
+          current={refrigeratorStatusQuery.data.custom_data.humidity}
+        />
+        <DoorCharts
+          doorOpenHistoryQuery={doorOpenHistoryQuery}
+          current={refrigeratorStatusQuery.data.custom_data.doorOpen}
+        />
       </Grid>
     </Card>
   );
+}
+
+interface HistoricalData {
+  x: string[];
+  y: number[];
+}
+
+function useLiveDataForRefrigerator({
+  assetId,
+  timeRange,
+}: {
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}) {
+  const { subscribe, unsubscribe } = useMessaging();
+  const queryClient = useQueryClient();
+  useEffect(() => {
+    const topics = [`_dbupdate/_monitor/_asset/${assetId}/locationAndStatus`];
+
+    subscribe(topics, (msg) => {
+      const assetData = msg.payload as RefrigeratorAsset;
+      queryClient.setQueryData<RefrigeratorAsset>(
+        refrigeratorStatusQueryKeys.byAsset({ assetId }),
+        (data) => {
+          if (typeof data === "undefined") {
+            return assetData;
+          }
+
+          return {
+            ...data,
+            last_updated: assetData.last_updated,
+            custom_data: {
+              ...data.custom_data,
+              ...assetData.custom_data,
+            },
+          };
+        }
+      );
+
+      if (typeof assetData.custom_data.temperature !== "undefined") {
+        queryClient.setQueryData<HistoricalData>(
+          temperatureHistoryQueryKeys.byAsset({ assetId, timeRange }),
+          (data) => {
+            return {
+              ...data,
+              x: [...data.x, assetData.last_updated],
+              y: [...data.y, assetData.custom_data.temperature],
+            };
+          }
+        );
+      }
+
+      if (typeof assetData.custom_data.humidity !== "undefined") {
+        queryClient.setQueryData<HistoricalData>(
+          humidityHistoryQueryKeys.byAsset({ assetId, timeRange }),
+          (data) => {
+            return {
+              ...data,
+              x: [...data.x, assetData.last_updated],
+              y: [...data.y, assetData.custom_data.humidity],
+            };
+          }
+        );
+      }
+
+      if (typeof assetData.custom_data.doorOpen !== "undefined") {
+        queryClient.setQueryData<HistoricalData>(
+          doorOpenHistoryQueryKeys.byAsset({ assetId, timeRange }),
+          (data) => {
+            return {
+              ...data,
+              x: [...data.x, assetData.last_updated],
+              y: [...data.y, assetData.custom_data.doorOpen === true ? 1 : 0],
+            };
+          }
+        );
+      }
+    });
+
+    return () => unsubscribe(topics);
+  }, [assetId, subscribe, unsubscribe, queryClient, timeRange]);
 }

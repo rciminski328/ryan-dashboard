@@ -17,16 +17,15 @@ const humidityChartStyles = makeStyles((theme) => ({
 }));
 
 export default function HumidityCharts({
-  assetId,
   current,
+  humidityHistoryQuery: {
+    data: { data, stats },
+  },
 }: {
-  assetId: string;
+  humidityHistoryQuery: ReturnType<typeof useHumidityHistoryQuery>;
   current: number;
 }) {
   const classes = humidityChartStyles();
-  const {
-    data: { stats, data },
-  } = useHumidityHistoryQuery({ assetId });
 
   return (
     <Grid container item spacing={1} className={classes.container}>
