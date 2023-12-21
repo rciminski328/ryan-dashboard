@@ -46,6 +46,9 @@ const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
     card: {
       padding: theme.spacing(2),
     },
+    container: {
+      width: "100%",
+    },
   })
 );
 
@@ -152,22 +155,30 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
           </Grid>
         </Grid>
 
-        <TemperatureCharts
-          temperatureHistoryQuery={temperatureHistoryQuery}
-          current={refrigeratorStatusQuery.data.custom_data.temperature}
-        />
-        <HumidityCharts
-          humidityHistoryQuery={humidityHistoryQuery}
-          current={refrigeratorStatusQuery.data.custom_data.humidity}
-        />
-        <DoorCharts
-          doorOpenHistoryQuery={doorOpenHistoryQuery}
-          current={refrigeratorStatusQuery.data.custom_data.doorOpen}
-        />
-        <MotionCharts
-          motionHistoryQuery={motionHistoryQuery}
-          current={refrigeratorStatusQuery.data.custom_data.motion ?? false}
-        />
+        <Grid item xs={12} className={classes.container}>
+          <TemperatureCharts
+            temperatureHistoryQuery={temperatureHistoryQuery}
+            current={refrigeratorStatusQuery.data.custom_data.temperature}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.container}>
+          <HumidityCharts
+            humidityHistoryQuery={humidityHistoryQuery}
+            current={refrigeratorStatusQuery.data.custom_data.humidity}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.container}>
+          <DoorCharts
+            doorOpenHistoryQuery={doorOpenHistoryQuery}
+            current={refrigeratorStatusQuery.data.custom_data.doorOpen}
+          />
+        </Grid>
+        <Grid item xs={12} className={classes.container}>
+          <MotionCharts
+            motionHistoryQuery={motionHistoryQuery}
+            current={refrigeratorStatusQuery.data.custom_data.motion ?? false}
+          />
+        </Grid>
       </Grid>
     </Card>
   );

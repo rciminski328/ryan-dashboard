@@ -1,4 +1,11 @@
-import { Box, Grid, Typography, makeStyles, useTheme } from "@material-ui/core";
+import {
+  Box,
+  Card,
+  Grid,
+  Typography,
+  makeStyles,
+  useTheme,
+} from "@material-ui/core";
 import { Skeleton } from "@material-ui/lab";
 import GaugeChart from "../../storeStatus/components/GaugeChart";
 import { useHumidityHistoryQuery } from "../api/humidityHistory";
@@ -16,7 +23,7 @@ const humidityChartStyles = makeStyles((theme) => ({
     width: "100%",
   },
   section: {
-    border: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`,
   },
   table: {
     width: "100%",
@@ -49,7 +56,13 @@ export default function HumidityCharts({
   const { data, stats } = humidityHistoryQuery.data;
 
   return (
-    <Grid container item spacing={1} className={classes.container}>
+    <Grid
+      container
+      item
+      spacing={1}
+      className={classes.container}
+      component={Card}
+    >
       <Grid
         container
         direction="column"
@@ -86,14 +99,7 @@ export default function HumidityCharts({
         </Grid>
       </Grid>
 
-      <Grid
-        container
-        item
-        xs={3}
-        wrap="wrap"
-        className={classes.section}
-        justifyContent="center"
-      >
+      <Grid container item xs={3} wrap="wrap" justifyContent="center">
         <Grid item>
           <Typography variant="subtitle1">Humidity Stats</Typography>
         </Grid>

@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
+import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import StatsTable from "./StatsTable";
 import { useDoorOpenHistoryQuery } from "../api/doorOpenHistory";
@@ -9,7 +9,7 @@ const doorChartStyles = makeStyles((theme) => ({
     width: "100%",
   },
   section: {
-    border: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`,
   },
   table: {
     width: "100%",
@@ -52,7 +52,13 @@ export default function DoorCharts({
   const { data, stats } = doorOpenHistoryQuery.data;
 
   return (
-    <Grid container item spacing={1} className={classes.container}>
+    <Grid
+      container
+      item
+      spacing={1}
+      className={classes.container}
+      component={Card}
+    >
       <Grid
         container
         direction="column"
@@ -82,14 +88,7 @@ export default function DoorCharts({
         </Box>
       </Grid>
 
-      <Grid
-        container
-        item
-        xs={3}
-        wrap="wrap"
-        className={classes.section}
-        justifyContent="center"
-      >
+      <Grid container item xs={3} wrap="wrap" justifyContent="center">
         <Grid item>
           <Typography variant="subtitle1">Door Open Stats</Typography>
         </Grid>

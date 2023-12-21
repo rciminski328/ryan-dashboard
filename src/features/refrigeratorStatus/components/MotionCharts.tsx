@@ -1,4 +1,4 @@
-import { Box, Grid, Typography, makeStyles } from "@material-ui/core";
+import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import { Skeleton } from "@material-ui/lab";
 import { useMotionHistoryQuery } from "../api/motionHistory";
@@ -8,7 +8,7 @@ const useMotionChartStyles = makeStyles((theme) => ({
     width: "100%",
   },
   section: {
-    border: `1px solid ${theme.palette.divider}`,
+    borderRight: `1px solid ${theme.palette.divider}`,
   },
   table: {
     width: "100%",
@@ -40,7 +40,13 @@ export default function MotionCharts({
   const { data } = motionHistoryQuery.data;
 
   return (
-    <Grid container item spacing={1} className={classes.container}>
+    <Grid
+      container
+      item
+      spacing={1}
+      className={classes.container}
+      component={Card}
+    >
       <Grid
         container
         direction="column"
@@ -56,14 +62,7 @@ export default function MotionCharts({
         </Grid>
       </Grid>
 
-      <Grid
-        container
-        direction="column"
-        item
-        xs={3}
-        className={classes.section}
-        alignItems="center"
-      >
+      <Grid container direction="column" item xs={3} alignItems="center">
         <Typography variant="subtitle1">Motion Status</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
           <Typography variant="h4">{current ? "YES" : "NO"}</Typography>
