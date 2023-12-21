@@ -38,19 +38,27 @@ import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from "../utils/types";
 import { useMotionHistoryQuery } from "../api/motionHistory";
 import MotionCharts from "./MotionCharts";
 
-const refrigeratorStatusStyles = makeStyles<Theme, { status: boolean }>(
-  (theme) => ({
-    statusIcon: ({ status }) => ({
-      color: status ? theme.palette.success.main : theme.palette.text.disabled,
-    }),
-    card: {
-      padding: theme.spacing(2),
-    },
-    container: {
-      width: "100%",
-    },
-  })
-);
+const refrigeratorStatusStyles = makeStyles<
+  Theme,
+  { powerStatus: boolean; motionStatus: boolean }
+>((theme) => ({
+  powerStatusIcon: ({ powerStatus }) => ({
+    color: powerStatus
+      ? theme.palette.success.main
+      : theme.palette.text.disabled,
+  }),
+  motionStatusIcon: ({ motionStatus }) => ({
+    color: motionStatus
+      ? theme.palette.success.main
+      : theme.palette.text.disabled,
+  }),
+  card: {
+    padding: theme.spacing(2),
+  },
+  container: {
+    width: "100%",
+  },
+}));
 
 export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   const refrigeratorStatusQuery = useRefrigeratorStatusQuery({ assetId });
@@ -79,8 +87,12 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   });
   useLiveDataForRefrigerator({ assetId, timeRange });
 
-  const status = refrigeratorStatusQuery.data?.custom_data.isRunning;
-  const classes = refrigeratorStatusStyles({ status: status ?? false });
+  const powerStatus = refrigeratorStatusQuery.data?.custom_data.isRunning;
+  const motionStatus = refrigeratorStatusQuery.data?.custom_data.motion;
+  const classes = refrigeratorStatusStyles({
+    powerStatus: powerStatus ?? false,
+    motionStatus: motionStatus ?? false,
+  });
 
   if (refrigeratorStatusQuery.isLoading) {
     return (
@@ -112,36 +124,29 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
 
   return (
     <Card className={classes.card}>
-      <Grid
-        container
-        alignItems="center"
-        justifyContent="center"
-        direction="column"
-        spacing={2}
-      >
-        <Grid
-          container
-          item
-          spacing={2}
-          wrap="nowrap"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Grid item>
+      <Grid container alignItems="center" direction="column" spacing={2}>
+        <Grid item className={classes.container}>
+          <Box display="flex" alignItems="left">
             <Typography variant="h5" noWrap>
               Refrigerator Power Status
             </Typography>
-          </Grid>
-          <Grid item xs={4}>
+            <Box display="flex" flexWrap="nowrap" alignItems="center">
+              <FiberManualRecordIcon className={classes.powerStatusIcon} />
+              <Typography variant="subtitle1">
+                {powerStatus ? "On" : "Off"}
+              </Typography>
+            </Box>
+            <Box ml={4} />
+            <Typography variant="h5" noWrap>
+              Motion Status
+            </Typography>
             <Box display="flex" flexWrap="nowrap" alignItems="center">
               <FiberManualRecordIcon className={classes.statusIcon} />
               <Typography variant="subtitle1">
-                {status ? "On" : "Off"}
+                {motionStatus ? "Yes" : "No"}
               </Typography>
             </Box>
-          </Grid>
-          <Grid item>
-            <Box pt={1}>
+            <Box pt={1} ml="auto">
               <RelativeAbsoluteDateRangePicker
                 currentRange={timeRange}
                 onApplyRange={(range) => {
@@ -152,7 +157,7 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
                 compact
               />
             </Box>
-          </Grid>
+          </Box>
         </Grid>
 
         <Grid item xs={12} className={classes.container}>
