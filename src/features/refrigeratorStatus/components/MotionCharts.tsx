@@ -50,7 +50,7 @@ export default function MotionCharts({
     return null;
   }
 
-  const { motion, motionCount } = motionHistoryQuery.data;
+  const { data, stats } = motionHistoryQuery.data;
 
   return (
     <Grid
@@ -70,7 +70,7 @@ export default function MotionCharts({
         <Grid item>
           <TrendChart
             title="Motion Detection Audit"
-            data={[{ ...motion.data, type: "scatter" }]}
+            data={[{ ...data, type: "scatter" }]}
           />
         </Grid>
       </Grid>
@@ -87,13 +87,7 @@ export default function MotionCharts({
           <Typography variant="subtitle1">Occupancy Stats</Typography>
         </Grid>
         <Grid item className={classes.table}>
-          <StatsTable
-            labels={labels}
-            stats={{
-              ...motion.stats,
-              count: motionCount.data.y[motionCount.data.y.length - 1],
-            }}
-          />
+          <StatsTable labels={labels} stats={stats} />
         </Grid>
       </Grid>
     </Grid>

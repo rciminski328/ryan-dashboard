@@ -8,10 +8,6 @@ import { average } from "simple-statistics";
 interface PlotMotionResponse {
   results: {
     lineData: {
-      motionCount?: {
-        x: string[];
-        y: number[];
-      };
       motion?: {
         x: string[];
         y: number[];
@@ -47,7 +43,7 @@ async function fetchMotionHistory({
         body: {
           defaultPlotParams: {
             ...getTimeRangeParametersForPlot(timeRange),
-            attributes: ["motion", "motionCount"],
+            attributes: ["motion"],
             entityId: assetId,
             entityType: "asset",
           },
@@ -64,7 +60,7 @@ async function fetchMotionHistory({
 
   const data: PlotMotionResponse = await resp.json();
 
-  return data.results.lineData;
+  return data.results.lineData.motion;
 }
 
 export function useMotionHistoryQuery(params: {
@@ -74,21 +70,11 @@ export function useMotionHistoryQuery(params: {
   return useQuery(motionHistoryQueryKeys.byAsset(params), {
     queryFn: fetchMotionHistory,
     select: (data) => ({
-      motion: {
-        data: {
-          ...data.motion,
-          x: data.motion ? data.motion.x.map((d) => new Date(d)) : [],
-          y: data.motion ? data.motion.y : [],
-        },
-        stats: getMotionStats(data.motion ? data.motion : { x: [], y: [] }),
+      data: {
+        x: data ? data.x.map((d) => new Date(d)) : [],
+        y: data ? data.y : [],
       },
-      motionCount: {
-        data: {
-          ...data.motionCount,
-          x: data.motionCount ? data.motionCount.x.map((d) => new Date(d)) : [],
-          y: data.motionCount ? data.motionCount.y : [],
-        },
-      },
+      stats: getMotionStats(data ? data : { x: [], y: [] }),
     }),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -96,17 +82,19 @@ export function useMotionHistoryQuery(params: {
 }
 
 function getMotionStats(data: { x: string[]; y: number[] }): {
+  count: number;
   averageDurationMs: number;
 } {
   try {
     const durations: number[] = [];
-    const motionDetected = 132;
+    let count = 0;
     const noMotionDetected = 0;
     let previousMotionDetectedIndex: number | null = null;
 
     for (let i = 0; i < data.x.length; i++) {
-      if (data.y[i] === motionDetected) {
+      if (data.y[i] !== noMotionDetected) {
         previousMotionDetectedIndex = i;
+        count++;
       } else if (
         data.y[i] === noMotionDetected &&
         previousMotionDetectedIndex !== null
@@ -122,11 +110,13 @@ function getMotionStats(data: { x: string[]; y: number[] }): {
     }
 
     return {
+      count,
       averageDurationMs: average(durations),
     };
   } catch (e) {
     console.warn("Failed to get motion stats", e);
     return {
+      count: 0,
       averageDurationMs: 0,
     };
   }

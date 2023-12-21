@@ -35,7 +35,10 @@ import {
 } from "../api/temperatureHistory";
 import { Skeleton } from "@material-ui/lab";
 import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from "../utils/types";
-import { useMotionHistoryQuery } from "../api/motionHistory";
+import {
+  motionHistoryQueryKeys,
+  useMotionHistoryQuery,
+} from "../api/motionHistory";
 import MotionCharts from "./MotionCharts";
 
 const refrigeratorStatusStyles = makeStyles<Theme, { powerStatus: boolean }>(
@@ -277,6 +280,27 @@ function useLiveDataForRefrigerator({
                 ...data,
                 x: [...data.x, last_updated],
                 y: [...data.y, assetData.custom_data.doorOpen === true ? 1 : 0],
+              };
+            }
+          );
+        }
+
+        if (
+          typeof assetData.custom_data.motion !== "undefined" &&
+          !queryClient.isFetching({
+            queryKey: motionHistoryQueryKeys.byAsset({ assetId, timeRange }),
+          })
+        ) {
+          queryClient.setQueryData<HistoricalData | undefined>(
+            motionHistoryQueryKeys.byAsset({ assetId, timeRange }),
+            (data) => {
+              if (typeof data === "undefined") {
+                return data;
+              }
+              return {
+                ...data,
+                x: [...data.x, last_updated],
+                y: [...data.y, assetData.custom_data.motion === true ? 1 : 0],
               };
             }
           );
