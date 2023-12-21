@@ -2,6 +2,7 @@ import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import TrendChart from "./TrendChart";
 import { Skeleton } from "@material-ui/lab";
 import { useMotionHistoryQuery } from "../api/motionHistory";
+import StatsTable from "./StatsTable";
 
 const useMotionChartStyles = makeStyles((theme) => ({
   container: {
@@ -14,6 +15,18 @@ const useMotionChartStyles = makeStyles((theme) => ({
     width: "100%",
   },
 }));
+
+const labels = [
+  {
+    field: "count",
+    label: "Count",
+  },
+  {
+    field: "averageDurationMs",
+    label: "Average Duration",
+    format: (val: number) => `${(val / 1000).toFixed(2)} sec`,
+  },
+];
 
 export default function MotionCharts({
   motionHistoryQuery,
@@ -37,7 +50,7 @@ export default function MotionCharts({
     return null;
   }
 
-  const { data } = motionHistoryQuery.data;
+  const { motion, motionCount } = motionHistoryQuery.data;
 
   return (
     <Grid
@@ -56,17 +69,32 @@ export default function MotionCharts({
       >
         <Grid item>
           <TrendChart
-            title="Motion Trend"
-            data={[{ ...data, type: "scatter" }]}
+            title="Motion Detection Audit"
+            data={[{ ...motion.data, type: "scatter" }]}
           />
         </Grid>
       </Grid>
 
       <Grid container direction="column" item xs={3} alignItems="center">
-        <Typography variant="subtitle1">Motion Status</Typography>
+        <Typography variant="subtitle1">Current Occupancy Status</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
           <Typography variant="h4">{current ? "YES" : "NO"}</Typography>
         </Box>
+      </Grid>
+
+      <Grid container item xs={3} wrap="wrap" justifyContent="center">
+        <Grid item>
+          <Typography variant="subtitle1">Occupancy Stats</Typography>
+        </Grid>
+        <Grid item className={classes.table}>
+          <StatsTable
+            labels={labels}
+            stats={{
+              ...motion.stats,
+              count: motionCount.data.y[motionCount.data.y.length - 1],
+            }}
+          />
+        </Grid>
       </Grid>
     </Grid>
   );

@@ -8,10 +8,8 @@ import { getTimeRangeParametersForPlot } from "../utils";
 
 interface PlotDoorOpenResponse {
   results: {
-    historyEndDate: string;
-    historyStartDate: string;
     lineData: {
-      doorOpen: {
+      doorOpen?: {
         x: string[];
         y: number[];
       };
@@ -63,7 +61,7 @@ async function fetchDoorOpenHistory({
 
   const data: PlotDoorOpenResponse = await resp.json();
 
-  return data.results.lineData.doorOpen;
+  return data.results.lineData.doorOpen ?? { x: [], y: [] };
 }
 
 function getDoorOpenStats(data: { x: string[]; y: number[] }): {
@@ -108,8 +106,8 @@ export function useDoorOpenHistoryQuery(params: {
   return useQuery(doorOpenHistoryQueryKeys.byAsset(params), {
     queryFn: fetchDoorOpenHistory,
     select: (data) => ({
-      data: { ...data, x: data.x.map((d) => new Date(d)) },
-      stats: getDoorOpenStats(data),
+      data: { ...data, x: data ? data.x.map((d) => new Date(d)) : [] },
+      stats: getDoorOpenStats(data ? data : { x: [], y: [] }),
     }),
     refetchOnMount: false,
     refetchOnWindowFocus: false,

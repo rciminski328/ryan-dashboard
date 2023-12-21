@@ -7,10 +7,8 @@ import { getTimeRangeParametersForPlot } from "../utils";
 
 interface PlotHumidityResponse {
   results: {
-    historyEndDate: string;
-    historyStartDate: string;
     lineData: {
-      humidity: {
+      humidity?: {
         x: string[];
         y: number[];
       };
@@ -62,7 +60,7 @@ async function fetchHumidityHistory({
 
   const data: PlotHumidityResponse = await resp.json();
 
-  return data.results.lineData.humidity;
+  return data.results.lineData.humidity ?? { x: [], y: [] };
 }
 
 export function useHumidityHistoryQuery(params: {
@@ -72,8 +70,8 @@ export function useHumidityHistoryQuery(params: {
   return useQuery(humidityHistoryQueryKeys.byAsset(params), {
     queryFn: fetchHumidityHistory,
     select: (data) => ({
-      data: { ...data, x: data.x.map((d) => new Date(d)) },
-      stats: getStats(data.y),
+      data: { ...data, x: data ? data.x.map((d) => new Date(d)) : [] },
+      stats: getStats(data ? data.y : []),
     }),
     refetchOnMount: false,
     refetchOnWindowFocus: false,

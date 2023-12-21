@@ -7,10 +7,8 @@ import { getTimeRangeParametersForPlot } from "../utils";
 
 interface PlotTemperatureResponse {
   results: {
-    historyEndDate: string;
-    historyStartDate: string;
     lineData: {
-      temperature: {
+      temperature?: {
         x: string[];
         y: number[];
       };
@@ -64,7 +62,7 @@ async function fetchTemperatureHistory({
 
   const data: PlotTemperatureResponse = await resp.json();
 
-  return data.results.lineData.temperature;
+  return data.results.lineData.temperature ?? { x: [], y: [] };
 }
 
 export function useTemperatureHistoryQuery(params: {
@@ -76,8 +74,8 @@ export function useTemperatureHistoryQuery(params: {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     select: (data) => ({
-      data: { ...data, x: data.x.map((d) => new Date(d)) },
-      stats: getStats(data.y),
+      data: { ...data, x: data ? data.x.map((d) => new Date(d)) : [] },
+      stats: getStats(data ? data.y : []),
     }),
   });
 }
