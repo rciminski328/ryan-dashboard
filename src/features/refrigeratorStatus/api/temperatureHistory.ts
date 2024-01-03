@@ -29,7 +29,9 @@ async function fetchTemperatureHistory({
   ],
 }: QueryFunctionContext<
   ReturnType<typeof temperatureHistoryQueryKeys.byAsset>
->) {
+>): Promise<
+  NonNullable<PlotTemperatureResponse["results"]["lineData"]["temperature"]>
+> {
   const authInfo = getAuthInfo();
   const resp = await fetch(
     `${getPlatformInfo().url}/api/v/1/code/${

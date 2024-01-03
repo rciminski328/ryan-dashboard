@@ -2,7 +2,6 @@ import { QueryFunctionContext, useQuery } from "react-query";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { average } from "simple-statistics";
-import { sleep } from "../../../utils/sleep";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 import { getTimeRangeParametersForPlot } from "../utils";
 
@@ -28,7 +27,11 @@ async function fetchDoorOpenHistory({
       params: { assetId, timeRange },
     },
   ],
-}: QueryFunctionContext<ReturnType<typeof doorOpenHistoryQueryKeys.byAsset>>) {
+}: QueryFunctionContext<
+  ReturnType<typeof doorOpenHistoryQueryKeys.byAsset>
+>): Promise<
+  NonNullable<PlotDoorOpenResponse["results"]["lineData"]["doorOpen"]>
+> {
   const authInfo = getAuthInfo();
   const resp = await fetch(
     `${getPlatformInfo().url}/api/v/1/code/${

@@ -27,7 +27,9 @@ async function fetchMotionHistory({
       params: { assetId, timeRange },
     },
   ],
-}: QueryFunctionContext<ReturnType<typeof motionHistoryQueryKeys.byAsset>>) {
+}: QueryFunctionContext<
+  ReturnType<typeof motionHistoryQueryKeys.byAsset>
+>): Promise<NonNullable<PlotMotionResponse["results"]["lineData"]["motion"]>> {
   const authInfo = getAuthInfo();
   const resp = await fetch(
     `${getPlatformInfo().url}/api/v/1/code/${
@@ -60,7 +62,7 @@ async function fetchMotionHistory({
 
   const data: PlotMotionResponse = await resp.json();
 
-  return data.results.lineData.motion;
+  return data.results.lineData.motion ?? { x: [], y: [] };
 }
 
 export function useMotionHistoryQuery(params: {

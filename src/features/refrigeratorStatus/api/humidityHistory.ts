@@ -27,7 +27,11 @@ async function fetchHumidityHistory({
       params: { assetId, timeRange },
     },
   ],
-}: QueryFunctionContext<ReturnType<typeof humidityHistoryQueryKeys.byAsset>>) {
+}: QueryFunctionContext<
+  ReturnType<typeof humidityHistoryQueryKeys.byAsset>
+>): Promise<
+  NonNullable<PlotHumidityResponse["results"]["lineData"]["humidity"]>
+> {
   const authInfo = getAuthInfo();
   const resp = await fetch(
     `${getPlatformInfo().url}/api/v/1/code/${
