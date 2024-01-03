@@ -1,6 +1,7 @@
 import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import RefrigeratorStatus from "../features/refrigeratorStatus/components/RefrigeratorStatus";
 import IndoorAirQuality from "../features/storeStatus/components/IndoorAirQuality";
+import { useEffect } from "react";
 
 const usePluginStyles = makeStyles((theme) => ({
   plugin: {
@@ -25,6 +26,17 @@ export default function DashboardPlugin() {
   const storeAssetId = "31913feb-50ba-46bb-90cc-f17d94bcffe4";
 
   const classes = usePluginStyles();
+
+  useEffect(() => {
+    const elem = document.createElement("link");
+    elem.setAttribute(
+      "href",
+      "https://db.onlinewebfonts.com/c/fa619a1b284957d9e6469c5cd6c717c4?family=ATT+Aleck+Sans+Medium+Regular"
+    );
+    elem.setAttribute("rel", "stylesheet");
+
+    document.getElementsByTagName("head")[0].appendChild(elem);
+  }, []);
 
   return (
     <Grid container className={classes.plugin} spacing={1}>
