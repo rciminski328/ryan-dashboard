@@ -36,28 +36,31 @@ export default function GaugeChart({
     },
   ];
   return (
-    <Plot
-      data={data}
-      config={{
-        responsive: true,
-        displayModeBar: false,
-        displaylogo: false,
-      }}
-      layout={{
-        autosize: true,
-        margin: { t: 50, b: 50 },
-        title,
-        titlefont: {
-          size: 16,
-          family: theme.typography.fontFamily,
-        },
-      }}
-      style={{
-        width: "100%",
-        height: "100%",
-        minHeight,
-        minWidth,
-      }}
-    />
+    <Box textAlign={"center"}>
+      <Typography>{title}</Typography>
+      <Plot
+        data={data}
+        config={{
+          responsive: true,
+          displayModeBar: false,
+          displaylogo: false,
+        }}
+        layout={{
+          autosize: true,
+          margin: { t: 50, b: 50 },
+          // title,
+          titlefont: {
+            size: 16,
+            family: theme.typography.fontFamily,
+          },
+        }}
+        style={{
+          width: "100%",
+          height: "100%",
+          minHeight,
+          minWidth,
+        }}
+      />
+    </Box>
   );
 }
