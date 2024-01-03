@@ -44,7 +44,7 @@ export default function DashboardPlugin() {
         <Grid item xs={12}>
           <Card className={classes.card}>
             <Box p={2}>
-              <Typography color="secondary">
+              <Typography color="secondary" variant="h5">
                 Get equipment insights, improve operations and reduce costs by
                 connecting all your remote assets to a single platform via web
                 or app
