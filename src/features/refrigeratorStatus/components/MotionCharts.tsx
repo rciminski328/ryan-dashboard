@@ -75,7 +75,14 @@ export default function MotionCharts({
         </Grid>
       </Grid>
 
-      <Grid container direction="column" item xs={3} alignItems="center">
+      <Grid
+        container
+        direction="column"
+        item
+        xs={3}
+        alignItems="center"
+        className={classes.section}
+      >
         <Typography variant="subtitle1">Current Occupancy Status</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
           <Typography variant="h4">{current ? "YES" : "NO"}</Typography>
