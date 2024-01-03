@@ -1,4 +1,4 @@
-import { Grid, makeStyles } from "@material-ui/core";
+import { Box, Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import RefrigeratorStatus from "../features/refrigeratorStatus/components/RefrigeratorStatus";
 import IndoorAirQuality from "../features/storeStatus/components/IndoorAirQuality";
 
@@ -6,6 +6,11 @@ const usePluginStyles = makeStyles((theme) => ({
   plugin: {
     marginTop: theme.spacing(1),
     width: "100%",
+  },
+  card: {
+    height: "100%",
+    display: "flex",
+    alignItems: "center",
   },
 }));
 
@@ -23,8 +28,21 @@ export default function DashboardPlugin() {
 
   return (
     <Grid container className={classes.plugin} spacing={1}>
-      <Grid item lg={3} xs={9}>
-        <IndoorAirQuality assetId={storeAssetId} />
+      <Grid container item lg={3} xs={9} spacing={1}>
+        <Grid item xs={12}>
+          <Card className={classes.card}>
+            <Box p={2}>
+              <Typography color="secondary">
+                Get equipment insights, improve operations and reduce costs by
+                connecting all your remote assets to a single platform via web
+                or app
+              </Typography>
+            </Box>
+          </Card>
+        </Grid>
+        <Grid item xs={12}>
+          <IndoorAirQuality assetId={storeAssetId} />
+        </Grid>
       </Grid>
       <Grid item lg={9} xs={12}>
         <RefrigeratorStatus assetId={refrigeratorAssetId} />
