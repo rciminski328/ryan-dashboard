@@ -95,7 +95,7 @@ export default function MotionCharts({
         alignItems="center"
         className={classes.section}
       >
-        <Typography variant="subtitle1">Current Occupancy Status</Typography>
+        <Typography variant="subtitle1">Motion Detected</Typography>
         <Box flex={1} display={"flex"} alignItems={"center"}>
           <Typography variant="h4">{current ? "YES" : "NO"}</Typography>
         </Box>
