@@ -6,7 +6,7 @@ const plotLayout: Partial<Plotly.Layout> = {
   autosize: true,
   margin: {
     b: 20,
-    l: 20,
+    l: 30,
     r: 20,
     t: 20,
   },
