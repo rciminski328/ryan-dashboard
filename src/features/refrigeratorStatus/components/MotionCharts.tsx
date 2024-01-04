@@ -70,7 +70,19 @@ export default function MotionCharts({
         <Grid item>
           <TrendChart
             title="Motion Detection Audit"
-            data={[{ ...data, type: "scatter" }]}
+            data={[
+              {
+                x: data.x,
+                y: data.y,
+                type: "scatter",
+                hovertemplate: "Motion Status: <b>%{text}</b><extra></extra>",
+                text: data.y.map((y) =>
+                  y === 1 ? "ACTIVATED" : "DEACTIVATED"
+                ),
+                line: { shape: "hv", width: 3 },
+                mode: "lines",
+              },
+            ]}
           />
         </Grid>
       </Grid>

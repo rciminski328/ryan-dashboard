@@ -69,7 +69,18 @@ export default function DoorCharts({
         <Grid item>
           <TrendChart
             title="Door Open/Close"
-            data={[{ ...data, type: "scatter" }]}
+            data={[
+              {
+                x: data.x,
+                y: data.y,
+                type: "scatter",
+                line: { shape: "hv", width: 3 },
+                hovertemplate:
+                  "Door Open / Closed: <b>%{text}</b><extra></extra>",
+                mode: "lines",
+                text: data.y.map((y) => (y === 1 ? "true" : "false")),
+              },
+            ]}
           />
         </Grid>
       </Grid>

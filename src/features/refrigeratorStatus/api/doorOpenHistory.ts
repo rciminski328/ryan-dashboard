@@ -109,7 +109,10 @@ export function useDoorOpenHistoryQuery(params: {
   return useQuery(doorOpenHistoryQueryKeys.byAsset(params), {
     queryFn: fetchDoorOpenHistory,
     select: (data) => ({
-      data: { ...data, x: data ? data.x.map((d) => new Date(d)) : [] },
+      data: {
+        x: data ? data.x.map((d) => new Date(d)) : [],
+        y: data ? data.y : [],
+      },
       stats: getDoorOpenStats(data ? data : { x: [], y: [] }),
     }),
     refetchOnMount: false,
