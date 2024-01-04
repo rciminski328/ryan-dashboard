@@ -63,7 +63,7 @@ export default function RefrigeratorStatus({ assetId }: { assetId: string }) {
   const [timeRange, setTimeRange] = useState<RelativeOrAbsoluteRange>({
     type: "relative",
     count: 1,
-    units: TimeUnitMultiplier.DAYS,
+    units: TimeUnitMultiplier.HOURS,
   });
 
   const temperatureHistoryQuery = useTemperatureHistoryQuery({
