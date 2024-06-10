@@ -52,7 +52,7 @@ export function useStoreStatusQuery({ assetId }: { assetId: string }) {
   const { subscribe, unsubscribe } = useMessaging();
   const queryClient = useQueryClient();
   useEffect(() => {
-    const topics = [`_dbupdate/_monitor/_asset/${assetId}/locationAndStatus`];
+    const topics = [`_dbupdate/_monitor/_asset/${assetId}/locStatusHistory`];
 
     subscribe(topics, (msg) => {
       const assetData = msg.payload as StoreAsset;
