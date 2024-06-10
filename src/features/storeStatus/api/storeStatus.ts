@@ -32,11 +32,9 @@ async function fetchStoreStatus({
   ReturnType<typeof storeStatusQueryKeys.byAsset>
 >): Promise<StoreAsset> {
   const data = await fetchAssets(new AbortController(), {
-    query: createFrontendAssetsQuery({
-      Filters: [
-        [{ type: "default", operator: "=", field: "id", value: assetId }],
-      ],
-    }),
+    filters: {
+      ids: [assetId],
+    },
   });
 
   const asset = data.DATA[0];

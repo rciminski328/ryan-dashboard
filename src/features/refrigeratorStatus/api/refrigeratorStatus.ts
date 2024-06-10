@@ -31,11 +31,9 @@ async function fetchRefrigeratorStatus({
   ReturnType<typeof refrigeratorStatusQueryKeys.byAsset>
 >): Promise<RefrigeratorAsset> {
   const data = await fetchAssets(new AbortController(), {
-    query: createFrontendAssetsQuery({
-      Filters: [
-        [{ type: "default", operator: "=", field: "id", value: assetId }],
-      ],
-    }),
+    filters: {
+      ids: [assetId],
+    },
   });
 
   const asset = data.DATA[0];
