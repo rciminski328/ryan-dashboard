@@ -1,10 +1,10 @@
 import { AppProviders } from "@clearblade/ia-mfe-react";
-import DashboardPlugin from "./components/DashboardPlugin";
+import { Main } from "./features/main";
 
 export default function Root() {
   return (
     <AppProviders>
-      <DashboardPlugin />
+      <Main />
     </AppProviders>
   );
 }
