@@ -1,5 +1,5 @@
 import { Asset, fetchAssets } from "@clearblade/ia-mfe-core";
-import { useQuery } from "react-query";
+import { useQuery, UseQueryResult } from "react-query";
 
 export const assetsQueryKeys = {
   all: [{ scope: "assets" }] as const,
@@ -23,8 +23,10 @@ export function useAssetsQuery<TData = Asset["frontend"][]>({
   });
 }
 
-export function useAsset(assetId: string) {
+export function useAsset<TAssetShape extends Asset["frontend"]>(
+  assetId: string
+): UseQueryResult<TAssetShape> {
   return useAssetsQuery({
     select: (data) => data.find((asset) => asset.id === assetId),
-  });
+  }) as UseQueryResult<TAssetShape>;
 }

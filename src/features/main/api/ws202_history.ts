@@ -4,35 +4,34 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
-import { getStats } from "../../../utils/getStats";
 import { getTimeRangeParametersForPlot } from "../../refrigeratorStatus/utils";
 import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
 import { assetsQueryKeys } from "./assetsQuery";
 
-export type Em300ThAsset = Omit<Asset["frontend"], "custom_data"> & {
+export type Ws202Asset = Omit<Asset["frontend"], "custom_data"> & {
   custom_data: {
-    temperature: number;
-    humidity: number;
+    motion: boolean;
+    daylight: boolean;
   };
 };
 
-interface Em300ThHistory {
-  temperature: {
+interface Ws202History {
+  motion: {
     x: string[];
-    y: number[];
+    y: (0 | 1)[];
   };
-  humidity: {
+  daylight: {
     x: string[];
-    y: number[];
+    y: (0 | 1)[];
   };
 }
 
-const em300ThHistoryQueryKeys = {
+const ws202HistoryQueryKeys = {
   byAsset: (params: { assetId: string; timeRange: RelativeOrAbsoluteRange }) =>
-    [{ scope: "em300_th_history", params }] as const,
+    [{ scope: "ws202History", params }] as const,
 };
 
-export function useEm300ThHistoryQuery({
+export function useWs202HistoryQuery({
   assetId,
   timeRange,
 }: {
@@ -40,8 +39,8 @@ export function useEm300ThHistoryQuery({
   timeRange: RelativeOrAbsoluteRange;
 }) {
   return useQuery({
-    queryKey: em300ThHistoryQueryKeys.byAsset({ assetId, timeRange }),
-    queryFn: async (): Promise<Em300ThHistory> => {
+    queryKey: ws202HistoryQueryKeys.byAsset({ assetId, timeRange }),
+    queryFn: async (): Promise<Ws202History> => {
       const authInfo = getAuthInfo();
       const resp = await fetch(
         `${getPlatformInfo().url}/api/v/1/code/${
@@ -57,7 +56,7 @@ export function useEm300ThHistoryQuery({
             body: {
               defaultPlotParams: {
                 ...getTimeRangeParametersForPlot(timeRange),
-                attributes: ["temperature", "humidity"],
+                attributes: ["motion", "daylight"],
                 entityId: assetId,
                 entityType: "asset",
               },
@@ -74,40 +73,36 @@ export function useEm300ThHistoryQuery({
 
       const data: {
         results: {
-          lineData: Partial<Em300ThHistory>;
+          lineData: Partial<Ws202History>;
         };
       } = await resp.json();
 
       return {
-        temperature: data.results.lineData.temperature ?? { x: [], y: [] },
-        humidity: data.results.lineData.humidity ?? { x: [], y: [] },
+        daylight: data.results.lineData.daylight ?? { x: [], y: [] },
+        motion: data.results.lineData.motion ?? { x: [], y: [] },
       };
     },
     select: (data) => ({
       data: {
-        temperature: data.temperature
+        daylight: data.daylight
           ? {
-              x: data.temperature.x.map((timestamp) => new Date(timestamp)),
-              y: data.temperature.y,
+              x: data.daylight.x.map((timestamp) => new Date(timestamp)),
+              y: data.daylight.y,
             }
           : { x: [], y: [] },
-        humidity: data.humidity
+        motion: data.motion
           ? {
-              x: data.humidity.x.map((timestamp) => new Date(timestamp)),
-              y: data.humidity.y,
+              x: data.motion.x.map((timestamp) => new Date(timestamp)),
+              y: data.motion.y,
             }
           : { x: [], y: [] },
-      },
-      stats: {
-        temperature: getStats(data.temperature ? data.temperature.y : []),
-        humidity: getStats(data.humidity ? data.humidity.y : []),
       },
     }),
     refetchOnWindowFocus: false,
   });
 }
 
-export function useLiveDataForEm300Th({
+export function useLiveDataForWs202({
   assetId,
   timeRange,
 }: {
@@ -119,7 +114,7 @@ export function useLiveDataForEm300Th({
   useEffect(() => {
     const topics = [`_dbupdate/_monitor/_asset/${assetId}/locStatusHistory`];
     subscribe(topics, (msg) => {
-      const assetData = msg.payload as Em300ThAsset;
+      const assetData = msg.payload as Ws202Asset;
       const last_updated = assetData.last_updated;
       if (last_updated === null) {
         console.warn(
@@ -153,16 +148,16 @@ export function useLiveDataForEm300Th({
         }
       );
 
-      // update the historical temperature and humidity data
+      // update the historical daylight and motion data
       if (
-        (typeof assetData.custom_data.temperature !== "undefined" ||
-          typeof assetData.custom_data.humidity !== "undefined") &&
+        (typeof assetData.custom_data.daylight !== "undefined" ||
+          typeof assetData.custom_data.motion !== "undefined") &&
         !queryClient.isFetching({
-          queryKey: em300ThHistoryQueryKeys.byAsset({ assetId, timeRange }),
+          queryKey: ws202HistoryQueryKeys.byAsset({ assetId, timeRange }),
         })
       ) {
-        queryClient.setQueryData<Em300ThHistory | undefined>(
-          em300ThHistoryQueryKeys.byAsset({ assetId, timeRange }),
+        queryClient.setQueryData<Ws202History | undefined>(
+          ws202HistoryQueryKeys.byAsset({ assetId, timeRange }),
           (data) => {
             if (typeof data === "undefined") {
               return data;
@@ -170,23 +165,26 @@ export function useLiveDataForEm300Th({
 
             return {
               ...data,
-              temperature:
-                typeof assetData.custom_data.temperature !== "undefined"
+              daylight:
+                typeof assetData.custom_data.daylight !== "undefined"
                   ? {
-                      x: [...data.temperature.x, last_updated],
+                      x: [...data.daylight.x, last_updated],
                       y: [
-                        ...data.temperature.y,
-                        assetData.custom_data.temperature,
+                        ...data.daylight.y,
+                        assetData.custom_data.daylight === true ? 1 : 0,
                       ],
                     }
-                  : data.temperature,
-              humidity:
-                typeof assetData.custom_data.humidity !== "undefined"
+                  : data.daylight,
+              motion:
+                typeof assetData.custom_data.motion !== "undefined"
                   ? {
-                      x: [...data.humidity.x, last_updated],
-                      y: [...data.humidity.y, assetData.custom_data.humidity],
+                      x: [...data.motion.x, last_updated],
+                      y: [
+                        ...data.motion.y,
+                        assetData.custom_data.motion === true ? 1 : 0,
+                      ],
                     }
-                  : data.humidity,
+                  : data.motion,
             };
           }
         );

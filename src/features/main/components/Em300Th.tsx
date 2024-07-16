@@ -1,6 +1,7 @@
 import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
+  Em300ThAsset,
   useEm300ThHistoryQuery,
   useLiveDataForEm300Th,
 } from "../api/em300_th_history";
@@ -13,7 +14,7 @@ export function Em300Th({
   timeRange: RelativeOrAbsoluteRange;
 }) {
   // subscribe to the asset's current state
-  const asset = useAsset(assetId);
+  const asset = useAsset<Em300ThAsset>(assetId);
   // subscribe to the asset's live historical data
   const historyQuery = useEm300ThHistoryQuery({
     assetId: assetId,
