@@ -4,6 +4,7 @@ import { Am103L } from "./Am103L";
 import { Em300Th } from "./Em300Th";
 import { Ws101 } from "./Ws101";
 import { Ws202 } from "./Ws202";
+import { Ws301 } from "./Ws301";
 import { Ws303 } from "./Ws303";
 
 export const AssetSwitch = memo(
@@ -28,10 +29,13 @@ export const AssetSwitch = memo(
       case "AM103L":
         return <Am103L assetId={assetId} timeRange={timeRange} />;
       case "WS301":
+        return <Ws301 assetId={assetId} timeRange={timeRange} />;
       default:
         return (
           <div>
-            <h1>{assetId}</h1>
+            <h1>
+              Unsupported asset type '{assetType}' for asset with id '{assetId}'
+            </h1>
           </div>
         );
     }
