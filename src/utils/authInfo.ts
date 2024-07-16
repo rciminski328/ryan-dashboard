@@ -1,6 +1,6 @@
 interface AuthInfo {
-  systemKey: string;
-  userToken: string;
+  systemKey: "a8ddffe80cb2e3bb87dda0a28034";
+  userToken: "A8DDFFE80CBCB1C8E7D8B0F1F56A";
 }
 
 export function getAuthInfo(): AuthInfo {

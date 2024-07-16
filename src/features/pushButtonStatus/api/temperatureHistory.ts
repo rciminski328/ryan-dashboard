@@ -1,7 +1,7 @@
 import { QueryFunctionContext, useQuery } from "react-query";
-import { getPlatformInfo } from "../../EM300 TempHumidity/utils/getPlatformInfo.tsx/getPlatformInfo";
-import { getAuthInfo } from "../../../utils/authInfo";
-import { getStats } from "../../../utils/getStats";
+import { getPlatformInfo } from "../utils/getPlatformInfo";
+import { getAuthInfo } from "../utils/authInfo";
+import { getStats } from "../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 import { getTimeRangeParametersForPlot } from "../utils";
 
@@ -73,11 +73,11 @@ export function useTemperatureHistoryQuery(params: {
 }) {
   return useQuery(temperatureHistoryQueryKeys.byAsset(params), {
     queryFn: fetchTemperatureHistory,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
     select: (data) => ({
       data: { ...data, x: data ? data.x.map((d) => new Date(d)) : [] },
       stats: getStats(data ? data.y : []),
     }),
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
 }
