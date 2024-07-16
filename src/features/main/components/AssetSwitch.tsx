@@ -3,6 +3,7 @@ import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
 import { Em300Th } from "./Em300Th";
 import { Ws101 } from "./Ws101";
 import { Ws202 } from "./Ws202";
+import { Ws303 } from "./Ws303";
 
 export const AssetSwitch = memo(
   ({
@@ -22,6 +23,7 @@ export const AssetSwitch = memo(
       case "WS101":
         return <Ws101 assetId={assetId} timeRange={timeRange} />;
       case "WS303":
+        return <Ws303 assetId={assetId} timeRange={timeRange} />;
       case "AM103L":
       case "WS301":
       default:
