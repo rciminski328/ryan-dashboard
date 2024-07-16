@@ -1,9 +1,13 @@
 import { fetchAssets } from "@clearblade/ia-mfe-core";
 import { useQuery } from "react-query";
 
+export const assetsQueryKeys = {
+  all: [{ scope: "assets" }] as const,
+};
+
 export function useAssetsQuery() {
   return useQuery({
-    queryKey: [{ scope: "assets" }],
+    queryKey: assetsQueryKeys.all,
     queryFn: async () => {
       const data = await fetchAssets(new AbortController(), {
         filters: {
