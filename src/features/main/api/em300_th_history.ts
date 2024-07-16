@@ -39,7 +39,7 @@ export function useEm300ThHistoryQuery({
       const resp = await fetch(
         `${getPlatformInfo().url}/api/v/1/code/${
           authInfo.systemKey
-        }/fetchTableItems`,
+        }/fetchTableItems?id=plotsV2.read`,
         {
           method: "POST",
           headers: {
@@ -146,9 +146,10 @@ export function useLiveDataForEm300Th({
         }
       );
 
-      // update the historical temperature data
+      // update the historical temperature and humidity data
       if (
-        typeof assetData.custom_data.temperature !== "undefined" &&
+        (typeof assetData.custom_data.temperature !== "undefined" ||
+          typeof assetData.custom_data.humidity !== "undefined") &&
         !queryClient.isFetching({
           queryKey: em300ThHistoryQueryKeys.byAsset({ assetId, timeRange }),
         })
@@ -162,35 +163,23 @@ export function useLiveDataForEm300Th({
 
             return {
               ...data,
-              temperature: {
-                x: [...data.temperature.x, last_updated],
-                y: [...data.temperature.y, assetData.custom_data.temperature],
-              },
-            };
-          }
-        );
-      }
-
-      // update the historical humidity data
-      if (
-        typeof assetData.custom_data.humidity !== "undefined" &&
-        !queryClient.isFetching({
-          queryKey: em300ThHistoryQueryKeys.byAsset({ assetId, timeRange }),
-        })
-      ) {
-        queryClient.setQueryData<Em300ThHistory | undefined>(
-          em300ThHistoryQueryKeys.byAsset({ assetId, timeRange }),
-          (data) => {
-            if (typeof data === "undefined") {
-              return data;
-            }
-
-            return {
-              ...data,
-              humidity: {
-                x: [...data.humidity.x, last_updated],
-                y: [...data.humidity.y, assetData.custom_data.humidity],
-              },
+              temperature:
+                typeof assetData.custom_data.temperature !== "undefined"
+                  ? {
+                      x: [...data.temperature.x, last_updated],
+                      y: [
+                        ...data.temperature.y,
+                        assetData.custom_data.temperature,
+                      ],
+                    }
+                  : data.temperature,
+              humidity:
+                typeof assetData.custom_data.humidity !== "undefined"
+                  ? {
+                      x: [...data.humidity.x, last_updated],
+                      y: [...data.humidity.y, assetData.custom_data.humidity],
+                    }
+                  : data.humidity,
             };
           }
         );

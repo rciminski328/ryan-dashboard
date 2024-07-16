@@ -29,7 +29,12 @@ export function Main() {
   return (
     <div>
       {assetsQuery.data.map((asset) => (
-        <AssetSwitch key={asset.id} asset={asset} timeRange={timeRange} />
+        <AssetSwitch
+          key={asset.id}
+          assetId={asset.id}
+          assetType={asset.type}
+          timeRange={timeRange}
+        />
       ))}
     </div>
   );
