@@ -1,5 +1,5 @@
 import { QueryFunctionContext, useQuery } from "react-query";
-import { getPlatformInfo } from "../../../utils/getPlatformInfo";
+import { getPlatformInfo } from "../../EM300 TempHumidity/utils/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { average } from "simple-statistics";
 import { RelativeOrAbsoluteRange } from "../utils/types";

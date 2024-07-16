@@ -1,6 +1,6 @@
 interface AuthInfo {
-  systemKey: string;
-  userToken: string;
+  systemKey: 'a8ddffe80cb2e3bb87dda0a28034';
+  userToken: 'A8DDFFE80CBCB1C8E7D8B0F1F56A';
 }
 
 export function getAuthInfo(): AuthInfo {
@@ -8,10 +8,10 @@ export function getAuthInfo(): AuthInfo {
   if (localStorageItem === null) {
     throw new Error("Could not find asset_monitor_auth_info in local storage");
   }
-  const authInfo: { "rad-demo": AuthInfo } = JSON.parse(localStorageItem);
-  const radDemoAuthInfo = authInfo["rad-demo"];
+  const authInfo: { "ia-ia-clearblade_test1016": AuthInfo } = JSON.parse(localStorageItem);
+  const radDemoAuthInfo = authInfo["ia-ia-clearblade_test1016"];
   if (typeof radDemoAuthInfo === "undefined") {
     throw new Error("rad-demo auth info not found");
   }
-  return authInfo["rad-demo"];
+  return authInfo["ia-ia-clearblade_test1016"];
 }

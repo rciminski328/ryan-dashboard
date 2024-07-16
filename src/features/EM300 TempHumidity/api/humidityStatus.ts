@@ -1,14 +1,14 @@
 import { QueryFunctionContext, useQuery } from "react-query";
-import { getPlatformInfo } from "../../EM300 TempHumidity/utils/getPlatformInfo.tsx/getPlatformInfo";
-import { getAuthInfo } from "../../../utils/authInfo";
-import { getStats } from "../../../utils/getStats";
+import { getPlatformInfo } from "../../utils/getPlatformInfo";
+import { getAuthInfo } from "../../utils/authInfo";
+import { getStats } from "../../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../utils/types";
-import { getTimeRangeParametersForPlot } from "../utils";
+import { getTimeRangeParametersForPlot } from "../../../utils";
 
-interface PlotTemperatureResponse {
+interface PlotHumidityResponse {
   results: {
     lineData: {
-      temperature?: {
+      humidity?: {
         x: string[];
         y: number[];
       };
@@ -16,21 +16,21 @@ interface PlotTemperatureResponse {
   };
 }
 
-export const temperatureHistoryQueryKeys = {
+export const humidityHistoryQueryKeys = {
   byAsset: (params: { assetId: string; timeRange: RelativeOrAbsoluteRange }) =>
-    [{ scope: "temperatureHistory", params }] as const,
+    [{ scope: "humidityHistory", params }] as const,
 };
 
-async function fetchTemperatureHistory({
+async function fetchHumidityHistory({
   queryKey: [
     {
       params: { assetId, timeRange },
     },
   ],
 }: QueryFunctionContext<
-  ReturnType<typeof temperatureHistoryQueryKeys.byAsset>
+  ReturnType<typeof humidityHistoryQueryKeys.byAsset>
 >): Promise<
-  NonNullable<PlotTemperatureResponse["results"]["lineData"]["temperature"]>
+  NonNullable<PlotHumidityResponse["results"]["lineData"]["humidity"]>
 > {
   const authInfo = getAuthInfo();
   const resp = await fetch(
@@ -47,7 +47,7 @@ async function fetchTemperatureHistory({
         body: {
           defaultPlotParams: {
             ...getTimeRangeParametersForPlot(timeRange),
-            attributes: ["temperature"],
+            attributes: ["humidity"],
             entityId: assetId,
             entityType: "asset",
           },
@@ -62,17 +62,17 @@ async function fetchTemperatureHistory({
     throw errText;
   }
 
-  const data: PlotTemperatureResponse = await resp.json();
+  const data: PlotHumidityResponse = await resp.json();
 
-  return data.results.lineData.temperature ?? { x: [], y: [] };
+  return data.results.lineData.humidity ?? { x: [], y: [] };
 }
 
-export function useTemperatureHistoryQuery(params: {
+export function useHumidityHistoryQuery(params: {
   assetId: string;
   timeRange: RelativeOrAbsoluteRange;
 }) {
-  return useQuery(temperatureHistoryQueryKeys.byAsset(params), {
-    queryFn: fetchTemperatureHistory,
+  return useQuery(humidityHistoryQueryKeys.byAsset(params), {
+    queryFn: fetchHumidityHistory,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     select: (data) => ({
