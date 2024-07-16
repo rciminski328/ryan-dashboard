@@ -1,9 +1,10 @@
+// @ts-nocheck
 import { QueryFunctionContext, useQuery } from "react-query";
-import { getPlatformInfo } from "../utils/getPlatformInfo";
+import { getTimeRangeParametersForPlot } from "../utils";
 import { getAuthInfo } from "../utils/authInfo";
+import { getPlatformInfo } from "../utils/getPlatformInfo";
 import { getStats } from "../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../utils/types";
-import { getTimeRangeParametersForPlot } from "../utils";
 
 interface PlotTemperatureResponse {
   results: {

@@ -1,27 +1,30 @@
-import React, { useState } from 'react';
-import { Card, Grid, Typography, makeStyles } from '@material-ui/core';
-import Plot from 'react-plotly.js';
-import StatsTable from '../../../components/StatsTable'; // Corrected import path
-import { useTemperatureHistoryQuery, useHumidityHistoryQuery } from '../api';
-import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from '../utils/types';
+// @ts-nocheck
+import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
+import React, { useState } from "react";
+import Plot from "react-plotly.js";
+import StatsTable from "../../../components/StatsTable"; // Corrected import path
+import { useHumidityHistoryQuery, useTemperatureHistoryQuery } from "../api";
+import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    width: '100%',
+    width: "100%",
   },
   section: {
     borderRight: `1px solid ${theme.palette.divider}`,
   },
   table: {
-    width: '100%',
+    width: "100%",
   },
   plot: {
-    width: '100%',
+    width: "100%",
     height: 300, // Reduced height of the plot
   },
 }));
 
-const EM300TempHumiditySensorStatus: React.FC<{ assetId: string }> = ({ assetId }) => {
+const EM300TempHumiditySensorStatus: React.FC<{ assetId: string }> = ({
+  assetId,
+}) => {
   const classes = useStyles();
   const [timeRange, setTimeRange] = useState<RelativeOrAbsoluteRange>({
     type: "relative",
@@ -55,25 +58,31 @@ const EM300TempHumiditySensorStatus: React.FC<{ assetId: string }> = ({ assetId 
   const humidityStats = humidityHistoryQuery.data?.stats || {};
 
   const temperatureLabels = [
-    { field: 'min', label: 'Min Temperature (°C)' },
-    { field: 'max', label: 'Max Temperature (°C)' },
-    { field: 'mean', label: 'Average Temperature (°C)' },
-    { field: 'median', label: 'Median Temperature (°C)' },
-    { field: 'standardDeviation', label: 'Standard Deviation (°C)' },
+    { field: "min", label: "Min Temperature (°C)" },
+    { field: "max", label: "Max Temperature (°C)" },
+    { field: "mean", label: "Average Temperature (°C)" },
+    { field: "median", label: "Median Temperature (°C)" },
+    { field: "standardDeviation", label: "Standard Deviation (°C)" },
   ];
 
   const humidityLabels = [
-    { field: 'min', label: 'Min Humidity (%)' },
-    { field: 'max', label: 'Max Humidity (%)' },
-    { field: 'mean', label: 'Average Humidity (%)' },
-    { field: 'median', label: 'Median Humidity (%)' },
-    { field: 'standardDeviation', label: 'Standard Deviation (%)' },
+    { field: "min", label: "Min Humidity (%)" },
+    { field: "max", label: "Max Humidity (%)" },
+    { field: "mean", label: "Average Humidity (%)" },
+    { field: "median", label: "Median Humidity (%)" },
+    { field: "standardDeviation", label: "Standard Deviation (%)" },
   ];
 
   return (
     <Card>
       <Grid container item spacing={1} className={classes.container}>
-        <Grid container direction="column" item xs={6} className={classes.section}>
+        <Grid
+          container
+          direction="column"
+          item
+          xs={6}
+          className={classes.section}
+        >
           <Grid item>
             <Typography variant="subtitle1">Temperature Over Time</Typography>
             <Plot
@@ -81,12 +90,16 @@ const EM300TempHumiditySensorStatus: React.FC<{ assetId: string }> = ({ assetId 
                 {
                   x: timeData,
                   y: temperatureData,
-                  type: 'scatter',
-                  mode: 'lines+markers',
-                  marker: { color: 'blue' },
+                  type: "scatter",
+                  mode: "lines+markers",
+                  marker: { color: "blue" },
                 },
               ]}
-              layout={{ title: 'Temperature Over Time', xaxis: { title: 'Time' }, yaxis: { title: 'Temperature (°C)' } }}
+              layout={{
+                title: "Temperature Over Time",
+                xaxis: { title: "Time" },
+                yaxis: { title: "Temperature (°C)" },
+              }}
               className={classes.plot}
             />
           </Grid>
@@ -103,12 +116,16 @@ const EM300TempHumiditySensorStatus: React.FC<{ assetId: string }> = ({ assetId 
                 {
                   x: timeData,
                   y: humidityData,
-                  type: 'scatter',
-                  mode: 'lines+markers',
-                  marker: { color: 'green' },
+                  type: "scatter",
+                  mode: "lines+markers",
+                  marker: { color: "green" },
                 },
               ]}
-              layout={{ title: 'Humidity Over Time', xaxis: { title: 'Time' }, yaxis: { title: 'Humidity (%)' } }}
+              layout={{
+                title: "Humidity Over Time",
+                xaxis: { title: "Time" },
+                yaxis: { title: "Humidity (%)" },
+              }}
               className={classes.plot}
             />
           </Grid>

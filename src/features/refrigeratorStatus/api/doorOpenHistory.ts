@@ -1,9 +1,9 @@
 import { QueryFunctionContext, useQuery } from "react-query";
-import { getPlatformInfo } from "../../EM300 TempHumidity/utils/getPlatformInfo";
-import { getAuthInfo } from "../../../utils/authInfo";
 import { average } from "simple-statistics";
-import { RelativeOrAbsoluteRange } from "../utils/types";
+import { getAuthInfo } from "../../../utils/authInfo";
+import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getTimeRangeParametersForPlot } from "../utils";
+import { RelativeOrAbsoluteRange } from "../utils/types";
 
 interface PlotDoorOpenResponse {
   results: {

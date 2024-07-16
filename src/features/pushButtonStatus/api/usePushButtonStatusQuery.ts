@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
-import { getPlatformInfo } from "../../EM300 TempHumidity/utils/getPlatformInfo.tsx/getPlatformInfo";
 import { getAuthInfo } from "../../../utils/authInfo";
+import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 
 interface PushButtonStatusResponse {
   currentStatus: boolean;
