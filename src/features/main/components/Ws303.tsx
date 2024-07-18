@@ -104,21 +104,22 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   x: leakDetectedData.x,
                   y: leakDetectedData.y,
                   type: "scatter",
-                  mode: "lines+markers",
+                  mode: "lines",
+                  line: { shape: 'hv' }, // step line
                   marker: { color: leakDetectedData.y.map((value) => (value ? "green" : "red")) },
                 },
               ]}
               layout={{
-                title: "Leak Detection Audit",
                 xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
+                  visible: false,
                 },
-                yaxis: { title: "Leak Detected" },
+                yaxis: {
+                  visible: false,
+                },
                 height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
+                margin: { t: 40, b: 0, l: 40, r: 40 }, // Adjust margins
               }}
+              config={{ displayModeBar: false }}
               className={classes.plot}
             />
           </Grid>
@@ -153,6 +154,10 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
+                  <td>{leakStats.count}</td>
+                </tr>
+                <tr>
+                  <td>Times Leaked</td>
                   <td>{leakStats.count}</td>
                 </tr>
                 <tr>

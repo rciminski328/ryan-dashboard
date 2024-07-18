@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   plot: {
     width: "100%",
-    height: 300, // Reduced height of the plot
+    height: 300, // Adjusted height of the plot
   },
   label: {
     marginBottom: theme.spacing(2),
@@ -34,6 +34,10 @@ const useStyles = makeStyles((theme) => ({
     '& th, & td': {
       padding: theme.spacing(1),
     },
+    fontSize: "1.2rem", // Increase font size for better visibility
+  },
+  largeText: {
+    fontSize: "1.5rem", // Larger text for better visibility
   },
 }));
 
@@ -76,7 +80,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
         {/* Temperature Section */}
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - Temperature Trend (°C)`}</strong></Typography>
+            <Typography variant="subtitle1"><strong>{`${label} - Temperature Trend (°F)`}</strong></Typography>
             <Plot
               data={[
                 {
@@ -94,9 +98,9 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
-                yaxis: { title: "Temperature (°C)" },
-                height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
+                yaxis: { title: "Temperature (°F)" },
+                height: 300, // Adjust height to reduce whitespace
+                margin: { t: 40, b: 60, l: 40, r: 40 }, // Adjust margins to reduce whitespace
               }}
               className={classes.plot}
             />
@@ -110,9 +114,9 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   type: "indicator",
                   mode: "gauge+number",
                   value: custom_data.temperature,
-                  title: { text: "Current Temperature (°C)" },
+                  title: { text: "Current Temperature (°F)" },
                   gauge: {
-                    axis: { range: [0, 60] },
+                    axis: { range: [0, 100] },
                     steps: [
                       { range: [0, 20], color: "lightgray" },
                       { range: [20, 40], color: "gray" },
@@ -126,7 +130,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   },
                 },
               ]}
-              layout={{ width: 300, height: 300, margin: { t: 0, b: 0 } }}
+              layout={{ width: 200, height: 200, margin: { t: 0, b: 0 } }}
             />
           </Grid>
 
@@ -187,8 +191,8 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
                 yaxis: { title: "Humidity (%)" },
-                height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
+                height: 300, // Adjust height to reduce whitespace
+                margin: { t: 40, b: 60, l: 40, r: 40 }, // Adjust margins to reduce whitespace
               }}
               className={classes.plot}
             />
@@ -218,7 +222,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   },
                 },
               ]}
-              layout={{ width: 300, height: 300, margin: { t: 0, b: 0 } }}
+              layout={{ width: 200, height: 200, margin: { t: 0, b: 0 } }}
             />
           </Grid>
 

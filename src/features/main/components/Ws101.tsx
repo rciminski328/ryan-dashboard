@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
   statsTable: {
     marginTop: theme.spacing(2),
-    '& th, & td': {
+    "& th, & td": {
       padding: theme.spacing(1),
     },
   },
@@ -55,10 +55,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
-  assetId,
-  timeRange,
-}) => {
+const Ws101: React.FC<{
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}> = ({ assetId, timeRange }) => {
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws101Asset>(assetId);
@@ -81,11 +81,13 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     return <div>Error loading data</div>;
   }
 
-  const custom_data = assetQuery.data.custom_data;
-  const label = assetQuery.data.label;
+  const custom_data = assetQuery.data?.custom_data || {};
+  const label = assetQuery.data?.label || "";
 
-  // Calculate statistics for button pushed
-  const buttonPushedStats = getStats(historyData.data.button_pushed.y);
+  // Calculate count of button pushes
+  const buttonPushedCount = historyData.data.button_pushed.y.filter(
+    (value) => value === 1
+  ).length;
 
   return (
     <Card>
@@ -94,38 +96,53 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
         {/* Button Pushed Section */}
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - Button Pushed Audit`}</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>{`${label} - Button Pushed Audit`}</strong>
+            </Typography>
             <Plot
               data={[
                 {
                   x: historyData.data.button_pushed.x,
                   y: historyData.data.button_pushed.y,
                   type: "scatter",
-                  mode: "lines+markers",
-                  marker: { color: historyData.data.button_pushed.y.map((value) => (value ? "green" : "red")) },
+                  mode: "lines",
+                  line: { shape: "hv" }, // step line
+                  marker: {
+                    color: historyData.data.button_pushed.y.map((value) =>
+                      value ? "green" : "red"
+                    ),
+                  },
                 },
               ]}
               layout={{
-                title: "Button Pushed Audit",
                 xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
+                  showgrid: false,
+                  zeroline: false,
+                  visible: false,
                 },
-                yaxis: { title: "Button Status" },
+                yaxis: {
+                  showgrid: false,
+                  zeroline: false,
+                  visible: false,
+                },
                 height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
+                margin: { t: 40, b: 0, l: 40, r: 40 }, // Adjust margins
               }}
+              config={{ displayModeBar: false }}
               className={classes.plot}
             />
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Button Pushed</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>Button Pushed</strong>
+            </Typography>
             <div className={classes.statusContainer}>
               {custom_data.button_pushed ? (
                 <>
-                  <CheckCircleIcon className={`${classes.statusIcon} ${classes.pushed}`} />
+                  <CheckCircleIcon
+                    className={`${classes.statusIcon} ${classes.pushed}`}
+                  />
                   <Typography variant="body1" className={classes.largeText}>
                     YES
                   </Typography>
@@ -139,7 +156,9 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Button Pushed Stats</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>Button Pushed Stats</strong>
+            </Typography>
             <table className={classes.statsTable}>
               <thead>
                 <tr>
@@ -150,12 +169,13 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{buttonPushedStats.count}</td>
+                  <td>{buttonPushedCount}</td>
                 </tr>
                 <tr>
-                  <td>Average Duration</td>
-                  <td>{buttonPushedStats.average.toFixed(2)} sec</td>
+                  <td>Times Pushed</td>
+                  <td>{buttonPushedCount}</td>
                 </tr>
+                {/* You may want to add other stats here */}
               </tbody>
             </table>
           </Grid>

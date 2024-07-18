@@ -10,8 +10,7 @@ import {
 } from "../api/ws301_history";
 import { useAsset } from "../api/assetsQuery";
 import { RelativeOrAbsoluteRange } from "../utils/types";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import CancelIcon from "@material-ui/icons/Cancel";
+import { getStats } from "../../../utils/getStats";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -42,6 +41,16 @@ const useStyles = makeStyles((theme) => ({
   },
   label: {
     marginBottom: theme.spacing(2),
+  },
+  statsTable: {
+    marginTop: theme.spacing(2),
+    '& th, & td': {
+      padding: theme.spacing(1),
+    },
+  },
+  largeText: {
+    fontSize: "2rem",
+    fontWeight: "bold",
   },
 }));
 
@@ -74,41 +83,17 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const custom_data = assetQuery.data.custom_data;
   const label = assetQuery.data.label;
 
+  // Calculate statistics for door open/close
+  const doorStats = getStats(historyData.data.doorOpen.y);
+
   return (
     <Card>
-      <Grid container item spacing={1} className={classes.container}>
-        <Grid
-          container
-          direction="column"
-          item
-          xs={4}
-          className={classes.section}
-        >
-          <Grid item>
-            <Typography variant="subtitle1">Current State</Typography>
-            <Typography variant="h6" className={classes.label}>{label}</Typography>
-            <div className={classes.statusContainer}>
-              {custom_data.isOpen ? (
-                <CheckCircleIcon className={`${classes.statusIcon} ${classes.open}`} />
-              ) : (
-                <CancelIcon className={`${classes.statusIcon} ${classes.closed}`} />
-              )}
-              <Typography variant="body1">
-                Door Status: {custom_data.isOpen ? "Open" : "Closed"}
-              </Typography>
-            </div>
-          </Grid>
-        </Grid>
-
-        <Grid
-          container
-          direction="column"
-          item
-          xs={8}
-          className={classes.section}
-        >
-          <Grid item>
-            <Typography variant="subtitle1">Door Status Over Time</Typography>
+      <Typography variant="h4">{label}</Typography>
+      <Grid container spacing={1} className={classes.container}>
+        {/* Door Status Section */}
+        <Grid container item xs={12} spacing={1}>
+          <Grid item xs={6}>
+            <Typography variant="subtitle1"><strong>{`${label} - Door Open/Close Audit`}</strong></Typography>
             <Plot
               data={[
                 {
@@ -116,16 +101,60 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   y: historyData.data.doorOpen.y,
                   type: "scatter",
                   mode: "lines+markers",
+                  line: { shape: 'hv' }, // step line
                   marker: { color: historyData.data.doorOpen.y.map((value) => (value ? "green" : "red")) },
                 },
               ]}
               layout={{
-                title: "Door Status Over Time",
-                xaxis: { title: "Time" },
-                yaxis: { title: "Door Status" },
+                title: "Door Open/Close Audit",
+                xaxis: {
+                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
+                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
+                  nticks: 10, // Adjust the number of ticks to make it more readable
+                },
+                yaxis: { 
+                  tickvals: [0, 1],
+                  ticktext: ["Closed", "Open"],
+                },
+                height: 300,
+                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
               }}
               className={classes.plot}
             />
+          </Grid>
+
+          <Grid item xs={3}>
+            <Typography variant="subtitle1"><strong>Door Status</strong></Typography>
+            <div className={classes.statusContainer}>
+              <Typography
+                variant="body1"
+                className={`${classes.largeText} ${custom_data.isOpen ? classes.open : classes.closed}`}
+              >
+                {custom_data.isOpen ? "OPEN" : "CLOSED"}
+              </Typography>
+            </div>
+          </Grid>
+
+          <Grid item xs={3}>
+            <Typography variant="subtitle1"><strong>Door Stats</strong></Typography>
+            <table className={classes.statsTable}>
+              <thead>
+                <tr>
+                  <th>Statistic</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Count</td>
+                  <td>{doorStats.count}</td>
+                </tr>
+                <tr>
+                  <td>Average Duration</td>
+                  <td>{doorStats.average.toFixed(2)} sec</td>
+                </tr>
+              </tbody>
+            </table>
           </Grid>
         </Grid>
       </Grid>

@@ -90,7 +90,6 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
 
   return (
     <Card>
-      <Typography variant="h4">{label}</Typography>
       <Grid container spacing={1} className={classes.container}>
         {/* Motion Detection Section */}
         <Grid container item xs={12} spacing={1}>
@@ -102,8 +101,9 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   x: historyData.data.motion.x,
                   y: historyData.data.motion.y,
                   type: "scatter",
-                  mode: "lines+markers",
-                  marker: { color: historyData.data.motion.y.map((value) => (value ? "green" : "red")) },
+                  mode: "lines",
+                  line: { shape: 'hv' }, // step line
+                  marker: { color: "blue" },
                 },
               ]}
               layout={{
@@ -113,7 +113,11 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
-                yaxis: { title: "Motion Detected" },
+                yaxis: { 
+                  title: "Motion Detected",
+                  tickvals: [0, 1],
+                  ticktext: ["0", "1"],
+                },
                 height: 300,
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
               }}
@@ -172,8 +176,9 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   x: historyData.data.daylight.x,
                   y: historyData.data.daylight.y,
                   type: "scatter",
-                  mode: "lines+markers",
-                  marker: { color: historyData.data.daylight.y.map((value) => (value ? "yellow" : "gray")) },
+                  mode: "lines",
+                  line: { shape: 'hv' }, // step line
+                  marker: { color: "yellow" },
                 },
               ]}
               layout={{
@@ -183,7 +188,11 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
-                yaxis: { title: "Daylight Detected" },
+                yaxis: { 
+                  title: "Daylight Detected",
+                  tickvals: [0, 1],
+                  ticktext: ["0", "1"],
+                },
                 height: 300,
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
               }}
