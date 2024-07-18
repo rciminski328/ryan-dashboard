@@ -1,48 +1,125 @@
-import React, { useEffect } from 'react';
-import { Box, Card, Grid, Typography, makeStyles } from '@material-ui/core';
-import RefrigeratorStatus from '../features/refrigeratorStatus/components/RefrigeratorStatus';
+// StaticPlot.tsx
+import React from "react";
+import Plot from "react-plotly.js";
+import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
 
-const usePluginStyles = makeStyles((theme) => ({
-  plugin: {
-    marginTop: theme.spacing(1),
-    width: '100%',
+const useStyles = makeStyles((theme) => ({
+  container: {
+    width: "100%",
   },
-  card: {
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    padding: theme.spacing(2),
+  section: {
+    borderRight: `1px solid ${theme.palette.divider}`,
+  },
+  plot: {
+    width: "100%",
+    height: 300,
   },
 }));
 
-interface DashboardPluginProps {
-  refrigeratorAssetId: string;
-}
+const StaticPlot: React.FC = () => {
+  const classes = useStyles();
 
-const DashboardPlugin: React.FC<DashboardPluginProps> = ({ refrigeratorAssetId }) => {
-  const classes = usePluginStyles();
-
-  useEffect(() => {
-    const elem = document.createElement('link');
-    elem.setAttribute('href', 'https://db.onlinewebfonts.com/c/fa619a1b284957d9e6469c5cd6c717c4?family=ATT+Aleck+Sans+Medium+Regular');
-    elem.setAttribute('rel', 'stylesheet');
-    document.getElementsByTagName('head')[0].appendChild(elem);
-  }, []);
+  const temperatureData = [20, 21, 22, 23, 24, 25];
+  const humidityData = [40, 42, 44, 46, 48, 50];
+  const co2Data = [380, 390, 400, 410, 420, 430];
+  const timeData = [
+    "2024-07-15T12:00:00",
+    "2024-07-15T13:00:00",
+    "2024-07-15T14:00:00",
+    "2024-07-15T15:00:00",
+    "2024-07-15T16:00:00",
+    "2024-07-15T17:00:00",
+  ].map((timestamp) => new Date(timestamp).toLocaleString());
 
   return (
-    <Grid container direction="column" className={classes.plugin} spacing={3}>
-      <Grid item xs={12}>
-        <Card className={classes.card}>
-          <Box>
-            <Typography color="secondary" variant="h5">
-              Refrigerator Power Status
-            </Typography>
-            <RefrigeratorStatus assetId={refrigeratorAssetId} />
-          </Box>
-        </Card>
+    <Card>
+      <Grid container item spacing={1} className={classes.container}>
+        <Grid
+          container
+          direction="column"
+          item
+          xs={4}
+          className={classes.section}
+        >
+          <Grid item>
+            <Typography variant="subtitle1">Current State</Typography>
+            <p>Temperature: 22 °C</p>
+            <p>Humidity: 45 %</p>
+            <p>Co2: 400 ppm</p>
+          </Grid>
+        </Grid>
+
+        <Grid
+          container
+          direction="column"
+          item
+          xs={8}
+          className={classes.section}
+        >
+          <Grid item>
+            <Typography variant="subtitle1">Temperature Over Time</Typography>
+            <Plot
+              data={[
+                {
+                  x: timeData,
+                  y: temperatureData,
+                  type: "scatter",
+                  mode: "lines+markers",
+                  marker: { color: "blue" },
+                },
+              ]}
+              layout={{
+                title: "Temperature Over Time",
+                xaxis: { title: "Time" },
+                yaxis: { title: "Temperature (°C)" },
+              }}
+              className={classes.plot}
+            />
+          </Grid>
+          <Grid item>
+            <Typography variant="subtitle1">Humidity Over Time</Typography>
+            <Plot
+              data={[
+                {
+                  x: timeData,
+                  y: humidityData,
+                  type: "scatter",
+                  mode: "lines+markers",
+                  marker: { color: "green" },
+                },
+              ]}
+              layout={{
+                title: "Humidity Over Time",
+                xaxis: { title: "Time" },
+                yaxis: { title: "Humidity (%)" },
+              }}
+              className={classes.plot}
+            />
+          </Grid>
+          <Grid item>
+            <Typography variant="subtitle1">CO2 Over Time</Typography>
+            <Plot
+              data={[
+                {
+                  x: timeData,
+                  y: co2Data,
+                  type: "scatter",
+                  mode: "lines+markers",
+                  marker: { color: "red" },
+                },
+              ]}
+              layout={{
+                title: "CO2 Over Time",
+                xaxis: { title: "Time" },
+                yaxis: { title: "CO2 (ppm)" },
+              }}
+              className={classes.plot}
+            />
+          </Grid>
+        </Grid>
       </Grid>
-    </Grid>
+    </Card>
   );
 };
 
-export default DashboardPlugin;
+export default StaticPlot;
