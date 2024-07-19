@@ -81,7 +81,7 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const label = assetData.label;
 
   // Ensure historyData and its properties are defined before accessing them
-  const leakDetectedData = historyData?.data?.leakDetected || { x: [], y: [] };
+  const leakDetectedData = historyData?.data?.leak_detected || { x: [], y: [] };
 
   // Calculate statistics for leak detection
   const leakStats = getStats(leakDetectedData.y);
@@ -126,7 +126,7 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           <Grid item xs={3}>
             <Typography variant="subtitle1"><strong>Leak Detected</strong></Typography>
             <div className={classes.statusContainer}>
-              {custom_data.leakDetected ? (
+              {custom_data.leak_detected ? (
                 <>
                   <CheckCircleIcon className={`${classes.statusIcon} ${classes.detected}`} />
                   <Typography variant="body1" className={classes.largeText}>
@@ -152,16 +152,8 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               </thead>
               <tbody>
                 <tr>
-                  <td>Count</td>
-                  <td>{leakStats.count}</td>
-                </tr>
-                <tr>
                   <td>Times Leaked</td>
                   <td>{leakStats.count}</td>
-                </tr>
-                <tr>
-                  <td>Average Duration</td>
-                  <td>{leakStats.average.toFixed(2)} sec</td>
                 </tr>
               </tbody>
             </table>
