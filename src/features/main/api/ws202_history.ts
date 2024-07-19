@@ -68,7 +68,7 @@ export function useWs202HistoryQuery({
 
       if (!resp.ok) {
         const errText = await resp.text();
-        throw errText;
+        throw new Error(errText);
       }
 
       const data: {
@@ -86,32 +86,26 @@ export function useWs202HistoryQuery({
       return {
         daylight: {
           x: daylightData.x,
-          y: daylightData.y,
+          y: daylightData.y as (0 | 1)[],
           count: daylightCount,
         },
         motion: {
           x: motionData.x,
-          y: motionData.y,
+          y: motionData.y as (0 | 1)[],
           count: motionCount,
         },
       };
     },
     select: (data) => ({
-      data: {
-        daylight: data.daylight
-          ? {
-              x: data.daylight.x.map((timestamp) => new Date(timestamp)),
-              y: data.daylight.y,
-              count: data.daylight.count,
-            }
-          : { x: [], y: [], count: 0 },
-        motion: data.motion
-          ? {
-              x: data.motion.x.map((timestamp) => new Date(timestamp)),
-              y: data.motion.y,
-              count: data.motion.count,
-            }
-          : { x: [], y: [], count: 0 },
+      daylight: {
+        x: data.daylight.x.map((timestamp) => new Date(timestamp)),
+        y: data.daylight.y,
+        count: data.daylight.count,
+      },
+      motion: {
+        x: data.motion.x.map((timestamp) => new Date(timestamp)),
+        y: data.motion.y,
+        count: data.motion.count,
       },
     }),
     refetchOnWindowFocus: false,
@@ -127,9 +121,10 @@ export function useLiveDataForWs202({
 }) {
   const { subscribe, unsubscribe } = useMessaging();
   const queryClient = useQueryClient();
+
   useEffect(() => {
     const topics = [`_dbupdate/_monitor/_asset/${assetId}/locStatusHistory`];
-    subscribe(topics, (msg) => {
+    const handleMessage = (msg: any) => {
       const assetData = msg.payload as Ws202Asset;
       const last_updated = assetData.last_updated;
       if (last_updated === null) {
@@ -179,12 +174,12 @@ export function useLiveDataForWs202({
               return {
                 daylight: {
                   x: [last_updated],
-                  y: [assetData.custom_data.daylight === true ? 1 : 0],
+                  y: [assetData.custom_data.daylight === true ? 1 : 0] as (0 | 1)[],
                   count: assetData.custom_data.daylight === true ? 1 : 0,
                 },
                 motion: {
                   x: [last_updated],
-                  y: [assetData.custom_data.motion === true ? 1 : 0],
+                  y: [assetData.custom_data.motion === true ? 1 : 0] as (0 | 1)[],
                   count: assetData.custom_data.motion === true ? 1 : 0,
                 },
               };
@@ -196,7 +191,7 @@ export function useLiveDataForWs202({
                   y: [
                     ...data.daylight.y,
                     assetData.custom_data.daylight === true ? 1 : 0,
-                  ],
+                  ] as (0 | 1)[],
                   count: (data.daylight.y || []).filter(value => value === 1).length + (assetData.custom_data.daylight === true ? 1 : 0),
                 }
               : data.daylight;
@@ -207,7 +202,7 @@ export function useLiveDataForWs202({
                   y: [
                     ...data.motion.y,
                     assetData.custom_data.motion === true ? 1 : 0,
-                  ],
+                  ] as (0 | 1)[],
                   count: (data.motion.y || []).filter(value => value === 1).length + (assetData.custom_data.motion === true ? 1 : 0),
                 }
               : data.motion;
@@ -220,7 +215,9 @@ export function useLiveDataForWs202({
           }
         );
       }
-    });
+    };
+
+    subscribe(topics, handleMessage);
 
     return () => unsubscribe(topics);
   }, [assetId, timeRange, subscribe, unsubscribe, queryClient]);

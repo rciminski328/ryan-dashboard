@@ -18,9 +18,6 @@ const useStyles = makeStyles((theme) => ({
   section: {
     borderRight: `1px solid ${theme.palette.divider}`,
   },
-  table: {
-    width: "100%",
-  },
   plot: {
     width: "100%",
     height: 300,
@@ -60,16 +57,8 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws202Asset>(assetId);
-
-  const { data: historyData } = useWs202HistoryQuery({
-    assetId: assetId,
-    timeRange,
-  });
-
-  useLiveDataForWs202({
-    assetId: assetId,
-    timeRange,
-  });
+  const { data: historyData } = useWs202HistoryQuery({ assetId, timeRange });
+  useLiveDataForWs202({ assetId, timeRange });
 
   if (assetQuery.isLoading || !historyData) {
     return <div>Loading...</div>;
@@ -83,12 +72,12 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const label = assetQuery.data.label;
 
   // Convert 1 to "true" and 0 to "false" for hover information
-  const motionData = historyData.data.motion.y.map(val => val ? "true" : "false");
-  const daylightData = historyData.data.daylight.y.map(val => val ? "true" : "false");
+  const motionData = historyData.motion.y.map(val => val ? "true" : "false");
+  const daylightData = historyData.daylight.y.map(val => val ? "true" : "false");
 
   // Calculate statistics for motion and daylight
-  const motionStats = getStats(historyData.data.motion.y);
-  const daylightStats = getStats(historyData.data.daylight.y);
+  const motionStats = getStats(historyData.motion.y);
+  const daylightStats = getStats(historyData.daylight.y);
 
   return (
     <Card>
@@ -100,8 +89,8 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
             <Plot
               data={[
                 {
-                  x: historyData.data.motion.x,
-                  y: historyData.data.motion.y,
+                  x: historyData.motion.x,
+                  y: historyData.motion.y,
                   type: "scatter",
                   mode: "lines",
                   line: { shape: 'hv' }, // step line
@@ -112,18 +101,18 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               layout={{
                 title: "Motion Detection Audit",
                 xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
+                  title: { text: "Time", standoff: 20 },
+                  tickformat: "%I:%M %p",
+                  nticks: 10,
                 },
                 yaxis: { 
                   title: "Motion Detected",
-                  tickvals: [0, 1], // Ensure the correct values are used
-                  ticktext: ["false", "true"], // Correctly map 0 to "false" and 1 to "true"
-                  range: [0, 1], // Set range to cover the values 0 and 1
+                  tickvals: [0, 1],
+                  ticktext: ["false", "true"],
+                  range: [0, 1],
                 },
                 height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
+                margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
@@ -159,7 +148,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{historyData.data.motion.count}</td> {/* Display motion count */}
+                  <td>{historyData.motion.count}</td>
                 </tr>
                 <tr>
                   <td>Average Duration</td>
@@ -177,11 +166,11 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
             <Plot
               data={[
                 {
-                  x: historyData.data.daylight.x,
-                  y: historyData.data.daylight.y,
+                  x: historyData.daylight.x,
+                  y: historyData.daylight.y,
                   type: "scatter",
                   mode: "lines",
-                  line: { shape: 'hv' }, // step line
+                  line: { shape: 'hv' },
                   marker: { color: "yellow" },
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Daylight Detected:</b> %{y}<extra></extra>`,
                 },
@@ -189,18 +178,18 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               layout={{
                 title: "Daylight Detection Audit",
                 xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
+                  title: { text: "Time", standoff: 20 },
+                  tickformat: "%I:%M %p",
+                  nticks: 10,
                 },
                 yaxis: { 
                   title: "Daylight Detected",
-                  tickvals: [0, 1], // Ensure the correct values are used
-                  ticktext: ["false", "true"], // Correctly map 0 to "false" and 1 to "true"
-                  range: [0, 1], // Set range to cover the values 0 and 1
+                  tickvals: [0, 1],
+                  ticktext: ["false", "true"],
+                  range: [0, 1],
                 },
                 height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
+                margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
@@ -236,7 +225,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{historyData.data.daylight.count}</td> {/* Display daylight count */}
+                  <td>{historyData.daylight.count}</td>
                 </tr>
                 <tr>
                   <td>Average Duration</td>
