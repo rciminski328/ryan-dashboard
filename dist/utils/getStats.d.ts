@@ -1,4 +1,5 @@
-export declare function getStats(values: number[]): {
+export declare function getStats(data: number[]): {
+    count: number;
     min: number;
     max: number;
     average: number;

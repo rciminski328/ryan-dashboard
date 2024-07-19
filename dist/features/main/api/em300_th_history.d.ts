@@ -22,6 +22,7 @@ export declare function useEm300ThHistoryQuery({ assetId, timeRange, }: {
     };
     stats: {
         temperature: {
+            count: number;
             min: number;
             max: number;
             average: number;
@@ -29,6 +30,7 @@ export declare function useEm300ThHistoryQuery({ assetId, timeRange, }: {
             stdDev: number;
         };
         humidity: {
+            count: number;
             min: number;
             max: number;
             average: number;

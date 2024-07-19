@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
   section: {
     borderRight: `1px solid ${theme.palette.divider}`,
   },
-  table: {
-    width: "100%",
-  },
   plot: {
     width: "100%",
     height: 300,
@@ -61,17 +58,10 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws301Asset>(assetId);
+  const { data: historyData } = useWs301HistoryQuery({ assetId, timeRange });
+  useLiveDataForWs301({ assetId, timeRange });
 
-  const { data: historyData } = useWs301HistoryQuery({
-    assetId: assetId,
-    timeRange,
-  });
-
-  useLiveDataForWs301({
-    assetId: assetId,
-    timeRange,
-  });
-
+  // Handle loading and error states
   if (assetQuery.isLoading || !historyData) {
     return <div>Loading...</div>;
   }
@@ -80,15 +70,23 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     return <div>Error loading data</div>;
   }
 
-  const custom_data = assetQuery.data.custom_data;
-  const label = assetQuery.data.label;
+  // Ensure assetQuery.data is defined before accessing its properties
+  const assetData = assetQuery.data;
+  if (!assetData) {
+    return <div>No asset data available</div>;
+  }
+
+  const custom_data = assetData.custom_data;
+  const label = assetData.label;
+
+  // Ensure historyData and its properties are defined before accessing them
+  const doorOpenData = historyData?.data?.doorOpen || { x: [], y: [] };
 
   // Calculate statistics for door open/close
-  const doorStats = getStats(historyData.data.doorOpen.y);
+  const doorStats = getStats(doorOpenData.y);
 
   return (
     <Card>
-      <Typography variant="h4">{label}</Typography>
       <Grid container spacing={1} className={classes.container}>
         {/* Door Status Section */}
         <Grid container item xs={12} spacing={1}>
@@ -97,12 +95,13 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
             <Plot
               data={[
                 {
-                  x: historyData.data.doorOpen.x,
-                  y: historyData.data.doorOpen.y,
+                  x: doorOpenData.x,
+                  y: doorOpenData.y,
                   type: "scatter",
                   mode: "lines+markers",
                   line: { shape: 'hv' }, // step line
-                  marker: { color: historyData.data.doorOpen.y.map((value) => (value ? "green" : "red")) },
+                  marker: { color: doorOpenData.y.map((value) => (value ? "green" : "red")) },
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Door Open:</b> %{y}<extra></extra>`,
                 },
               ]}
               layout={{
@@ -113,11 +112,13 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
                 yaxis: { 
+                  title: "Door Status",
                   tickvals: [0, 1],
                   ticktext: ["Closed", "Open"],
+                  range: [0, 1],
                 },
                 height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
+                margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
@@ -128,9 +129,9 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
             <div className={classes.statusContainer}>
               <Typography
                 variant="body1"
-                className={`${classes.largeText} ${custom_data.isOpen ? classes.open : classes.closed}`}
+                className={`${classes.largeText} ${custom_data.doorOpen ? classes.open : classes.closed}`}
               >
-                {custom_data.isOpen ? "OPEN" : "CLOSED"}
+                {custom_data.doorOpen ? "OPEN" : "CLOSED"}
               </Typography>
             </div>
           </Grid>
@@ -147,6 +148,10 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
+                  <td>{doorStats.count}</td>
+                </tr>
+                <tr>
+                  <td>Times Opened</td>
                   <td>{doorStats.count}</td>
                 </tr>
                 <tr>

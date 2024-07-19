@@ -9,9 +9,9 @@ import {
   useLiveDataForWs101,
 } from "../api/ws101_history";
 import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { getStats } from "../../../utils/getStats";
+import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
   },
   section: {
     borderRight: `1px solid ${theme.palette.divider}`,
-  },
-  table: {
-    width: "100%",
   },
   plot: {
     width: "100%",
@@ -45,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   statsTable: {
     marginTop: theme.spacing(2),
-    "& th, & td": {
+    '& th, & td': {
       padding: theme.spacing(1),
     },
   },
@@ -55,24 +52,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Ws101: React.FC<{
-  assetId: string;
-  timeRange: RelativeOrAbsoluteRange;
-}> = ({ assetId, timeRange }) => {
+const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
+  assetId,
+  timeRange,
+}) => {
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws101Asset>(assetId);
+  const { data: historyData } = useWs101HistoryQuery({ assetId, timeRange });
+  useLiveDataForWs101({ assetId, timeRange });
 
-  const { data: historyData } = useWs101HistoryQuery({
-    assetId: assetId,
-    timeRange,
-  });
-
-  useLiveDataForWs101({
-    assetId: assetId,
-    timeRange,
-  });
-
+  // Handle loading and error states
   if (assetQuery.isLoading || !historyData) {
     return <div>Loading...</div>;
   }
@@ -81,84 +71,76 @@ const Ws101: React.FC<{
     return <div>Error loading data</div>;
   }
 
-  const custom_data = assetQuery.data?.custom_data || {};
-  const label = assetQuery.data?.label || "";
+  // Ensure assetQuery.data is defined before accessing its properties
+  const assetData = assetQuery.data;
+  if (!assetData) {
+    return <div>No asset data available</div>;
+  }
+
+  const custom_data = assetData.custom_data;
+  const label = assetData.label;
 
   // Calculate count of button pushes
   const buttonPushedCount = historyData.data.button_pushed.y.filter(
     (value) => value === 1
   ).length;
 
+  // Convert 1 to "true" and 0 to "false" for hover information
+  const buttonPushedData = historyData.data.button_pushed.y.map(val => val ? "true" : "false");
+
   return (
     <Card>
-      <Typography variant="h4">{label}</Typography>
       <Grid container spacing={1} className={classes.container}>
         {/* Button Pushed Section */}
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={6}>
-            <Typography variant="subtitle1">
-              <strong>{`${label} - Button Pushed Audit`}</strong>
-            </Typography>
+            <Typography variant="subtitle1"><strong>{`${label} - Button Pushed Audit`}</strong></Typography>
             <Plot
               data={[
                 {
                   x: historyData.data.button_pushed.x,
                   y: historyData.data.button_pushed.y,
                   type: "scatter",
-                  mode: "lines",
+                  mode: "lines+markers",
                   line: { shape: "hv" }, // step line
-                  marker: {
-                    color: historyData.data.button_pushed.y.map((value) =>
-                      value ? "green" : "red"
-                    ),
-                  },
+                  marker: { color: historyData.data.button_pushed.y.map((value) => (value ? "green" : "red")) },
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Button Pushed:</b> %{y}<extra></extra>`,
                 },
               ]}
               layout={{
+                title: "Button Pushed Audit",
                 xaxis: {
-                  showgrid: false,
-                  zeroline: false,
-                  visible: false,
+                  title: { text: "Time", standoff: 20 },
+                  tickformat: "%I:%M %p",
+                  nticks: 10,
                 },
-                yaxis: {
-                  showgrid: false,
-                  zeroline: false,
-                  visible: false,
+                yaxis: { 
+                  title: "Button Pushed",
+                  tickvals: [0, 1],
+                  ticktext: ["false", "true"],
+                  range: [0, 1],
                 },
                 height: 300,
-                margin: { t: 40, b: 0, l: 40, r: 40 }, // Adjust margins
+                margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
-              config={{ displayModeBar: false }}
               className={classes.plot}
             />
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1">
-              <strong>Button Pushed</strong>
-            </Typography>
+            <Typography variant="subtitle1"><strong>Button Pushed</strong></Typography>
             <div className={classes.statusContainer}>
-              {custom_data.button_pushed ? (
-                <>
-                  <CheckCircleIcon
-                    className={`${classes.statusIcon} ${classes.pushed}`}
-                  />
-                  <Typography variant="body1" className={classes.largeText}>
-                    YES
-                  </Typography>
-                </>
-              ) : (
-                <Typography variant="body1" className={classes.largeText}>
-                  NO
-                </Typography>
-              )}
+              <Typography
+                variant="body1"
+                className={`${classes.largeText} ${custom_data.button_pushed ? classes.pushed : classes.notPushed}`}
+              >
+                {custom_data.button_pushed ? "YES" : "NO"}
+              </Typography>
             </div>
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1">
-              <strong>Button Pushed Stats</strong>
-            </Typography>
+            <Typography variant="subtitle1"><strong>Button Pushed Stats</strong></Typography>
             <table className={classes.statsTable}>
               <thead>
                 <tr>
@@ -175,7 +157,6 @@ const Ws101: React.FC<{
                   <td>Times Pushed</td>
                   <td>{buttonPushedCount}</td>
                 </tr>
-                {/* You may want to add other stats here */}
               </tbody>
             </table>
           </Grid>

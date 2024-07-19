@@ -20,6 +20,7 @@ export declare function useTemperatureHistoryQuery(params: {
         y: number[];
     };
     stats: {
+        count: number;
         min: number;
         max: number;
         average: number;

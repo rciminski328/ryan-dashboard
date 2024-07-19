@@ -130,7 +130,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   },
                 },
               ]}
-              layout={{ width: 200, height: 200, margin: { t: 0, b: 0 } }}
+              layout={{ width: 250, height: 250, margin: { t: 0, b: 0 } }}
             />
           </Grid>
 
@@ -146,11 +146,11 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
               <tbody>
                 <tr>
                   <td>Min</td>
-                  <td>{temperatureStats.min}</td>
+                  <td>{temperatureStats.min.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Max</td>
-                  <td>{temperatureStats.max}</td>
+                  <td>{temperatureStats.max.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Average</td>
@@ -158,7 +158,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                 </tr>
                 <tr>
                   <td>Median</td>
-                  <td>{temperatureStats.median}</td>
+                  <td>{temperatureStats.median.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Std Dev</td>
@@ -222,7 +222,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   },
                 },
               ]}
-              layout={{ width: 200, height: 200, margin: { t: 0, b: 0 } }}
+              layout={{ width: 250, height: 250, margin: { t: 0, b: 0 } }}
             />
           </Grid>
 
@@ -238,11 +238,11 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
               <tbody>
                 <tr>
                   <td>Min</td>
-                  <td>{humidityStats.min}</td>
+                  <td>{humidityStats.min.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Max</td>
-                  <td>{humidityStats.max}</td>
+                  <td>{humidityStats.max.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Average</td>
@@ -250,7 +250,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                 </tr>
                 <tr>
                   <td>Median</td>
-                  <td>{humidityStats.median}</td>
+                  <td>{humidityStats.median.toFixed(2)}</td>
                 </tr>
                 <tr>
                   <td>Std Dev</td>

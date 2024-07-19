@@ -9,9 +9,9 @@ import {
   useLiveDataForWs303,
 } from "../api/ws303_history";
 import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { getStats } from "../../../utils/getStats";
+import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
   },
   section: {
     borderRight: `1px solid ${theme.palette.divider}`,
-  },
-  table: {
-    width: "100%",
   },
   plot: {
     width: "100%",
@@ -62,17 +59,10 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws303Asset>(assetId);
+  const { data: historyData } = useWs303HistoryQuery({ assetId, timeRange });
+  useLiveDataForWs303({ assetId, timeRange });
 
-  const { data: historyData } = useWs303HistoryQuery({
-    assetId: assetId,
-    timeRange,
-  });
-
-  useLiveDataForWs303({
-    assetId: assetId,
-    timeRange,
-  });
-
+  // Handle loading and error states
   if (assetQuery.isLoading || !historyData) {
     return <div>Loading...</div>;
   }
@@ -81,8 +71,14 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     return <div>Error loading data</div>;
   }
 
-  const custom_data = assetQuery.data.custom_data;
-  const label = assetQuery.data.label;
+  // Ensure assetQuery.data is defined before accessing its properties
+  const assetData = assetQuery.data;
+  if (!assetData) {
+    return <div>No asset data available</div>;
+  }
+
+  const custom_data = assetData.custom_data;
+  const label = assetData.label;
 
   // Ensure historyData and its properties are defined before accessing them
   const leakDetectedData = historyData?.data?.leakDetected || { x: [], y: [] };
@@ -92,7 +88,6 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
 
   return (
     <Card>
-      <Typography variant="h4">{label}</Typography>
       <Grid container spacing={1} className={classes.container}>
         {/* Leak Detection Section */}
         <Grid container item xs={12} spacing={1}>
@@ -107,19 +102,25 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   mode: "lines",
                   line: { shape: 'hv' }, // step line
                   marker: { color: leakDetectedData.y.map((value) => (value ? "green" : "red")) },
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Leak Detected:</b> %{y}<extra></extra>`,
                 },
               ]}
               layout={{
+                title: "Leak Detection Audit",
                 xaxis: {
-                  visible: false,
+                  title: { text: "Time", standoff: 20 },
+                  tickformat: "%I:%M %p",
+                  nticks: 10,
                 },
-                yaxis: {
-                  visible: false,
+                yaxis: { 
+                  title: "Leak Detected",
+                  tickvals: [0, 1],
+                  ticktext: ["false", "true"],
+                  range: [0, 1],
                 },
                 height: 300,
-                margin: { t: 40, b: 0, l: 40, r: 40 }, // Adjust margins
+                margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
-              config={{ displayModeBar: false }}
               className={classes.plot}
             />
           </Grid>

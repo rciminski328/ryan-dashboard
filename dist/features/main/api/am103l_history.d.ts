@@ -27,6 +27,7 @@ export declare function useAm103LHistoryQuery({ assetId, timeRange, }: {
     };
     stats: {
         temperature: {
+            count: number;
             min: number;
             max: number;
             average: number;
@@ -34,6 +35,7 @@ export declare function useAm103LHistoryQuery({ assetId, timeRange, }: {
             stdDev: number;
         };
         humidity: {
+            count: number;
             min: number;
             max: number;
             average: number;
@@ -41,6 +43,7 @@ export declare function useAm103LHistoryQuery({ assetId, timeRange, }: {
             stdDev: number;
         };
         co2: {
+            count: number;
             min: number;
             max: number;
             average: number;
