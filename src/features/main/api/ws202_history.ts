@@ -19,10 +19,12 @@ interface Ws202History {
   motion: {
     x: string[];
     y: (0 | 1)[];
+    count: number;
   };
   daylight: {
     x: string[];
     y: (0 | 1)[];
+    count: number;
   };
 }
 
@@ -43,9 +45,7 @@ export function useWs202HistoryQuery({
     queryFn: async (): Promise<Ws202History> => {
       const authInfo = getAuthInfo();
       const resp = await fetch(
-        `${getPlatformInfo().url}/api/v/1/code/${
-          authInfo.systemKey
-        }/fetchTableItems?id=plotsV2.read`,
+        `${getPlatformInfo().url}/api/v/1/code/${authInfo.systemKey}/fetchTableItems?id=plotsV2.read`,
         {
           method: "POST",
           headers: {
@@ -77,9 +77,23 @@ export function useWs202HistoryQuery({
         };
       } = await resp.json();
 
+      const motionData = data.results.lineData.motion || { x: [], y: [], count: 0 };
+      const daylightData = data.results.lineData.daylight || { x: [], y: [], count: 0 };
+
+      const motionCount = (motionData.y || []).filter(value => value === 1).length;
+      const daylightCount = (daylightData.y || []).filter(value => value === 1).length;
+
       return {
-        daylight: data.results.lineData.daylight ?? { x: [], y: [] },
-        motion: data.results.lineData.motion ?? { x: [], y: [] },
+        daylight: {
+          x: daylightData.x,
+          y: daylightData.y,
+          count: daylightCount,
+        },
+        motion: {
+          x: motionData.x,
+          y: motionData.y,
+          count: motionCount,
+        },
       };
     },
     select: (data) => ({
@@ -88,14 +102,16 @@ export function useWs202HistoryQuery({
           ? {
               x: data.daylight.x.map((timestamp) => new Date(timestamp)),
               y: data.daylight.y,
+              count: data.daylight.count,
             }
-          : { x: [], y: [] },
+          : { x: [], y: [], count: 0 },
         motion: data.motion
           ? {
               x: data.motion.x.map((timestamp) => new Date(timestamp)),
               y: data.motion.y,
+              count: data.motion.count,
             }
-          : { x: [], y: [] },
+          : { x: [], y: [], count: 0 },
       },
     }),
     refetchOnWindowFocus: false,
@@ -160,31 +176,46 @@ export function useLiveDataForWs202({
           ws202HistoryQueryKeys.byAsset({ assetId, timeRange }),
           (data) => {
             if (typeof data === "undefined") {
-              return data;
+              return {
+                daylight: {
+                  x: [last_updated],
+                  y: [assetData.custom_data.daylight === true ? 1 : 0],
+                  count: assetData.custom_data.daylight === true ? 1 : 0,
+                },
+                motion: {
+                  x: [last_updated],
+                  y: [assetData.custom_data.motion === true ? 1 : 0],
+                  count: assetData.custom_data.motion === true ? 1 : 0,
+                },
+              };
             }
+
+            const updatedDaylight = typeof assetData.custom_data.daylight !== "undefined"
+              ? {
+                  x: [...data.daylight.x, last_updated],
+                  y: [
+                    ...data.daylight.y,
+                    assetData.custom_data.daylight === true ? 1 : 0,
+                  ],
+                  count: (data.daylight.y || []).filter(value => value === 1).length + (assetData.custom_data.daylight === true ? 1 : 0),
+                }
+              : data.daylight;
+
+            const updatedMotion = typeof assetData.custom_data.motion !== "undefined"
+              ? {
+                  x: [...data.motion.x, last_updated],
+                  y: [
+                    ...data.motion.y,
+                    assetData.custom_data.motion === true ? 1 : 0,
+                  ],
+                  count: (data.motion.y || []).filter(value => value === 1).length + (assetData.custom_data.motion === true ? 1 : 0),
+                }
+              : data.motion;
 
             return {
               ...data,
-              daylight:
-                typeof assetData.custom_data.daylight !== "undefined"
-                  ? {
-                      x: [...data.daylight.x, last_updated],
-                      y: [
-                        ...data.daylight.y,
-                        assetData.custom_data.daylight === true ? 1 : 0,
-                      ],
-                    }
-                  : data.daylight,
-              motion:
-                typeof assetData.custom_data.motion !== "undefined"
-                  ? {
-                      x: [...data.motion.x, last_updated],
-                      y: [
-                        ...data.motion.y,
-                        assetData.custom_data.motion === true ? 1 : 0,
-                      ],
-                    }
-                  : data.motion,
+              daylight: updatedDaylight,
+              motion: updatedMotion,
             };
           }
         );

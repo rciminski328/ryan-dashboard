@@ -1,5 +1,3 @@
-// Ws202.tsx
-// @ts-nocheck
 import React from "react";
 import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import Plot from "react-plotly.js";
@@ -84,6 +82,10 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const custom_data = assetQuery.data.custom_data;
   const label = assetQuery.data.label;
 
+  // Convert 1 to "true" and 0 to "false" for hover information
+  const motionData = historyData.data.motion.y.map(val => val ? "true" : "false");
+  const daylightData = historyData.data.daylight.y.map(val => val ? "true" : "false");
+
   // Calculate statistics for motion and daylight
   const motionStats = getStats(historyData.data.motion.y);
   const daylightStats = getStats(historyData.data.daylight.y);
@@ -104,6 +106,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   mode: "lines",
                   line: { shape: 'hv' }, // step line
                   marker: { color: "blue" },
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Motion Detected:</b> %{y}<extra></extra>`,
                 },
               ]}
               layout={{
@@ -115,8 +118,9 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
                 yaxis: { 
                   title: "Motion Detected",
-                  tickvals: [0, 1],
-                  ticktext: ["0", "1"],
+                  tickvals: [0, 1], // Ensure the correct values are used
+                  ticktext: ["false", "true"], // Correctly map 0 to "false" and 1 to "true"
+                  range: [0, 1], // Set range to cover the values 0 and 1
                 },
                 height: 300,
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
@@ -128,7 +132,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           <Grid item xs={3}>
             <Typography variant="subtitle1"><strong>Motion Detected</strong></Typography>
             <div className={classes.statusContainer}>
-              {custom_data.motionDetected ? (
+              {custom_data.motion ? (
                 <>
                   <CheckCircleIcon className={`${classes.statusIcon} ${classes.detected}`} />
                   <Typography variant="body1" className={classes.largeText}>
@@ -155,7 +159,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{motionStats.count}</td>
+                  <td>{historyData.data.motion.count}</td> {/* Display motion count */}
                 </tr>
                 <tr>
                   <td>Average Duration</td>
@@ -179,6 +183,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   mode: "lines",
                   line: { shape: 'hv' }, // step line
                   marker: { color: "yellow" },
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Daylight Detected:</b> %{y}<extra></extra>`,
                 },
               ]}
               layout={{
@@ -190,8 +195,9 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
                 yaxis: { 
                   title: "Daylight Detected",
-                  tickvals: [0, 1],
-                  ticktext: ["0", "1"],
+                  tickvals: [0, 1], // Ensure the correct values are used
+                  ticktext: ["false", "true"], // Correctly map 0 to "false" and 1 to "true"
+                  range: [0, 1], // Set range to cover the values 0 and 1
                 },
                 height: 300,
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
@@ -203,7 +209,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           <Grid item xs={3}>
             <Typography variant="subtitle1"><strong>Daylight Detected</strong></Typography>
             <div className={classes.statusContainer}>
-              {custom_data.daylightDetected ? (
+              {custom_data.daylight ? (
                 <>
                   <CheckCircleIcon className={`${classes.statusIcon} ${classes.detected}`} />
                   <Typography variant="body1" className={classes.largeText}>
@@ -230,7 +236,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{daylightStats.count}</td>
+                  <td>{historyData.data.daylight.count}</td> {/* Display daylight count */}
                 </tr>
                 <tr>
                   <td>Average Duration</td>
