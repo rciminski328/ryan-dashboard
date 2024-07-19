@@ -111,9 +111,7 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
                 yaxis: { 
-                  title: "Door Status",
                   tickvals: [0, 1],
-                  ticktext: ["Closed", "Open"],
                   range: [0, 1],
                 },
                 height: 300,
@@ -146,16 +144,8 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               </thead>
               <tbody>
                 <tr>
-                  <td>Count</td>
-                  <td>{doorStats.count}</td>
-                </tr>
-                <tr>
                   <td>Times Opened</td>
                   <td>{doorStats.count}</td>
-                </tr>
-                <tr>
-                  <td>Average Duration</td>
-                  <td>{doorStats.average.toFixed(2)} sec</td>
                 </tr>
               </tbody>
             </table>

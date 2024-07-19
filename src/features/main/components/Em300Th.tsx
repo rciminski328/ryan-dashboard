@@ -97,7 +97,6 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
-                yaxis: { title: "Temperature (°F)" },
                 height: 300, // Adjust height to reduce whitespace
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Adjust margins to reduce whitespace
               }}
@@ -113,7 +112,6 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   type: "indicator",
                   mode: "gauge+number",
                   value: custom_data.temperature,
-                  title: { text: "Current Temperature (°F)" },
                   gauge: {
                     axis: { range: [0, 100] },
                     steps: [
@@ -188,7 +186,6 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
-                yaxis: { title: "Humidity (%)" },
                 height: 300, // Adjust height to reduce whitespace
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Adjust margins to reduce whitespace
               }}
@@ -204,7 +201,6 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   type: "indicator",
                   mode: "gauge+number",
                   value: custom_data.humidity,
-                  title: { text: "Current Humidity (%)" },
                   gauge: {
                     axis: { range: [0, 100] },
                     steps: [

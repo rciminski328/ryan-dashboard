@@ -106,14 +106,12 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
               ]}
               layout={{
-                title: "Leak Detection Audit",
                 xaxis: {
                   title: { text: "Time", standoff: 20 },
                   tickformat: "%I:%M %p",
                   nticks: 10,
                 },
                 yaxis: { 
-                  title: "Leak Detected",
                   tickvals: [0, 1],
                   ticktext: ["false", "true"],
                   range: [0, 1],

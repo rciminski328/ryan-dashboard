@@ -114,9 +114,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   nticks: 10,
                 },
                 yaxis: { 
-                  title: "Motion Detected",
                   tickvals: [1, 2],
-                  ticktext: ["Not Detected", "Detected"],
                   range: [1, 2],
                 },
                 height: 300,
@@ -184,9 +182,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   nticks: 10,
                 },
                 yaxis: { 
-                  title: "Daylight Detected",
                   tickvals: [0, 1],
-                  ticktext: ["Not Detected", "Detected"],
                   range: [0, 1],
                 },
                 height: 300,

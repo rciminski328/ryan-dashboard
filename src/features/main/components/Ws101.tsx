@@ -114,9 +114,7 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   nticks: 10,
                 },
                 yaxis: { 
-                  title: "Button Pushed",
                   tickvals: [0, 1],
-                  ticktext: ["false", "true"],
                   range: [0, 1],
                 },
                 height: 300,
