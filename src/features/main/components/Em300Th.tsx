@@ -92,7 +92,6 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                 },
               ]}
               layout={{
-                title: "Temperature Trend",
                 xaxis: {
                   title: { text: "Time", standoff: 20 }, // Move 'Time' label down
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
@@ -184,7 +183,6 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                 },
               ]}
               layout={{
-                title: "Humidity Trend",
                 xaxis: {
                   title: { text: "Time", standoff: 20 }, // Move 'Time' label down
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"

@@ -18,7 +18,7 @@ export type Ws202Asset = Omit<Asset["frontend"], "custom_data"> & {
 interface Ws202History {
   motion: {
     x: string[];
-    y: (0 | 1)[];
+    y: (1 | 2)[];
     count: number;
   };
   daylight: {
@@ -80,7 +80,7 @@ export function useWs202HistoryQuery({
       const motionData = data.results.lineData.motion || { x: [], y: [], count: 0 };
       const daylightData = data.results.lineData.daylight || { x: [], y: [], count: 0 };
 
-      const motionCount = (motionData.y || []).filter(value => value === 1).length;
+      const motionCount = (motionData.y || []).filter(value => value === 2).length;  // Count 2 as detected
       const daylightCount = (daylightData.y || []).filter(value => value === 1).length;
 
       return {
@@ -91,7 +91,7 @@ export function useWs202HistoryQuery({
         },
         motion: {
           x: motionData.x,
-          y: motionData.y as (0 | 1)[],
+          y: motionData.y as (1 | 2)[],
           count: motionCount,
         },
       };
@@ -179,7 +179,7 @@ export function useLiveDataForWs202({
                 },
                 motion: {
                   x: [last_updated],
-                  y: [assetData.custom_data.motion === true ? 1 : 0] as (0 | 1)[],
+                  y: [assetData.custom_data.motion === true ? 2 : 1] as (1 | 2)[],  // 2 for detected, 1 for not detected
                   count: assetData.custom_data.motion === true ? 1 : 0,
                 },
               };
@@ -201,9 +201,9 @@ export function useLiveDataForWs202({
                   x: [...data.motion.x, last_updated],
                   y: [
                     ...data.motion.y,
-                    assetData.custom_data.motion === true ? 1 : 0,
-                  ] as (0 | 1)[],
-                  count: (data.motion.y || []).filter(value => value === 1).length + (assetData.custom_data.motion === true ? 1 : 0),
+                    assetData.custom_data.motion === true ? 2 : 1,
+                  ] as (1 | 2)[],
+                  count: (data.motion.y || []).filter(value => value === 2).length + (assetData.custom_data.motion === true ? 1 : 0),
                 }
               : data.motion;
 

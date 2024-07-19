@@ -108,7 +108,6 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
               ]}
               layout={{
-                title: "Button Pushed Audit",
                 xaxis: {
                   title: { text: "Time", standoff: 20 },
                   tickformat: "%I:%M %p",

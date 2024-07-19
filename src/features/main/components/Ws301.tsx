@@ -105,7 +105,6 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
               ]}
               layout={{
-                title: "Door Open/Close Audit",
                 xaxis: {
                   title: { text: "Time", standoff: 20 }, // Move 'Time' label down
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"

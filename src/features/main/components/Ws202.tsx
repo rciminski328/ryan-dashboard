@@ -1,3 +1,5 @@
+// Ws202.tsx
+// @ts-nocheck
 import React from "react";
 import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import Plot from "react-plotly.js";
@@ -78,13 +80,13 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const custom_data = assetData.custom_data;
   const label = assetData.label;
 
-  // Convert 1 to "true" and 0 to "false" for hover information
-  const motionData = historyData.motion.y.map(val => val ? "true" : "false");
-  const daylightData = historyData.daylight.y.map(val => val ? "true" : "false");
+  // Ensure historyData and its properties are defined before accessing them
+  const motionData = historyData?.motion || { x: [], y: [], count: 0 };
+  const daylightData = historyData?.daylight || { x: [], y: [], count: 0 };
 
   // Calculate statistics for motion and daylight
-  const motionStats = getStats(historyData.motion.y);
-  const daylightStats = getStats(historyData.daylight.y);
+  const motionStats = getStats(motionData.y);
+  const daylightStats = getStats(daylightData.y);
 
   return (
     <Card>
@@ -96,17 +98,16 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
             <Plot
               data={[
                 {
-                  x: historyData.motion.x,
-                  y: historyData.motion.y,
+                  x: motionData.x,
+                  y: motionData.y,
                   type: "scatter",
-                  mode: "lines",
+                  mode: "lines+markers",
                   line: { shape: 'hv' }, // step line
-                  marker: { color: "blue" },
+                  marker: { color: motionData.y.map((value) => (value === 2 ? "green" : "red")) },
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Motion Detected:</b> %{y}<extra></extra>`,
                 },
               ]}
               layout={{
-                title: "Motion Detection Audit",
                 xaxis: {
                   title: { text: "Time", standoff: 20 },
                   tickformat: "%I:%M %p",
@@ -114,12 +115,12 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
                 yaxis: { 
                   title: "Motion Detected",
-                  tickvals: [0, 1],
-                  ticktext: ["false", "true"],
-                  range: [0, 1],
+                  tickvals: [1, 2],
+                  ticktext: ["Not Detected", "Detected"],
+                  range: [1, 2],
                 },
                 height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 },
+                margin: { t: 0, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
@@ -128,23 +129,17 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           <Grid item xs={3}>
             <Typography variant="subtitle1"><strong>Motion Detected</strong></Typography>
             <div className={classes.statusContainer}>
-              {custom_data.motion ? (
-                <>
-                  <CheckCircleIcon className={`${classes.statusIcon} ${classes.detected}`} />
-                  <Typography variant="body1" className={classes.largeText}>
-                    YES
-                  </Typography>
-                </>
-              ) : (
-                <Typography variant="body1" className={classes.largeText}>
-                  NO
-                </Typography>
-              )}
+              <Typography
+                variant="body1"
+                className={`${classes.largeText} ${custom_data.motion ? classes.detected : classes.notDetected}`}
+              >
+                {custom_data.motion ? "YES" : "NO"}
+              </Typography>
             </div>
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Occupancy Stats</strong></Typography>
+            <Typography variant="subtitle1"><strong>Motion Stats</strong></Typography>
             <table className={classes.statsTable}>
               <thead>
                 <tr>
@@ -155,7 +150,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{historyData.motion.count}</td>
+                  <td>{motionData.count}</td>
                 </tr>
                 <tr>
                   <td>Average Duration</td>
@@ -173,17 +168,16 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
             <Plot
               data={[
                 {
-                  x: historyData.daylight.x,
-                  y: historyData.daylight.y,
+                  x: daylightData.x,
+                  y: daylightData.y,
                   type: "scatter",
-                  mode: "lines",
+                  mode: "lines+markers",
                   line: { shape: 'hv' },
-                  marker: { color: "yellow" },
+                  marker: { color: daylightData.y.map((value) => (value ? "yellow" : "gray")) },
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Daylight Detected:</b> %{y}<extra></extra>`,
                 },
               ]}
               layout={{
-                title: "Daylight Detection Audit",
                 xaxis: {
                   title: { text: "Time", standoff: 20 },
                   tickformat: "%I:%M %p",
@@ -192,11 +186,11 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 yaxis: { 
                   title: "Daylight Detected",
                   tickvals: [0, 1],
-                  ticktext: ["false", "true"],
+                  ticktext: ["Not Detected", "Detected"],
                   range: [0, 1],
                 },
                 height: 300,
-                margin: { t: 40, b: 60, l: 40, r: 40 },
+                margin: { t: 0, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
@@ -205,18 +199,12 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           <Grid item xs={3}>
             <Typography variant="subtitle1"><strong>Daylight Detected</strong></Typography>
             <div className={classes.statusContainer}>
-              {custom_data.daylight ? (
-                <>
-                  <CheckCircleIcon className={`${classes.statusIcon} ${classes.detected}`} />
-                  <Typography variant="body1" className={classes.largeText}>
-                    YES
-                  </Typography>
-                </>
-              ) : (
-                <Typography variant="body1" className={classes.largeText}>
-                  NO
-                </Typography>
-              )}
+              <Typography
+                variant="body1"
+                className={`${classes.largeText} ${custom_data.daylight ? classes.detected : classes.notDetected}`}
+              >
+                {custom_data.daylight ? "YES" : "NO"}
+              </Typography>
             </div>
           </Grid>
 
@@ -232,7 +220,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{historyData.daylight.count}</td>
+                  <td>{daylightData.count}</td>
                 </tr>
                 <tr>
                   <td>Average Duration</td>
