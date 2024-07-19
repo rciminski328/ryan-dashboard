@@ -7,9 +7,9 @@ import {
   useLiveDataForWs202,
 } from "../api/ws202_history";
 import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { getStats } from "../../../utils/getStats";
+import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -60,6 +60,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const { data: historyData } = useWs202HistoryQuery({ assetId, timeRange });
   useLiveDataForWs202({ assetId, timeRange });
 
+  // Handle loading and error states
   if (assetQuery.isLoading || !historyData) {
     return <div>Loading...</div>;
   }
@@ -68,8 +69,14 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     return <div>Error loading data</div>;
   }
 
-  const custom_data = assetQuery.data.custom_data;
-  const label = assetQuery.data.label;
+  // Ensure assetQuery.data is defined before accessing its properties
+  const assetData = assetQuery.data;
+  if (!assetData) {
+    return <div>No asset data available</div>;
+  }
+
+  const custom_data = assetData.custom_data;
+  const label = assetData.label;
 
   // Convert 1 to "true" and 0 to "false" for hover information
   const motionData = historyData.motion.y.map(val => val ? "true" : "false");
