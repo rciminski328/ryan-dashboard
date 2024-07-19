@@ -17,7 +17,7 @@ export declare function useWs202HistoryQuery({ assetId, timeRange, }: {
     };
     motion: {
         x: Date[];
-        y: (0 | 1)[];
+        y: (2 | 1)[];
         count: number;
     };
 }, unknown>;
