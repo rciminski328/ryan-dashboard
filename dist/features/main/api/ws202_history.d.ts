@@ -14,10 +14,12 @@ export declare function useWs202HistoryQuery({ assetId, timeRange, }: {
         daylight: {
             x: Date[];
             y: (0 | 1)[];
+            count: number;
         };
         motion: {
             x: Date[];
             y: (0 | 1)[];
+            count: number;
         };
     };
 }, unknown>;
