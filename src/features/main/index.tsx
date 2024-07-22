@@ -5,6 +5,8 @@ import {
 } from "../refrigeratorStatus/utils/types";
 import { useAssetsQuery } from "./api/assetsQuery";
 import { AssetSwitch } from "./components/AssetSwitch";
+import { RelativeAbsoluteDateRangePicker } from "@clearblade/ia-mfe-react";
+import { Box } from "@material-ui/core";
 
 export function Main() {
   const assetsQuery = useAssetsQuery();
@@ -28,6 +30,19 @@ export function Main() {
 
   return (
     <div>
+      <Box display="flex" alignItems="right">
+        <Box pt={1} pb={1}>
+          <RelativeAbsoluteDateRangePicker
+            currentRange={timeRange}
+            onApplyRange={(range) => {
+              if (range) {
+                setTimeRange(range);
+              }
+            }}
+            compact
+          />
+        </Box>
+      </Box>
       {assetsQuery.data.map((asset) => (
         <AssetSwitch
           key={asset.id}
