@@ -113,9 +113,9 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   mode: "gauge+number",
                   value: custom_data.temperature,
                   gauge: {
-                    axis: { range: [0, 100] },
+                    axis: { range: [-10, 120] },
                     steps: [
-                      { range: [0, 20], color: "lightgray" },
+                      { range: [-10, 20], color: "lightgray" },
                       { range: [20, 40], color: "gray" },
                       { range: [40, 60], color: "darkgray" },
                     ],
