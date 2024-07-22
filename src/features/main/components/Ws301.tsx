@@ -82,8 +82,30 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   // Ensure historyData and its properties are defined before accessing them
   const doorOpenData = historyData?.data?.doorOpen || { x: [], y: [] };
 
-  // Calculate statistics for door open/close
-  const doorStats = getStats(doorOpenData.y);
+  // Calculate the number of times the door was opened
+  const timesOpened = doorOpenData.y.reduce((count, value, index, arr) => {
+    if (index > 0 && value === 1 && arr[index - 1] === 0) {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+
+  // Calculate duration of each door open period
+  const durations = [];
+  let openTime = null;
+  doorOpenData.y.forEach((value, index) => {
+    if (value === 1 && openTime === null) {
+      openTime = new Date(doorOpenData.x[index]);
+    } else if (value === 0 && openTime !== null) {
+      const closeTime = new Date(doorOpenData.x[index]);
+      durations.push((closeTime - openTime) / 1000); // Duration in seconds
+      openTime = null;
+    }
+  });
+
+  const averageDuration = durations.length > 0
+    ? (durations.reduce((sum, duration) => sum + duration, 0) / durations.length).toFixed(2)
+    : 0;
 
   return (
     <Card>
@@ -145,7 +167,11 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Times Opened</td>
-                  <td>{doorStats.count}</td>
+                  <td>{timesOpened}</td>
+                </tr>
+                <tr>
+                  <td>Average Duration</td>
+                  <td>{averageDuration}</td>
                 </tr>
               </tbody>
             </table>

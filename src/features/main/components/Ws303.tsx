@@ -10,7 +10,6 @@ import {
 } from "../api/ws303_history";
 import { useAsset } from "../api/assetsQuery";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import { getStats } from "../../../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
@@ -83,8 +82,30 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   // Ensure historyData and its properties are defined before accessing them
   const leakDetectedData = historyData?.data?.leak_detected || { x: [], y: [] };
 
-  // Calculate statistics for leak detection
-  const leakStats = getStats(leakDetectedData.y);
+  // Calculate the number of times the leak was detected
+  const timesLeaked = leakDetectedData.y.reduce((count, value, index, arr) => {
+    if (index > 0 && value === 1 && arr[index - 1] === 0) {
+      return count + 1;
+    }
+    return count;
+  }, 0);
+
+  // Calculate duration of each leak period
+  const durations = [];
+  let leakStartTime = null;
+  leakDetectedData.y.forEach((value, index) => {
+    if (value === 1 && leakStartTime === null) {
+      leakStartTime = new Date(leakDetectedData.x[index]);
+    } else if (value === 0 && leakStartTime !== null) {
+      const leakEndTime = new Date(leakDetectedData.x[index]);
+      durations.push((leakEndTime - leakStartTime) / 1000); // Duration in seconds
+      leakStartTime = null;
+    }
+  });
+
+  const averageDuration = durations.length > 0
+    ? (durations.reduce((sum, duration) => sum + duration, 0) / durations.length).toFixed(2)
+    : 0;
 
   return (
     <Card>
@@ -152,8 +173,12 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               </thead>
               <tbody>
                 <tr>
-                  <td>Times Leaked</td>
-                  <td>{leakStats.count}</td>
+                  <td>Count</td>
+                  <td>{timesLeaked}</td>
+                </tr>
+                <tr>
+                  <td>Average Duration</td>
+                  <td>{averageDuration}</td>
                 </tr>
               </tbody>
             </table>

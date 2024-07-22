@@ -10,7 +10,6 @@ import {
 } from "../api/ws101_history";
 import { useAsset } from "../api/assetsQuery";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
-import { getStats } from "../../../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
@@ -85,9 +84,6 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     (value) => value === 1
   ).length;
 
-  // Convert 1 to "true" and 0 to "false" for hover information
-  const buttonPushedData = historyData.data.button_pushed.y.map(val => val ? "true" : "false");
-
   return (
     <Card>
       <Grid container spacing={1} className={classes.container}>
@@ -148,10 +144,6 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
               <tbody>
                 <tr>
                   <td>Count</td>
-                  <td>{buttonPushedCount}</td>
-                </tr>
-                <tr>
-                  <td>Times Pushed</td>
                   <td>{buttonPushedCount}</td>
                 </tr>
               </tbody>
