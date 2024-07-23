@@ -1,7 +1,7 @@
 // Ws301.tsx
 // @ts-nocheck
 import React from "react";
-import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
+import { Card, Grid, Typography, makeStyles, Box, Divider } from "@material-ui/core";
 import Plot from "react-plotly.js";
 import {
   Ws301Asset,
@@ -10,44 +10,69 @@ import {
 } from "../api/ws301_history";
 import { useAsset } from "../api/assetsQuery";
 import { RelativeOrAbsoluteRange } from "../utils/types";
-import { getStats } from "../../../utils/getStats";
 
 const useStyles = makeStyles((theme) => ({
+  card: {
+    padding: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    fontFamily: 'Arial, sans-serif',
+  },
   container: {
     width: "100%",
   },
-  section: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
   plot: {
     width: "100%",
-    height: 300,
+    height: 200,
   },
   statusContainer: {
     display: "flex",
+    justifyContent: "center",
     alignItems: "center",
-  },
-  statusIcon: {
-    marginRight: theme.spacing(1),
+    flexDirection: "column",
+    height: "100%",
   },
   open: {
     color: "green",
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
   },
   closed: {
     color: "red",
-  },
-  label: {
-    marginBottom: theme.spacing(2),
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
   },
   statsTable: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     '& th, & td': {
-      padding: theme.spacing(1),
+      padding: theme.spacing(0.5),
+      textAlign: 'left',
+      fontSize: '1rem',
     },
   },
   largeText: {
-    fontSize: "2rem",
+    fontSize: "1.5rem", // Matched font size
     fontWeight: "bold",
+  },
+  divider: {
+    margin: `${theme.spacing(0.5)}px 0`,
+    width: "100%", // Adjust the width to make the divider longer
+  },
+  verticalDivider: {
+    margin: theme.spacing(0, 2), // Adjust the space between the vertical dividers
+    height: "100%",
+  },
+  sectionTitle: {
+    fontWeight: "bold",
+    fontSize: "1rem",
+  },
+  tableRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing(0.5),
+  },
+  statLabel: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -108,12 +133,20 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     : 0;
 
   return (
-    <Card>
-      <Grid container spacing={1} className={classes.container}>
-        {/* Door Status Section */}
+    <Card className={classes.card}>
+      <Grid container spacing={1}>
+        {/* Door Status */}
+        <Grid item xs={12} className={classes.container}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography className={classes.sectionTitle} noWrap>
+              {`${label} - Door Open/Close Audit`}
+            </Typography>
+          </Box>
+        </Grid>
+
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - Door Open/Close Audit`}</strong></Typography>
+          {/* Door Status Chart */}
+          <Grid item xs={12} md={4} className={classes.container}>
             <Plot
               data={[
                 {
@@ -121,9 +154,10 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   y: doorOpenData.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: 'hv' }, // step line
+                  line: { shape: 'hv', width: 4 }, // step line and increased width
                   marker: { color: doorOpenData.y.map((value) => (value ? "green" : "red")) },
-                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Door Open:</b> %{y}<extra></extra>`,
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Door Status:</b> %{customdata}<extra></extra>`,
+                  customdata: doorOpenData.y.map(value => value ? "OPEN" : "CLOSED"),
                 },
               ]}
               layout={{
@@ -134,47 +168,58 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
                 yaxis: { 
                   tickvals: [0, 1],
-                  range: [0, 1],
+                  range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                height: 300,
+                hovermode: 'closest',
+                height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
           </Grid>
 
-          <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Door Status</strong></Typography>
+          {/* Vertical Divider */}
+          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+
+          {/* Current Door Status */}
+          <Grid item xs={12} md={3} className={classes.statusContainer}>
             <div className={classes.statusContainer}>
+              <Typography className={classes.sectionTitle} gutterBottom>Current Door Status</Typography>
               <Typography
                 variant="body1"
                 className={`${classes.largeText} ${custom_data.doorOpen ? classes.open : classes.closed}`}
+                align="center" // Center align the "OPEN"/"CLOSED" status
               >
                 {custom_data.doorOpen ? "OPEN" : "CLOSED"}
               </Typography>
             </div>
           </Grid>
 
-          <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Door Stats</strong></Typography>
-            <table className={classes.statsTable}>
-              <thead>
-                <tr>
-                  <th>Statistic</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Times Opened</td>
-                  <td>{timesOpened}</td>
-                </tr>
-                <tr>
-                  <td>Average Duration</td>
-                  <td>{averageDuration}</td>
-                </tr>
-              </tbody>
-            </table>
+          {/* Vertical Divider */}
+          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+
+          {/* Door Stats */}
+          <Grid item xs={12} md={4} className={classes.statusContainer}>
+            <div className={classes.statusContainer}>
+              <Typography className={classes.sectionTitle} gutterBottom>Door Stats</Typography>
+              <table className={classes.statsTable}>
+                <tbody>
+                  <tr>
+                    <td className={classes.statLabel}>Times</td>
+                    <td>{timesOpened}</td>
+                  </tr>
+                  <tr>
+                    <td colSpan={2}>
+                      <Divider className={classes.divider} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={classes.statLabel}>Average Duration</td>
+                    <td>{averageDuration}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </Grid>
         </Grid>
       </Grid>

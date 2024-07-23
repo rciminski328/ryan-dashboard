@@ -1,7 +1,7 @@
 // Ws101.tsx
 // @ts-nocheck
 import React from "react";
-import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
+import { Card, Grid, Typography, makeStyles, Box, Divider } from "@material-ui/core";
 import Plot from "react-plotly.js";
 import {
   Ws101Asset,
@@ -9,45 +9,70 @@ import {
   useLiveDataForWs101,
 } from "../api/ws101_history";
 import { useAsset } from "../api/assetsQuery";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
+  card: {
+    padding: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    fontFamily: 'Arial, sans-serif',
+  },
   container: {
     width: "100%",
   },
-  section: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
   plot: {
     width: "100%",
-    height: 300,
+    height: 200,
   },
   statusContainer: {
     display: "flex",
+    justifyContent: "center",
     alignItems: "center",
-  },
-  statusIcon: {
-    marginRight: theme.spacing(1),
+    flexDirection: "column",
+    height: "100%",
   },
   pushed: {
     color: "green",
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
   },
   notPushed: {
     color: "red",
-  },
-  label: {
-    marginBottom: theme.spacing(2),
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
   },
   statsTable: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     '& th, & td': {
-      padding: theme.spacing(1),
+      padding: theme.spacing(0.5),
+      textAlign: 'left',
+      fontSize: '1rem',
     },
   },
   largeText: {
-    fontSize: "2rem",
+    fontSize: "1.5rem", // Matched font size
     fontWeight: "bold",
+  },
+  divider: {
+    margin: `${theme.spacing(0.5)}px 0`,
+    width: "100%", // Adjust the width to make the divider longer
+  },
+  verticalDivider: {
+    margin: theme.spacing(0, 2), // Adjust the space between the vertical dividers
+    height: "120%",
+  },
+  sectionTitle: {
+    fontWeight: "bold",
+    fontSize: "1rem",
+  },
+  tableRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing(0.5),
+  },
+  statLabel: {
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -84,13 +109,38 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     (value) => value === 1
   ).length;
 
+  // Calculate duration of each button push period
+  const durations = [];
+  let pushStartTime = null;
+  historyData.data.button_pushed.y.forEach((value, index) => {
+    if (value === 1 && pushStartTime === null) {
+      pushStartTime = new Date(historyData.data.button_pushed.x[index]);
+    } else if (value === 0 && pushStartTime !== null) {
+      const pushEndTime = new Date(historyData.data.button_pushed.x[index]);
+      durations.push((pushEndTime - pushStartTime) / 1000); // Duration in seconds
+      pushStartTime = null;
+    }
+  });
+
+  const averageDuration = durations.length > 0
+    ? (durations.reduce((sum, duration) => sum + duration, 0) / durations.length).toFixed(2)
+    : 0;
+
   return (
-    <Card>
-      <Grid container spacing={1} className={classes.container}>
+    <Card className={classes.card}>
+      <Grid container spacing={1}>
         {/* Button Pushed Section */}
+        <Grid item xs={12} className={classes.container}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography className={classes.sectionTitle} noWrap>
+              {`${label} - Button Pushed Audit`}
+            </Typography>
+          </Box>
+        </Grid>
+
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - Button Pushed Audit`}</strong></Typography>
+          {/* Button Pushed Chart */}
+          <Grid item xs={12} md={4} className={classes.container}>
             <Plot
               data={[
                 {
@@ -98,9 +148,10 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   y: historyData.data.button_pushed.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: "hv" }, // step line
+                  line: { shape: "hv", width: 4 }, // step line and increased width
                   marker: { color: historyData.data.button_pushed.y.map((value) => (value ? "green" : "red")) },
-                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Button Pushed:</b> %{y}<extra></extra>`,
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Button Pushed:</b> %{customdata}<extra></extra>`,
+                  customdata: historyData.data.button_pushed.y.map(value => value ? "YES" : "NO"),
                 },
               ]}
               layout={{
@@ -111,43 +162,58 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
                 yaxis: { 
                   tickvals: [0, 1],
-                  range: [0, 1],
+                  range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                height: 300,
+                hovermode: 'closest',
+                height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
           </Grid>
 
-          <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Button Pushed</strong></Typography>
-            <div className={classes.statusContainer}>
+          {/* Vertical Divider */}
+          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+
+          {/* Button Pushed */}
+          <Grid item xs={12} md={3} className={classes.statusContainer}>
+            <div>
+              <Typography className={classes.sectionTitle} gutterBottom>Button Pushed</Typography>
               <Typography
                 variant="body1"
                 className={`${classes.largeText} ${custom_data.button_pushed ? classes.pushed : classes.notPushed}`}
+                align="center" // Center align the "YES"/"NO" status
               >
                 {custom_data.button_pushed ? "YES" : "NO"}
               </Typography>
             </div>
           </Grid>
 
-          <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Button Pushed Stats</strong></Typography>
-            <table className={classes.statsTable}>
-              <thead>
-                <tr>
-                  <th>Statistic</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Count</td>
-                  <td>{buttonPushedCount}</td>
-                </tr>
-              </tbody>
-            </table>
+          {/* Vertical Divider */}
+          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+
+          {/* Button Pushed Stats */}
+          <Grid item xs={12} md={4} className={classes.statusContainer}>
+            <div>
+              <Typography className={classes.sectionTitle} gutterBottom>Button Pushed Stats</Typography>
+              <table className={classes.statsTable}>
+                <tbody>
+                  <tr>
+                    <td className={classes.statLabel}>Count</td>
+                    <td>{buttonPushedCount}</td>
+                  </tr>
+                  <tr>
+                    <td colSpan={2}>
+                      <Divider className={classes.divider} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={classes.statLabel}>Average Duration</td>
+                    <td>{averageDuration}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </Grid>
         </Grid>
       </Grid>

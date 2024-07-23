@@ -1,7 +1,7 @@
 // Ws303.tsx
 // @ts-nocheck
 import React from "react";
-import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
+import { Card, Grid, Typography, makeStyles, Box, Divider } from "@material-ui/core";
 import Plot from "react-plotly.js";
 import {
   Ws303Asset,
@@ -9,29 +9,27 @@ import {
   useLiveDataForWs303,
 } from "../api/ws303_history";
 import { useAsset } from "../api/assetsQuery";
-import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
+  card: {
+    padding: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    fontFamily: 'Arial, sans-serif',
+  },
   container: {
     width: "100%",
   },
-  section: {
-    borderRight: `1px solid ${theme.palette.divider}`,
-  },
   plot: {
     width: "100%",
-    height: 300,
-  },
-  label: {
-    marginBottom: theme.spacing(2),
+    height: 200,
   },
   statusContainer: {
     display: "flex",
+    justifyContent: "center",
     alignItems: "center",
-  },
-  statusIcon: {
-    marginRight: theme.spacing(1),
+    flexDirection: "column",
+    height: "100%",
   },
   detected: {
     color: "green",
@@ -40,14 +38,40 @@ const useStyles = makeStyles((theme) => ({
     color: "red",
   },
   statsTable: {
-    marginTop: theme.spacing(2),
+    marginTop: theme.spacing(1),
     '& th, & td': {
-      padding: theme.spacing(1),
+      padding: theme.spacing(0.5),
+      textAlign: 'left',
     },
   },
   largeText: {
-    fontSize: "2rem",
+    fontSize: "1.5rem", // Increased font size for larger display
     fontWeight: "bold",
+  },
+  divider: {
+    margin: `${theme.spacing(0.5)}px 0`,
+    width: "150%", // Adjust the width to make the divider longer
+  },
+  verticalDivider: {
+    margin: theme.spacing(0, 2), // Adjust the space between the vertical dividers
+    height: "120%",
+  },
+  boldText: {
+    fontWeight: "bold",
+  },
+  sectionTitle: {
+    fontWeight: "bold",
+    fontSize: "1rem", // Enlarged font size for section title
+    textAlign: "center", // Center align the section title
+  },
+  tableRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing(1), // Add padding for more spacing
+  },
+  statLabel: {
+    marginRight: theme.spacing(1), // Add space between label and value
   },
 }));
 
@@ -108,22 +132,31 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
     : 0;
 
   return (
-    <Card>
-      <Grid container spacing={1} className={classes.container}>
+    <Card className={classes.card}>
+      <Grid container spacing={1}>
         {/* Leak Detection Section */}
+        <Grid item xs={12} className={classes.container}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography className={classes.sectionTitle} noWrap>
+              {`${label} - Leak Detection Audit`}
+            </Typography>
+          </Box>
+        </Grid>
+
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - Leak Detection Audit`}</strong></Typography>
+          {/* Leak Detection Chart */}
+          <Grid item xs={12} md={4} className={classes.container}>
             <Plot
               data={[
                 {
                   x: leakDetectedData.x,
                   y: leakDetectedData.y,
                   type: "scatter",
-                  mode: "lines",
-                  line: { shape: 'hv' }, // step line
+                  mode: "lines+markers",
+                  line: { shape: 'hv', width: 4 }, // step line and increased width
                   marker: { color: leakDetectedData.y.map((value) => (value ? "green" : "red")) },
-                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Leak Detected:</b> %{y}<extra></extra>`,
+                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Leak Detected:</b> %{customdata}<extra></extra>`,
+                  customdata: leakDetectedData.y.map(value => value ? "YES" : "NO"),
                 },
               ]}
               layout={{
@@ -134,54 +167,50 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
                 yaxis: { 
                   tickvals: [0, 1],
-                  ticktext: ["false", "true"],
-                  range: [0, 1],
+                  range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                height: 300,
+                hovermode: 'closest',
+                height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
               className={classes.plot}
             />
           </Grid>
 
-          <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Leak Detected</strong></Typography>
-            <div className={classes.statusContainer}>
-              {custom_data.leak_detected ? (
-                <>
-                  <CheckCircleIcon className={`${classes.statusIcon} ${classes.detected}`} />
-                  <Typography variant="body1" className={classes.largeText}>
-                    YES
-                  </Typography>
-                </>
-              ) : (
-                <Typography variant="body1" className={classes.largeText}>
-                  NO
-                </Typography>
-              )}
+          {/* Vertical Divider */}
+          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+
+          {/* Leak Detected */}
+          <Grid item xs={12} md={3} className={classes.statusContainer}>
+            <div>
+              <Typography className={classes.sectionTitle} gutterBottom>Leak Detected</Typography>
+              <Typography
+                variant="body1"
+                className={`${classes.largeText} ${custom_data.leak_detected ? classes.detected : classes.notDetected}`}
+                align="center" // Center align the "YES"/"NO" status
+              >
+                {custom_data.leak_detected ? "YES" : "NO"}
+              </Typography>
             </div>
           </Grid>
 
-          <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Leak Stats</strong></Typography>
-            <table className={classes.statsTable}>
-              <thead>
-                <tr>
-                  <th>Statistic</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Count</td>
-                  <td>{timesLeaked}</td>
-                </tr>
-                <tr>
-                  <td>Average Duration</td>
-                  <td>{averageDuration}</td>
-                </tr>
-              </tbody>
-            </table>
+          {/* Vertical Divider */}
+          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+
+          {/* Leak Stats */}
+          <Grid item xs={12} md={4} className={classes.statusContainer}>
+            <div>
+              <Typography className={classes.sectionTitle} gutterBottom>Leak Stats</Typography>
+              <div className={classes.tableRow}>
+                <Typography className={classes.statLabel}>Count</Typography>
+                <Typography>{timesLeaked}</Typography>
+              </div>
+              <Divider className={classes.divider} />
+              <div className={classes.tableRow}>
+                <Typography className={classes.statLabel}>Average Duration</Typography>
+                <Typography>{averageDuration} sec</Typography>
+              </div>
+            </div>
           </Grid>
         </Grid>
       </Grid>
