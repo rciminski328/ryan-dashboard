@@ -148,7 +148,7 @@ const Ws202: React.FC<{
                   y: mappedMotionData,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: "spline", width: 4 }, // smooth line and increased width
+                  line: { shape: "hv", width: 4 }, // smooth line and increased width
                   marker: {
                     color: mappedMotionData.map((value) =>
                       value ? "green" : "red"
@@ -262,7 +262,7 @@ const Ws202: React.FC<{
                   y: daylightData.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: "spline", width: 4 }, // smooth line and increased width
+                  line: { shape: "hv", width: 4 }, // smooth line and increased width
                   marker: {
                     color: daylightData.y.map((value) =>
                       value ? "yellow" : "gray"

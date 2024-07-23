@@ -30,7 +30,7 @@ export function Main() {
 
   return (
     <div>
-      <Box display="flex" alignItems="right">
+      <Box display="flex" justifyContent="flex-end" alignItems="center">
         <Box pt={1} pb={1}>
           <RelativeAbsoluteDateRangePicker
             currentRange={timeRange}
