@@ -222,7 +222,7 @@ const Em300Th: React.FC<{
                   nticks: 10,
                 },
                 yaxis: {
-                  title: { text: "Temperature (°F)" },
+                  title: { text: "" },
                 },
                 hovermode: "closest", // Show hover tool regardless of xy point
                 hoverdistance: 100, // Increase hover distance
@@ -351,7 +351,7 @@ const Em300Th: React.FC<{
                   nticks: 10,
                 },
                 yaxis: {
-                  title: { text: "Humidity (%)" },
+                  title: { text: "" },
                 },
                 hovermode: "closest", // Show hover tool regardless of xy point
                 hoverdistance: 100, // Increase hover distance
