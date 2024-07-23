@@ -58,8 +58,8 @@ const useStyles = makeStyles((theme) => ({
     width: "100%", // Adjust the width to make the divider longer
   },
   verticalDivider: {
-    margin: theme.spacing(0, 2), // Adjust the space between the vertical dividers
-    height: "120%",
+    margin: theme.spacing(0, 2),
+    height: "200px", // Set a fixed height
   },
   sectionTitle: {
     fontWeight: "bold",
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(1),
   },
   statLabel: {
     marginRight: theme.spacing(1),
@@ -108,23 +108,6 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const buttonPushedCount = historyData.data.button_pushed.y.filter(
     (value) => value === 1
   ).length;
-
-  // Calculate duration of each button push period
-  const durations = [];
-  let pushStartTime = null;
-  historyData.data.button_pushed.y.forEach((value, index) => {
-    if (value === 1 && pushStartTime === null) {
-      pushStartTime = new Date(historyData.data.button_pushed.x[index]);
-    } else if (value === 0 && pushStartTime !== null) {
-      const pushEndTime = new Date(historyData.data.button_pushed.x[index]);
-      durations.push((pushEndTime - pushStartTime) / 1000); // Duration in seconds
-      pushStartTime = null;
-    }
-  });
-
-  const averageDuration = durations.length > 0
-    ? (durations.reduce((sum, duration) => sum + duration, 0) / durations.length).toFixed(2)
-    : 0;
 
   return (
     <Card className={classes.card}>
@@ -195,21 +178,12 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           {/* Button Pushed Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Button Pushed Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>Button Stats</Typography>
               <table className={classes.statsTable}>
                 <tbody>
                   <tr>
                     <td className={classes.statLabel}>Count</td>
                     <td>{buttonPushedCount}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Average Duration</td>
-                    <td>{averageDuration}</td>
                   </tr>
                 </tbody>
               </table>

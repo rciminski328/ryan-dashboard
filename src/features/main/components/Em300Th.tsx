@@ -130,7 +130,7 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
 
     return (
       <Box textAlign={"center"}>
-        <Typography>{title}</Typography>
+        <Typography style={{ fontWeight: "bold" }}>{title}</Typography>
         <Plot
           data={data}
           config={{
