@@ -168,9 +168,11 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                 },
                 yaxis: { 
                   tickvals: [0, 1],
+                  ticktext: ["NO", "YES"],
                   range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                hovermode: 'closest',
+                hovermode: 'x', // Hovermode 'x' for hover over x-axis
+                hoverdistance: 100,
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}

@@ -1,7 +1,14 @@
 // Ws202.tsx
 // @ts-nocheck
 import React from "react";
-import { Card, Grid, Typography, makeStyles, Box, Divider } from "@material-ui/core";
+import {
+  Card,
+  Grid,
+  Typography,
+  makeStyles,
+  Box,
+  Divider,
+} from "@material-ui/core";
 import Plot from "react-plotly.js";
 import {
   Ws202Asset,
@@ -16,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "Arial, sans-serif",
   },
   container: {
     width: "100%",
@@ -40,9 +47,9 @@ const useStyles = makeStyles((theme) => ({
   },
   statsTable: {
     marginTop: theme.spacing(1),
-    '& th, & td': {
+    "& th, & td": {
       padding: theme.spacing(0.5),
-      textAlign: 'left',
+      textAlign: "left",
     },
   },
   largeText: {
@@ -66,9 +73,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center", // Center align the section title
   },
   tableRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: theme.spacing(1), // Add padding for more spacing
   },
   statLabel: {
@@ -76,10 +83,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
-  assetId,
-  timeRange,
-}) => {
+const Ws202: React.FC<{
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}> = ({ assetId, timeRange }) => {
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws202Asset>(assetId);
@@ -109,7 +116,7 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const daylightData = historyData?.daylight || { x: [], y: [], count: 0 };
 
   // Map 1 and 2 to 0 and 1 for display purposes
-  const mappedMotionData = motionData.y.map(value => value === 2 ? 1 : 0);
+  const mappedMotionData = motionData.y.map((value) => (value === 2 ? 1 : 0));
 
   // Calculate statistics for motion and daylight
   const motionStats = getStats(mappedMotionData);
@@ -120,7 +127,11 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
       <Grid container spacing={1}>
         {/* Motion Detection Section */}
         <Grid item xs={12} className={classes.container}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography className={classes.sectionTitle} noWrap>
               {`${label} - Motion Detection Audit`}
             </Typography>
@@ -137,10 +148,17 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   y: mappedMotionData,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: "hv", width: 4 }, // step line and increased width
-                  marker: { color: mappedMotionData.map((value) => (value ? "green" : "red")) },
+                  line: { shape: "spline", width: 4 }, // smooth line and increased width
+                  marker: {
+                    color: mappedMotionData.map((value) =>
+                      value ? "green" : "red"
+                    ),
+                  },
+                  hoverinfo: "x+y", // Show x and y information on hover
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Motion Detected:</b> %{customdata}<extra></extra>`,
-                  customdata: mappedMotionData.map(value => value ? "YES" : "NO"),
+                  customdata: mappedMotionData.map((value) =>
+                    value ? "YES" : "NO"
+                  ),
                 },
               ]}
               layout={{
@@ -149,11 +167,13 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   tickformat: "%I:%M %p",
                   nticks: 10,
                 },
-                yaxis: { 
+                yaxis: {
                   tickvals: [0, 1],
+                  ticktext: ["NO", "YES"], // Display YES/NO instead of 0/1
                   range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                hovermode: 'closest',
+                hovermode: "x", // Show hover tool on the x-axis
+                hoverdistance: 100, // Increase hover distance
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
@@ -162,15 +182,23 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Motion Detected */}
           <Grid item xs={12} md={3} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Motion Detected</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Motion Detected
+              </Typography>
               <Typography
                 variant="body1"
-                className={`${classes.largeText} ${custom_data.motion ? classes.detected : classes.notDetected}`}
+                className={`${classes.largeText} ${
+                  custom_data.motion ? classes.detected : classes.notDetected
+                }`}
                 align="center" // Center align the "YES"/"NO" status
               >
                 {custom_data.motion ? "YES" : "NO"}
@@ -179,19 +207,27 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Motion Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Motion Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Motion Stats
+              </Typography>
               <div className={classes.tableRow}>
                 <Typography className={classes.statLabel}>Count</Typography>
                 <Typography>{motionData.count}</Typography>
               </div>
               <Divider className={classes.divider} />
               <div className={classes.tableRow}>
-                <Typography className={classes.statLabel}>Average Duration</Typography>
+                <Typography className={classes.statLabel}>
+                  Average Duration
+                </Typography>
                 <Typography>{motionStats.average.toFixed(2)} sec</Typography>
               </div>
             </div>
@@ -205,7 +241,11 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
 
         {/* Daylight Detection Section */}
         <Grid item xs={12} className={classes.container}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography className={classes.sectionTitle} noWrap>
               {`${label} - Daylight Detection Audit`}
             </Typography>
@@ -222,10 +262,17 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   y: daylightData.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: "hv", width: 4 },
-                  marker: { color: daylightData.y.map((value) => (value ? "yellow" : "gray")) },
+                  line: { shape: "spline", width: 4 }, // smooth line and increased width
+                  marker: {
+                    color: daylightData.y.map((value) =>
+                      value ? "yellow" : "gray"
+                    ),
+                  },
+                  hoverinfo: "x+y", // Show x and y information on hover
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Daylight Detected:</b> %{customdata}<extra></extra>`,
-                  customdata: daylightData.y.map(value => value ? "YES" : "NO"),
+                  customdata: daylightData.y.map((value) =>
+                    value ? "YES" : "NO"
+                  ),
                 },
               ]}
               layout={{
@@ -234,11 +281,13 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   tickformat: "%I:%M %p",
                   nticks: 10,
                 },
-                yaxis: { 
+                yaxis: {
                   tickvals: [0, 1],
+                  ticktext: ["NO", "YES"], // Display YES/NO instead of 0/1
                   range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                hovermode: 'closest',
+                hovermode: "x", // Show hover tool on the x-axis
+                hoverdistance: 100, // Increase hover distance
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
@@ -247,15 +296,23 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Daylight Detected */}
           <Grid item xs={12} md={3} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Daylight Detected</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Daylight Detected
+              </Typography>
               <Typography
                 variant="body1"
-                className={`${classes.largeText} ${custom_data.daylight ? classes.detected : classes.notDetected}`}
+                className={`${classes.largeText} ${
+                  custom_data.daylight ? classes.detected : classes.notDetected
+                }`}
                 align="center" // Center align the "YES"/"NO" status
               >
                 {custom_data.daylight ? "YES" : "NO"}
@@ -264,19 +321,27 @@ const Ws202: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Daylight Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Daylight Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Daylight Stats
+              </Typography>
               <div className={classes.tableRow}>
                 <Typography className={classes.statLabel}>Count</Typography>
                 <Typography>{daylightData.count}</Typography>
               </div>
               <Divider className={classes.divider} />
               <div className={classes.tableRow}>
-                <Typography className={classes.statLabel}>Average Duration</Typography>
+                <Typography className={classes.statLabel}>
+                  Average Duration
+                </Typography>
                 <Typography>{daylightStats.average.toFixed(2)} sec</Typography>
               </div>
             </div>

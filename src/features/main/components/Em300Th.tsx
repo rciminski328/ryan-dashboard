@@ -1,8 +1,17 @@
 // Em300Th.tsx
 // @ts-nocheck
 import React from "react";
-import { Card, Grid, Typography, makeStyles, Box, Divider, useTheme } from "@material-ui/core";
+import {
+  Card,
+  Grid,
+  Typography,
+  makeStyles,
+  Box,
+  Divider,
+  useTheme,
+} from "@material-ui/core";
 import Plot from "react-plotly.js";
+import { Axis, GaugeData } from "plotly.js";
 import {
   Em300ThAsset,
   useEm300ThHistoryQuery,
@@ -16,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "Arial, sans-serif",
   },
   container: {
     width: "100%",
@@ -34,10 +43,10 @@ const useStyles = makeStyles((theme) => ({
   },
   statsTable: {
     marginTop: theme.spacing(1),
-    '& th, & td': {
+    "& th, & td": {
       padding: theme.spacing(0.5),
-      textAlign: 'left',
-      fontSize: '1rem',
+      textAlign: "left",
+      fontSize: "1rem",
     },
   },
   largeText: {
@@ -58,9 +67,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center", // Center align the section title
   },
   tableRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: theme.spacing(1), // Add padding for more spacing
   },
   statLabel: {
@@ -68,10 +77,83 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
-  assetId,
-  timeRange,
+const GaugeChart = ({
+  title,
+  value,
+  units,
+  minHeight,
+  minWidth,
+  gaugeAxis,
+}: {
+  title: string;
+  value: number;
+  units: string;
+  minHeight?: number;
+  minWidth?: number;
+  gaugeAxis?: Partial<Axis>;
 }) => {
+  const theme = useTheme();
+
+  // Determine color based on value
+  let color = "green";
+  if (value < 50) color = "red";
+  else if (value < 68) color = "yellow";
+  else if (value > 82) color = "red";
+  else if (value > 78) color = "yellow";
+
+  const data: Partial<GaugeData>[] = [
+    {
+      type: "indicator",
+      mode: "gauge+number",
+      value: value,
+      number: { suffix: units },
+      domain: { x: [0, 1], y: [0, 1] },
+      gauge: {
+        bar: { color: color },
+        axis: gaugeAxis,
+        steps: [], // No background colors
+        threshold: {
+          line: { color: "red", width: 4 },
+          thickness: 0.75,
+          value: value,
+        },
+      },
+    },
+  ];
+
+  return (
+    <Box textAlign={"center"}>
+      <Typography>{title}</Typography>
+      <Plot
+        data={data as any} // Casting as any to avoid type mismatch
+        config={{
+          responsive: true,
+          displayModeBar: false,
+          displaylogo: false,
+        }}
+        layout={{
+          autosize: true,
+          margin: { t: 50, b: 50 },
+          titlefont: {
+            size: 16,
+            family: theme.typography.fontFamily,
+          },
+        }}
+        style={{
+          width: "100%",
+          height: "100%",
+          minHeight,
+          minWidth,
+        }}
+      />
+    </Box>
+  );
+};
+
+const Em300Th: React.FC<{
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}> = ({ assetId, timeRange }) => {
   const classes = useStyles();
   const theme = useTheme();
 
@@ -101,68 +183,16 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
   const temperatureStats = getStats(historyData.data.temperature.y);
   const humidityStats = getStats(historyData.data.humidity.y);
 
-  const renderGaugeChart = (title, value, units) => {
-    const data = [
-      {
-        domain: { x: [0, 1], y: [0, 1] },
-        value,
-        number: { suffix: units },
-        type: "indicator",
-        mode: "gauge+number",
-        gauge: {
-          bar: { color: theme.palette.primary.main },
-          axis: { range: [-10, 120] },
-          steps: [
-            { range: [-10, 50], color: "red" },
-            { range: [50, 68], color: "yellow" },
-            { range: [68, 78], color: "green" },
-            { range: [78, 82], color: "yellow" },
-            { range: [82, 120], color: "red" },
-          ],
-          threshold: {
-            line: { color: "red", width: 4 },
-            thickness: 0.75,
-            value: custom_data.temperature,
-          },
-        },
-      },
-    ];
-
-    return (
-      <Box textAlign={"center"}>
-        <Typography style={{ fontWeight: "bold" }}>{title}</Typography>
-        <Plot
-          data={data}
-          config={{
-            responsive: true,
-            displayModeBar: false,
-            displaylogo: false,
-          }}
-          layout={{
-            autosize: true,
-            margin: { t: 50, b: 50 },
-            titlefont: {
-              size: 16,
-              family: theme.typography.fontFamily,
-            },
-          }}
-          style={{
-            width: "100%",
-            height: "100%",
-            minHeight: 300, // Enlarge the gauge
-            minWidth: 300,
-          }}
-        />
-      </Box>
-    );
-  };
-
   return (
     <Card className={classes.card}>
       <Grid container spacing={1}>
         {/* Temperature Section */}
         <Grid item xs={12} className={classes.container}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography className={classes.sectionTitle} noWrap>
               {`${label} - Temperature Trend (°F)`}
             </Typography>
@@ -179,8 +209,10 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   y: historyData.data.temperature.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: 'linear', width: 4 }, // step line and increased width
+                  line: { shape: "spline", width: 4 }, // smooth line and increased width
                   marker: { color: "blue" },
+                  hoverinfo: "x+y", // Show x and y information on hover
+                  hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Temperature:</b> %{y}°F<extra></extra>`,
                 },
               ]}
               layout={{
@@ -189,6 +221,11 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   tickformat: "%I:%M %p",
                   nticks: 10,
                 },
+                yaxis: {
+                  title: { text: "Temperature (°F)" },
+                },
+                hovermode: "closest", // Show hover tool regardless of xy point
+                hoverdistance: 100, // Increase hover distance
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
@@ -197,20 +234,37 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Current Temperature */}
           <Grid item xs={12} md={3} className={classes.statusContainer}>
-            {renderGaugeChart("Current Temperature", custom_data.temperature, "°F")}
+            <GaugeChart
+              title={<strong>Current Temperature</strong>}
+              value={custom_data.temperature}
+              units="°F"
+              minHeight={300} // Enlarge the gauge
+              minWidth={300}
+              gaugeAxis={{ range: [-10, 120] }}
+            />
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Temperature Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Temperature Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Temperature Stats
+              </Typography>
               <table className={classes.statsTable}>
                 <tbody>
                   <tr>
@@ -263,7 +317,11 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
 
         {/* Humidity Section */}
         <Grid item xs={12} className={classes.container}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography className={classes.sectionTitle} noWrap>
               {`${label} - Humidity Trend (%)`}
             </Typography>
@@ -280,8 +338,10 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   y: historyData.data.humidity.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: 'linear', width: 4 }, // step line and increased width
+                  line: { shape: "spline", width: 4 }, // smooth line and increased width
                   marker: { color: "green" },
+                  hoverinfo: "x+y", // Show x and y information on hover
+                  hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Humidity:</b> %{y}%<extra></extra>`,
                 },
               ]}
               layout={{
@@ -290,6 +350,11 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
                   tickformat: "%I:%M %p",
                   nticks: 10,
                 },
+                yaxis: {
+                  title: { text: "Humidity (%)" },
+                },
+                hovermode: "closest", // Show hover tool regardless of xy point
+                hoverdistance: 100, // Increase hover distance
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
               }}
@@ -298,20 +363,37 @@ const Em300Th: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }>
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Current Humidity */}
           <Grid item xs={12} md={3} className={classes.statusContainer}>
-            {renderGaugeChart("Current Humidity", custom_data.humidity, "%")}
+            <GaugeChart
+              title={<strong>Current Humidity</strong>}
+              value={custom_data.humidity}
+              units="%"
+              minHeight={300} // Enlarge the gauge
+              minWidth={300}
+              gaugeAxis={{ range: [0, 100] }}
+            />
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Humidity Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Humidity Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Humidity Stats
+              </Typography>
               <table className={classes.statsTable}>
                 <tbody>
                   <tr>
