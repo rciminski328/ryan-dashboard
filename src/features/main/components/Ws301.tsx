@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
+import { graphChartHeight } from "../../../utils";
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
@@ -23,12 +24,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontFamily: "Arial, sans-serif",
   },
-  container: {
-    width: "100%",
+  borderRight: {
+    [theme.breakpoints.up("md")]: {
+      borderRight: `1px solid ${theme.palette.divider}`,
+    },
   },
-  plot: {
-    width: "100%",
-    height: 200,
+  statusContainerGridItem: {
+    display: "flex",
+    justifyContent: "center",
   },
   statusContainer: {
     display: "flex",
@@ -147,119 +150,109 @@ const Ws301: React.FC<{
 
   return (
     <Card className={classes.card}>
-      <Grid container spacing={1}>
-        {/* Door Status */}
-        <Grid item xs={12} className={classes.container}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography className={classes.sectionTitle} noWrap>
-              {`${label} - Door Open/Close Audit`}
-            </Typography>
-          </Box>
-        </Grid>
+      {/* Door Status */}
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography className={classes.sectionTitle} noWrap>
+          {`${label} - Door Open/Close Audit`}
+        </Typography>
+      </Box>
 
-        <Grid container item xs={12} spacing={1}>
-          {/* Door Status Chart */}
-          <Grid item xs={12} md={4} className={classes.container}>
-            <Plot
-              data={[
-                {
-                  x: doorOpenData.x,
-                  y: doorOpenData.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  line: { shape: "hv", width: 4 }, // step line and increased width
-                  marker: {
-                    color: doorOpenData.y.map((value) =>
-                      value ? "green" : "red"
-                    ),
-                  },
-                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Door Status:</b> %{customdata}<extra></extra>`,
-                  customdata: doorOpenData.y.map((value) =>
-                    value ? "OPEN" : "CLOSED"
+      <Grid container item xs={12} spacing={1}>
+        {/* Door Status Chart */}
+        <Grid item xs={12} md={6} className={classes.borderRight}>
+          <Plot
+            data={[
+              {
+                x: doorOpenData.x,
+                y: doorOpenData.y,
+                type: "scatter",
+                mode: "lines+markers",
+                line: { shape: "hv", width: 4 }, // step line and increased width
+                marker: {
+                  color: doorOpenData.y.map((value) =>
+                    value ? "green" : "red"
                   ),
                 },
-              ]}
-              layout={{
-                xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
-                },
-                yaxis: {
-                  tickvals: [0, 1],
-                  ticktext: ["NO", "YES"],
-                  range: [-0.1, 1.1], // Extend range to avoid cutoff
-                },
-                hovermode: "x", // Hovermode 'x' for hover over x-axis
-                hoverdistance: 100,
-                height: 200,
-                margin: { t: 40, b: 60, l: 40, r: 40 },
-              }}
-              className={classes.plot}
-            />
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
+                hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Door Status:</b> %{customdata}<extra></extra>`,
+                customdata: doorOpenData.y.map((value) =>
+                  value ? "OPEN" : "CLOSED"
+                ),
+              },
+            ]}
+            config={{
+              responsive: true,
+            }}
+            layout={{
+              autosize: true,
+              xaxis: {
+                title: { text: "Time", standoff: 20 }, // Move 'Time' label down
+                tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
+                nticks: 10, // Adjust the number of ticks to make it more readable
+              },
+              yaxis: {
+                tickvals: [0, 1],
+                ticktext: ["NO", "YES"],
+                range: [-0.1, 1.1], // Extend range to avoid cutoff
+              },
+              hovermode: "x", // Hovermode 'x' for hover over x-axis
+              hoverdistance: 100,
+              margin: { t: 40, b: 60, l: 40, r: 40 },
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: graphChartHeight,
+            }}
           />
+        </Grid>
 
-          {/* Current Door Status */}
-          <Grid item xs={12} md={3} className={classes.statusContainer}>
-            <div className={classes.statusContainer}>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Current Door Status
-              </Typography>
-              <Typography
-                variant="body1"
-                className={`${classes.largeText} ${
-                  custom_data.doorOpen ? classes.open : classes.closed
-                }`}
-                align="center" // Center align the "OPEN"/"CLOSED" status
-              >
-                {custom_data.doorOpen ? "OPEN" : "CLOSED"}
-              </Typography>
-            </div>
-          </Grid>
+        {/* Current Door Status */}
+        <Grid
+          item
+          xs={12}
+          md={3}
+          className={`${classes.statusContainerGridItem} ${classes.borderRight}`}
+        >
+          <div className={classes.statusContainer}>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Current Door Status
+            </Typography>
+            <Typography
+              variant="body1"
+              className={`${classes.largeText} ${
+                custom_data.doorOpen ? classes.open : classes.closed
+              }`}
+              align="center" // Center align the "OPEN"/"CLOSED" status
+            >
+              {custom_data.doorOpen ? "OPEN" : "CLOSED"}
+            </Typography>
+          </div>
+        </Grid>
 
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
-          />
-
-          {/* Door Stats */}
-          <Grid item xs={12} md={4} className={classes.statusContainer}>
-            <div className={classes.statusContainer}>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Door Stats
-              </Typography>
-              <table className={classes.statsTable}>
-                <tbody>
-                  <tr>
-                    <td className={classes.statLabel}>Times</td>
-                    <td>{timesOpened}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Average Duration</td>
-                    <td>{averageDuration}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Grid>
+        {/* Door Stats */}
+        <Grid item xs={12} md={3} className={classes.statusContainerGridItem}>
+          <div className={classes.statusContainer}>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Door Stats
+            </Typography>
+            <table className={classes.statsTable}>
+              <tbody>
+                <tr>
+                  <td className={classes.statLabel}>Times</td>
+                  <td>{timesOpened}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Average Duration</td>
+                  <td>{averageDuration}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </Grid>
       </Grid>
     </Card>
