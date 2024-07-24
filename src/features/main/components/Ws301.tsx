@@ -1,21 +1,27 @@
 // Ws301.tsx
-// @ts-nocheck
+import {
+  Box,
+  Card,
+  Divider,
+  Grid,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
 import React from "react";
-import { Card, Grid, Typography, makeStyles, Box, Divider } from "@material-ui/core";
 import Plot from "react-plotly.js";
+import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { useAsset } from "../api/assetsQuery";
 import {
   Ws301Asset,
-  useWs301HistoryQuery,
   useLiveDataForWs301,
+  useWs301HistoryQuery,
 } from "../api/ws301_history";
-import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "Arial, sans-serif",
   },
   container: {
     width: "100%",
@@ -33,20 +39,20 @@ const useStyles = makeStyles((theme) => ({
   },
   open: {
     color: "green",
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
+    fontWeight: "bold",
+    fontSize: "1.5rem",
   },
   closed: {
     color: "red",
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
+    fontWeight: "bold",
+    fontSize: "1.5rem",
   },
   statsTable: {
     marginTop: theme.spacing(1),
-    '& th, & td': {
+    "& th, & td": {
       padding: theme.spacing(0.5),
-      textAlign: 'left',
-      fontSize: '1rem',
+      textAlign: "left",
+      fontSize: "1rem",
     },
   },
   largeText: {
@@ -66,9 +72,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "1rem",
   },
   tableRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: theme.spacing(0.5),
   },
   statLabel: {
@@ -76,10 +82,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
-  assetId,
-  timeRange,
-}) => {
+const Ws301: React.FC<{
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}> = ({ assetId, timeRange }) => {
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws301Asset>(assetId);
@@ -108,36 +114,47 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const doorOpenData = historyData?.data?.doorOpen || { x: [], y: [] };
 
   // Calculate the number of times the door was opened
-  const timesOpened = doorOpenData.y.reduce((count, value, index, arr) => {
-    if (index > 0 && value === 1 && arr[index - 1] === 0) {
-      return count + 1;
-    }
-    return count;
-  }, 0);
+  const timesOpened = doorOpenData.y.reduce<number>(
+    (count, value, index, arr) => {
+      if (index > 0 && value === 1 && arr[index - 1] === 0) {
+        return count + 1;
+      }
+      return count;
+    },
+    0
+  );
 
   // Calculate duration of each door open period
-  const durations = [];
-  let openTime = null;
+  const durations: number[] = [];
+  let openTime: Date | null = null;
   doorOpenData.y.forEach((value, index) => {
     if (value === 1 && openTime === null) {
       openTime = new Date(doorOpenData.x[index]);
     } else if (value === 0 && openTime !== null) {
       const closeTime = new Date(doorOpenData.x[index]);
-      durations.push((closeTime - openTime) / 1000); // Duration in seconds
+      durations.push((closeTime.getTime() - openTime.getTime()) / 1000); // Duration in seconds
       openTime = null;
     }
   });
 
-  const averageDuration = durations.length > 0
-    ? (durations.reduce((sum, duration) => sum + duration, 0) / durations.length).toFixed(2)
-    : 0;
+  const averageDuration =
+    durations.length > 0
+      ? (
+          durations.reduce((sum, duration) => sum + duration, 0) /
+          durations.length
+        ).toFixed(2)
+      : 0;
 
   return (
     <Card className={classes.card}>
       <Grid container spacing={1}>
         {/* Door Status */}
         <Grid item xs={12} className={classes.container}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography className={classes.sectionTitle} noWrap>
               {`${label} - Door Open/Close Audit`}
             </Typography>
@@ -154,10 +171,16 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   y: doorOpenData.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: 'hv', width: 4 }, // step line and increased width
-                  marker: { color: doorOpenData.y.map((value) => (value ? "green" : "red")) },
+                  line: { shape: "hv", width: 4 }, // step line and increased width
+                  marker: {
+                    color: doorOpenData.y.map((value) =>
+                      value ? "green" : "red"
+                    ),
+                  },
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Door Status:</b> %{customdata}<extra></extra>`,
-                  customdata: doorOpenData.y.map(value => value ? "OPEN" : "CLOSED"),
+                  customdata: doorOpenData.y.map((value) =>
+                    value ? "OPEN" : "CLOSED"
+                  ),
                 },
               ]}
               layout={{
@@ -166,12 +189,12 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
-                yaxis: { 
+                yaxis: {
                   tickvals: [0, 1],
                   ticktext: ["NO", "YES"],
                   range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                hovermode: 'x', // Hovermode 'x' for hover over x-axis
+                hovermode: "x", // Hovermode 'x' for hover over x-axis
                 hoverdistance: 100,
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
@@ -181,15 +204,23 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Current Door Status */}
           <Grid item xs={12} md={3} className={classes.statusContainer}>
             <div className={classes.statusContainer}>
-              <Typography className={classes.sectionTitle} gutterBottom>Current Door Status</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Current Door Status
+              </Typography>
               <Typography
                 variant="body1"
-                className={`${classes.largeText} ${custom_data.doorOpen ? classes.open : classes.closed}`}
+                className={`${classes.largeText} ${
+                  custom_data.doorOpen ? classes.open : classes.closed
+                }`}
                 align="center" // Center align the "OPEN"/"CLOSED" status
               >
                 {custom_data.doorOpen ? "OPEN" : "CLOSED"}
@@ -198,12 +229,18 @@ const Ws301: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Door Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div className={classes.statusContainer}>
-              <Typography className={classes.sectionTitle} gutterBottom>Door Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Door Stats
+              </Typography>
               <table className={classes.statsTable}>
                 <tbody>
                   <tr>
