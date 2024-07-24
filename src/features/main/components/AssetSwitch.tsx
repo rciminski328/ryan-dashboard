@@ -1,11 +1,11 @@
 import { memo } from "react";
 import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
-import Am103L from "./Am103L";
 import Em300Th from "./Em300Th";
-import Ws101 from "./Ws101";
-import Ws202 from "./Ws202";
-import Ws301  from "./Ws301";
+import Ws301 from "./Ws301";
 import Ws303 from "./Ws303";
+import Ws202 from "./Ws202";
+import Ws101 from "./Ws101";
+import Am103L from "./Am103L";
 
 export const AssetSwitch = memo(
   ({
