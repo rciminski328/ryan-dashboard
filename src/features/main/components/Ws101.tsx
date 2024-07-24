@@ -27,12 +27,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   pushed: {
-    color: "green",
+    color: "red",
     fontWeight: "bold",
     fontSize: "1.5rem",
   },
   notPushed: {
-    color: "red",
+    color: "green",
     fontWeight: "bold",
     fontSize: "1.5rem",
   },

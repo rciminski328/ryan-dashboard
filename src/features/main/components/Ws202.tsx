@@ -34,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   detected: {
-    color: "green",
+    color: "red",
   },
   notDetected: {
-    color: "red",
+    color: "green",
   },
   statsTable: {
     marginTop: theme.spacing(1),
@@ -222,7 +222,7 @@ const Ws202: React.FC<{
       <Grid item xs={12}>
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography className={classes.sectionTitle} noWrap>
-            {`${label} - Daylight Detection Audit`}
+            {`${label} - Light Status Audit`}
           </Typography>
         </Box>
       </Grid>
@@ -244,9 +244,9 @@ const Ws202: React.FC<{
                   ),
                 },
                 hoverinfo: "x+y", // Show x and y information on hover
-                hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Daylight Detected:</b> %{customdata}<extra></extra>`,
+                hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Light Status:</b> %{customdata}<extra></extra>`,
                 customdata: daylightData.y.map((value) =>
-                  value ? "YES" : "NO"
+                  value ? "ON" : "OFF"
                 ),
               },
             ]}
@@ -261,7 +261,7 @@ const Ws202: React.FC<{
               },
               yaxis: {
                 tickvals: [0, 1],
-                ticktext: ["NO", "YES"], // Display YES/NO instead of 0/1
+                ticktext: ["OFF", "ON"], // Display YES/NO instead of 0/1
                 range: [-0.1, 1.1], // Extend range to avoid cutoff
               },
               hovermode: "x", // Show hover tool on the x-axis
@@ -285,7 +285,7 @@ const Ws202: React.FC<{
         >
           <div>
             <Typography className={classes.sectionTitle} gutterBottom>
-              Daylight Detected
+              Light Status
             </Typography>
             <Typography
               variant="body1"
@@ -294,7 +294,7 @@ const Ws202: React.FC<{
               }`}
               align="center" // Center align the "YES"/"NO" status
             >
-              {custom_data.daylight ? "YES" : "NO"}
+              {custom_data.daylight ? "ON" : "OFF"}
             </Typography>
           </div>
         </Grid>
@@ -303,7 +303,7 @@ const Ws202: React.FC<{
         <Grid item xs={12} md={3} className={classes.statusContainer}>
           <div>
             <Typography className={classes.sectionTitle} gutterBottom>
-              Daylight Stats
+              Light Stats
             </Typography>
             <div className={classes.tableRow}>
               <Typography className={classes.statLabel}>Count</Typography>

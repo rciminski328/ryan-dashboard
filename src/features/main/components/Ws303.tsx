@@ -34,10 +34,10 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   detected: {
-    color: "green",
+    color: "red",
   },
   notDetected: {
-    color: "red",
+    color: "green",
   },
   statsTable: {
     marginTop: theme.spacing(1),

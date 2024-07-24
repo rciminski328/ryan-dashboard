@@ -41,14 +41,14 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   open: {
-    color: "green",
-    fontWeight: "bold",
-    fontSize: "1.5rem",
+    color: "red",
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
   },
   closed: {
-    color: "red",
-    fontWeight: "bold",
-    fontSize: "1.5rem",
+    color: "green",
+    fontWeight: 'bold',
+    fontSize: '1.5rem',
   },
   statsTable: {
     marginTop: theme.spacing(1),

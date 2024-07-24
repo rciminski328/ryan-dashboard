@@ -33,6 +33,10 @@ const useStyles = makeStyles((theme) => ({
   label: {
     marginBottom: theme.spacing(2),
   },
+  plot: {
+    width: "100%",
+    height: 300,
+  },
   statsTable: {
     marginTop: theme.spacing(2),
     "& th, & td": {
@@ -80,6 +84,103 @@ const Am103L: React.FC<{
   const humidityStats = historyData.stats.humidity;
   const co2Stats = historyData.stats.co2;
 
+  const renderPlot = (
+    title: string,
+    x: any[],
+    y: any[],
+    yLabel: string,
+    color: string
+  ) => (
+    <Plot
+      data={[
+        {
+          x: x,
+          y: y,
+          type: "scatter",
+          mode: "lines+markers",
+          marker: { color: color },
+        },
+      ]}
+      layout={{
+        title: title,
+        xaxis: {
+          title: { text: "Time", standoff: 20 },
+          tickformat: "%I:%M %p",
+          nticks: 10,
+        },
+        yaxis: { title: yLabel },
+        height: 300,
+        margin: { t: 40, b: 60, l: 40, r: 40 },
+      }}
+      className={classes.plot}
+    />
+  );
+
+  const renderGauge = (value: number, max: number, title: string) => (
+    <Plot
+      data={[
+        {
+          type: "indicator",
+          mode: "gauge+number",
+          value: value,
+          title: { text: title },
+          gauge: {
+            axis: { range: [0, max] },
+            steps: [
+              { range: [0, max * 0.33], color: "lightgray" },
+              { range: [max * 0.33, max * 0.66], color: "gray" },
+              { range: [max * 0.66, max], color: "darkgray" },
+            ],
+            threshold: {
+              line: { color: "red", width: 4 },
+              thickness: 0.75,
+              value: value,
+            },
+          },
+        },
+      ]}
+      layout={{ width: 300, height: 300, margin: { t: 0, b: 0 } }}
+    />
+  );
+
+  const renderStatsTable = (stats: any, title: string) => (
+    <Grid item xs={3}>
+      <Typography variant="subtitle1">
+        <strong>{title}</strong>
+      </Typography>
+      <table className={classes.statsTable}>
+        <thead>
+          <tr>
+            <th>Statistic</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Min</td>
+            <td>{stats.min}</td>
+          </tr>
+          <tr>
+            <td>Max</td>
+            <td>{stats.max}</td>
+          </tr>
+          <tr>
+            <td>Average</td>
+            <td>{stats.average.toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td>Median</td>
+            <td>{stats.median}</td>
+          </tr>
+          <tr>
+            <td>Std Dev</td>
+            <td>{stats.stdDev.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </Grid>
+  );
+
   return (
     <Card>
       <Grid container spacing={3}>
@@ -89,36 +190,13 @@ const Am103L: React.FC<{
             <Typography variant="subtitle1">
               <strong>{`${label} - Temperature Trend (°C)`}</strong>
             </Typography>
-            <Plot
-              data={[
-                {
-                  x: historyData.data.temperature.x,
-                  y: historyData.data.temperature.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  marker: { color: "blue" },
-                },
-              ]}
-              config={{
-                responsive: true,
-              }}
-              layout={{
-                autosize: true,
-                title: "Temperature Trend",
-                xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
-                },
-                yaxis: { title: "Temperature (°C)" },
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
-              }}
-              style={{
-                width: "100%",
-                height: "100%",
-                minHeight: chartHeight,
-              }}
-            />
+            {renderPlot(
+              "Temperature Trend",
+              historyData.data.temperature.x,
+              historyData.data.temperature.y,
+              "Temperature (°C)",
+              "blue"
+            )}
           </Grid>
 
           <Grid
@@ -130,66 +208,15 @@ const Am103L: React.FC<{
             <Typography variant="subtitle1">
               <strong>Current Temperature</strong>
             </Typography>
-            <Plot
-              data={[
-                {
-                  type: "indicator",
-                  mode: "gauge+number",
-                  value: custom_data.temperature,
-                  title: { text: "Current Temperature (°C)" },
-                  gauge: {
-                    axis: { range: [0, 60] },
-                    steps: [
-                      { range: [0, 20], color: "lightgray" },
-                      { range: [20, 40], color: "gray" },
-                      { range: [40, 60], color: "darkgray" },
-                    ],
-                    threshold: {
-                      line: { color: "red", width: 4 },
-                      thickness: 0.75,
-                      value: custom_data.temperature,
-                    },
-                  },
-                },
-              ]}
-              layout={{ width: 300, height: 300, margin: { t: 0, b: 0 } }}
-            />
+            {renderGauge(
+              custom_data.temperature,
+              60,
+              "Current Temperature (°C)"
+            )}
           </Grid>
 
           <Grid item xs={12} md={3} className={classes.statusContainer}>
-            <Typography variant="subtitle1">
-              <strong>Temperature Stats</strong>
-            </Typography>
-            <table className={classes.statsTable}>
-              <thead>
-                <tr>
-                  <th>Statistic</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Min</td>
-                  <td>{temperatureStats.min}</td>
-                </tr>
-                <tr>
-                  <td>Max</td>
-                  <td>{temperatureStats.max}</td>
-                </tr>
-                <tr>
-                  <td>Average</td>
-                  <td>{temperatureStats.average.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td>Median</td>
-                  <td>{temperatureStats.median}</td>
-                </tr>
-                <tr>
-                  <td>Std Dev</td>
-                  <td>{temperatureStats.stdDev.toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
+            {renderStatsTable(temperatureStats, "Temperature Stats")}
           </Grid>
         </Grid>
 
@@ -206,102 +233,23 @@ const Am103L: React.FC<{
             <Typography variant="subtitle1">
               <strong>{`${label} - Humidity Trend (%)`}</strong>
             </Typography>
-            <Plot
-              data={[
-                {
-                  x: historyData.data.humidity.x,
-                  y: historyData.data.humidity.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  marker: { color: "green" },
-                },
-              ]}
-              config={{
-                responsive: true,
-              }}
-              layout={{
-                autosize: true,
-                title: "Humidity Trend",
-                xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
-                },
-                yaxis: { title: "Humidity (%)" },
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
-              }}
-              style={{
-                width: "100%",
-                height: "100%",
-                minHeight: chartHeight,
-              }}
-            />
+            {renderPlot(
+              "Humidity Trend",
+              historyData.data.humidity.x,
+              historyData.data.humidity.y,
+              "Humidity (%)",
+              "green"
+            )}
           </Grid>
 
           <Grid item xs={3} className={classes.borderRight}>
             <Typography variant="subtitle1">
               <strong>Current Humidity</strong>
             </Typography>
-            <Plot
-              data={[
-                {
-                  type: "indicator",
-                  mode: "gauge+number",
-                  value: custom_data.humidity,
-                  title: { text: "Current Humidity (%)" },
-                  gauge: {
-                    axis: { range: [0, 100] },
-                    steps: [
-                      { range: [0, 33], color: "lightgray" },
-                      { range: [33, 66], color: "gray" },
-                      { range: [66, 100], color: "darkgray" },
-                    ],
-                    threshold: {
-                      line: { color: "red", width: 4 },
-                      thickness: 0.75,
-                      value: custom_data.humidity,
-                    },
-                  },
-                },
-              ]}
-              layout={{ width: 300, height: 300, margin: { t: 0, b: 0 } }}
-            />
+            {renderGauge(custom_data.humidity, 100, "Current Humidity (%)")}
           </Grid>
-
-          <Grid item xs={3}>
-            <Typography variant="subtitle1">
-              <strong>Humidity Stats</strong>
-            </Typography>
-            <table className={classes.statsTable}>
-              <thead>
-                <tr>
-                  <th>Statistic</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Min</td>
-                  <td>{humidityStats.min}</td>
-                </tr>
-                <tr>
-                  <td>Max</td>
-                  <td>{humidityStats.max}</td>
-                </tr>
-                <tr>
-                  <td>Average</td>
-                  <td>{humidityStats.average.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td>Median</td>
-                  <td>{humidityStats.median}</td>
-                </tr>
-                <tr>
-                  <td>Std Dev</td>
-                  <td>{humidityStats.stdDev.toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
+          <Grid item xs={12} md={3} className={classes.statusContainer}>
+            {renderStatsTable(humidityStats, "Humidity Stats")}
           </Grid>
         </Grid>
 
@@ -314,106 +262,28 @@ const Am103L: React.FC<{
 
         {/* CO2 Section */}
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6} className={classes.borderRight}>
+          <Grid item xs={12} md={6} className={classes.borderRight}>
             <Typography variant="subtitle1">
               <strong>{`${label} - CO22 Trend (ppm)`}</strong>
             </Typography>
-            <Plot
-              data={[
-                {
-                  x: historyData.data.co2.x,
-                  y: historyData.data.co2.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  marker: { color: "red" },
-                },
-              ]}
-              config={{
-                responsive: true,
-              }}
-              layout={{
-                autosize: true,
-                title: "CO2 Trend",
-                xaxis: {
-                  title: { text: "Time", standoff: 20 }, // Move 'Time' label down
-                  tickformat: "%I:%M %p", // Format to display time as "hh:mm AM/PM"
-                  nticks: 10, // Adjust the number of ticks to make it more readable
-                },
-                yaxis: { title: "CO2 (ppm)" },
-                margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
-              }}
-              style={{
-                width: "100%",
-                height: "100%",
-                minHeight: chartHeight,
-              }}
-            />
+            {renderPlot(
+              "CO2 Trend",
+              historyData.data.co2.x,
+              historyData.data.co2.y,
+              "CO2 (ppm)",
+              "red"
+            )}
           </Grid>
 
-          <Grid item xs={3} className={classes.borderRight}>
+          <Grid item xs={12} md={3} className={classes.borderRight}>
             <Typography variant="subtitle1">
               <strong>Current CO2</strong>
             </Typography>
-            <Plot
-              data={[
-                {
-                  type: "indicator",
-                  mode: "gauge+number",
-                  value: custom_data.co2,
-                  title: { text: "Current CO2 (ppm)" },
-                  gauge: {
-                    axis: { range: [0, 2000] },
-                    steps: [
-                      { range: [0, 600], color: "lightgray" },
-                      { range: [600, 1200], color: "gray" },
-                      { range: [1200, 2000], color: "darkgray" },
-                    ],
-                    threshold: {
-                      line: { color: "red", width: 4 },
-                      thickness: 0.75,
-                      value: custom_data.co2,
-                    },
-                  },
-                },
-              ]}
-              layout={{ width: 300, height: 300, margin: { t: 0, b: 0 } }}
-            />
+            {renderGauge(custom_data.co2, 2000, "Current CO2 (ppm)")}
           </Grid>
 
-          <Grid item xs={3}>
-            <Typography variant="subtitle1">
-              <strong>CO2 Stats</strong>
-            </Typography>
-            <table className={classes.statsTable}>
-              <thead>
-                <tr>
-                  <th>Statistic</th>
-                  <th>Value</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Min</td>
-                  <td>{co2Stats.min}</td>
-                </tr>
-                <tr>
-                  <td>Max</td>
-                  <td>{co2Stats.max}</td>
-                </tr>
-                <tr>
-                  <td>Average</td>
-                  <td>{co2Stats.average.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td>Median</td>
-                  <td>{co2Stats.median}</td>
-                </tr>
-                <tr>
-                  <td>Std Dev</td>
-                  <td>{co2Stats.stdDev.toFixed(2)}</td>
-                </tr>
-              </tbody>
-            </table>
+          <Grid item xs={12} md={3} className={classes.statusContainer}>
+            {renderStatsTable(co2Stats, "CO2 Stats")}
           </Grid>
         </Grid>
       </Grid>

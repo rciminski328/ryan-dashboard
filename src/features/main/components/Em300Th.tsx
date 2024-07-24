@@ -79,6 +79,7 @@ const GaugeChart = ({
   title,
   value,
   units,
+  color,
   minHeight,
   minWidth,
   gaugeAxis,
@@ -86,18 +87,12 @@ const GaugeChart = ({
   title: React.ReactElement;
   value: number;
   units: string;
+  color: string;
   minHeight?: number;
   minWidth?: number;
   gaugeAxis?: Partial<Axis>;
 }) => {
   const theme = useTheme();
-
-  // Determine color based on value
-  let color = "green";
-  if (value < 50) color = "red";
-  else if (value < 68) color = "yellow";
-  else if (value > 82) color = "red";
-  else if (value > 78) color = "yellow";
 
   const data: Data[] = [
     {
@@ -111,7 +106,7 @@ const GaugeChart = ({
         axis: gaugeAxis,
         steps: [], // No background colors
         threshold: {
-          line: { color: "red", width: 4 },
+          line: { color: color, width: 4 },
           thickness: 0.75,
           value: value,
         },
@@ -245,6 +240,7 @@ const Em300Th: React.FC<{
             title={<strong>Current Temperature</strong>}
             value={custom_data.temperature}
             units="°F"
+            color="blue"
             minHeight={300} // Enlarge the gauge
             minWidth={300}
             gaugeAxis={{ range: [-10, 120] }}
@@ -294,10 +290,6 @@ const Em300Th: React.FC<{
                   <td colSpan={2}>
                     <Divider className={classes.divider} />
                   </td>
-                </tr>
-                <tr>
-                  <td className={classes.statLabel}>Std Dev</td>
-                  <td>{temperatureStats.stdDev.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
@@ -366,6 +358,7 @@ const Em300Th: React.FC<{
             title={<strong>Current Humidity</strong>}
             value={custom_data.humidity}
             units="%"
+            color="green"
             minHeight={300} // Enlarge the gauge
             minWidth={300}
             gaugeAxis={{ range: [0, 100] }}
@@ -415,10 +408,6 @@ const Em300Th: React.FC<{
                   <td colSpan={2}>
                     <Divider className={classes.divider} />
                   </td>
-                </tr>
-                <tr>
-                  <td className={classes.statLabel}>Std Dev</td>
-                  <td>{humidityStats.stdDev.toFixed(2)}</td>
                 </tr>
               </tbody>
             </table>
