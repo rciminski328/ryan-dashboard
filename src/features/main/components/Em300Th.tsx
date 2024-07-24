@@ -13,7 +13,7 @@ import { Axis, Data } from "plotly.js";
 import React from "react";
 import Plot from "react-plotly.js";
 import { getStats } from "../../../utils/getStats"; // import the existing utility function
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
   Em300ThAsset,

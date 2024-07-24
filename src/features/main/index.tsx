@@ -1,12 +1,9 @@
-import { useState } from "react";
-import {
-  RelativeOrAbsoluteRange,
-  TimeUnitMultiplier,
-} from "../refrigeratorStatus/utils/types";
-import { useAssetsQuery } from "./api/assetsQuery";
-import { AssetSwitch } from "./components/AssetSwitch";
 import { RelativeAbsoluteDateRangePicker } from "@clearblade/ia-mfe-react";
 import { Box } from "@material-ui/core";
+import { useState } from "react";
+import { RelativeOrAbsoluteRange, TimeUnitMultiplier } from "../../utils/types";
+import { useAssetsQuery } from "./api/assetsQuery";
+import { AssetSwitch } from "./components/AssetSwitch";
 
 export function Main() {
   const assetsQuery = useAssetsQuery();

@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
-import { getTimeRangeParametersForPlot } from "../../refrigeratorStatus/utils";
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { getTimeRangeParametersForPlot } from "../../../utils/getTimeRangeParametersForPlot";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { assetsQueryKeys } from "./assetsQuery";
 
 export type Ws202Asset = Omit<Asset["frontend"], "custom_data"> & {
@@ -45,7 +45,9 @@ export function useWs202HistoryQuery({
     queryFn: async (): Promise<Ws202History> => {
       const authInfo = getAuthInfo();
       const resp = await fetch(
-        `${getPlatformInfo().url}/api/v/1/code/${authInfo.systemKey}/fetchTableItems?id=plotsV2.read`,
+        `${getPlatformInfo().url}/api/v/1/code/${
+          authInfo.systemKey
+        }/fetchTableItems?id=plotsV2.read`,
         {
           method: "POST",
           headers: {
@@ -77,11 +79,23 @@ export function useWs202HistoryQuery({
         };
       } = await resp.json();
 
-      const motionData = data.results.lineData.motion || { x: [], y: [], count: 0 };
-      const daylightData = data.results.lineData.daylight || { x: [], y: [], count: 0 };
+      const motionData = data.results.lineData.motion || {
+        x: [],
+        y: [],
+        count: 0,
+      };
+      const daylightData = data.results.lineData.daylight || {
+        x: [],
+        y: [],
+        count: 0,
+      };
 
-      const motionCount = (motionData.y || []).filter(value => value === 2).length;  // Count 2 as detected
-      const daylightCount = (daylightData.y || []).filter(value => value === 1).length;
+      const motionCount = (motionData.y || []).filter(
+        (value) => value === 2
+      ).length; // Count 2 as detected
+      const daylightCount = (daylightData.y || []).filter(
+        (value) => value === 1
+      ).length;
 
       return {
         daylight: {
@@ -174,38 +188,52 @@ export function useLiveDataForWs202({
               return {
                 daylight: {
                   x: [last_updated],
-                  y: [assetData.custom_data.daylight === true ? 1 : 0] as (0 | 1)[],
+                  y: [assetData.custom_data.daylight === true ? 1 : 0] as (
+                    | 0
+                    | 1
+                  )[],
                   count: assetData.custom_data.daylight === true ? 1 : 0,
                 },
                 motion: {
                   x: [last_updated],
-                  y: [assetData.custom_data.motion === true ? 2 : 1] as (1 | 2)[],  // 2 for detected, 1 for not detected
+                  y: [assetData.custom_data.motion === true ? 2 : 1] as (
+                    | 1
+                    | 2
+                  )[], // 2 for detected, 1 for not detected
                   count: assetData.custom_data.motion === true ? 1 : 0,
                 },
               };
             }
 
-            const updatedDaylight = typeof assetData.custom_data.daylight !== "undefined"
-              ? {
-                  x: [...data.daylight.x, last_updated],
-                  y: [
-                    ...data.daylight.y,
-                    assetData.custom_data.daylight === true ? 1 : 0,
-                  ] as (0 | 1)[],
-                  count: (data.daylight.y || []).filter(value => value === 1).length + (assetData.custom_data.daylight === true ? 1 : 0),
-                }
-              : data.daylight;
+            const updatedDaylight =
+              typeof assetData.custom_data.daylight !== "undefined"
+                ? {
+                    x: [...data.daylight.x, last_updated],
+                    y: [
+                      ...data.daylight.y,
+                      assetData.custom_data.daylight === true ? 1 : 0,
+                    ] as (0 | 1)[],
+                    count:
+                      (data.daylight.y || []).filter((value) => value === 1)
+                        .length +
+                      (assetData.custom_data.daylight === true ? 1 : 0),
+                  }
+                : data.daylight;
 
-            const updatedMotion = typeof assetData.custom_data.motion !== "undefined"
-              ? {
-                  x: [...data.motion.x, last_updated],
-                  y: [
-                    ...data.motion.y,
-                    assetData.custom_data.motion === true ? 2 : 1,
-                  ] as (1 | 2)[],
-                  count: (data.motion.y || []).filter(value => value === 2).length + (assetData.custom_data.motion === true ? 1 : 0),
-                }
-              : data.motion;
+            const updatedMotion =
+              typeof assetData.custom_data.motion !== "undefined"
+                ? {
+                    x: [...data.motion.x, last_updated],
+                    y: [
+                      ...data.motion.y,
+                      assetData.custom_data.motion === true ? 2 : 1,
+                    ] as (1 | 2)[],
+                    count:
+                      (data.motion.y || []).filter((value) => value === 2)
+                        .length +
+                      (assetData.custom_data.motion === true ? 1 : 0),
+                  }
+                : data.motion;
 
             return {
               ...data,

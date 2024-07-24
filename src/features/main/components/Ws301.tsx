@@ -9,7 +9,7 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
   Ws301Asset,

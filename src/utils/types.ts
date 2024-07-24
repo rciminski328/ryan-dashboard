@@ -2,6 +2,7 @@ interface TimeRange {
   startDate: string;
   endDate: string;
 }
+
 export enum TimeUnitMultiplier {
   // Value is the multiplier needed to multiply a second by
   SECONDS = 1,

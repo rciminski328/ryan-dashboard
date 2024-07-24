@@ -10,7 +10,7 @@ import {
 import React from "react";
 import Plot from "react-plotly.js";
 import { getStats } from "../../../utils/getStats";
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
   Ws202Asset,

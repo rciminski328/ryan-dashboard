@@ -5,8 +5,8 @@ import { useQuery, useQueryClient } from "react-query";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
 import { getStats } from "../../../utils/getStats";
-import { getTimeRangeParametersForPlot } from "../../refrigeratorStatus/utils";
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { getTimeRangeParametersForPlot } from "../../../utils/getTimeRangeParametersForPlot";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { assetsQueryKeys } from "./assetsQuery";
 
 export type Em300ThAsset = Omit<Asset["frontend"], "custom_data"> & {

@@ -3,7 +3,7 @@ import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
 import { getStats } from "../../../utils/getStats"; // import the existing utility function
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import {
   Am103LAsset,
   useAm103LHistoryQuery,

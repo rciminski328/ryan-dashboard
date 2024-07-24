@@ -1,20 +1,14 @@
 // Ws101.tsx
-import {
-  Box,
-  Card,
-  Divider,
-  Grid,
-  Typography,
-  makeStyles,
-} from "@material-ui/core";
+import { Box, Card, Grid, makeStyles, Typography } from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { graphChartHeight } from "../../../utils";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
-  Ws101Asset,
   useLiveDataForWs101,
   useWs101HistoryQuery,
+  Ws101Asset,
 } from "../api/ws101_history";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,19 +17,19 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontFamily: "Arial, sans-serif",
   },
-  container: {
-    width: "100%",
+  plotContainer: {
+    [theme.breakpoints.up("md")]: {
+      borderRight: `1px solid ${theme.palette.divider}`,
+    },
   },
-  plot: {
-    width: "100%",
-    height: 200,
+  borderRight: {
+    [theme.breakpoints.up("md")]: {
+      borderRight: `1px solid ${theme.palette.divider}`,
+    },
   },
   statusContainer: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-    height: "100%",
   },
   pushed: {
     color: "green",
@@ -117,110 +111,105 @@ const Ws101: React.FC<{
 
   return (
     <Card className={classes.card}>
-      <Grid container spacing={1}>
-        {/* Button Pushed Section */}
-        <Grid item xs={12} className={classes.container}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography className={classes.sectionTitle} noWrap>
-              {`${label} - Button Pushed Audit`}
-            </Typography>
-          </Box>
-        </Grid>
+      {/* Button Pushed Section */}
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography className={classes.sectionTitle} noWrap>
+          {`${label} - Button Pushed Audit`}
+        </Typography>
+      </Box>
 
-        <Grid container item xs={12} spacing={1}>
-          {/* Button Pushed Chart */}
-          <Grid item xs={12} md={4} className={classes.container}>
-            <Plot
-              data={[
-                {
-                  x: historyData.data.button_pushed.x,
-                  y: historyData.data.button_pushed.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  line: { shape: "hv", width: 4 }, // step line and increased width
-                  marker: {
-                    color: historyData.data.button_pushed.y.map((value) =>
-                      value ? "green" : "red"
-                    ),
-                  },
-                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Button Pushed:</b> %{customdata}<extra></extra>`,
-                  customdata: historyData.data.button_pushed.y.map((value) =>
-                    value ? "YES" : "NO"
+      <Grid container item xs={12} spacing={1}>
+        {/* Button Pushed Chart */}
+        <Grid
+          item
+          xs={12}
+          md={5}
+          className={`${classes.plotContainer} ${classes.borderRight}`}
+        >
+          <Plot
+            data={[
+              {
+                x: historyData.data.button_pushed.x,
+                y: historyData.data.button_pushed.y,
+                type: "scatter",
+                mode: "lines+markers",
+                line: { shape: "hv", width: 4 }, // step line and increased width
+                marker: {
+                  color: historyData.data.button_pushed.y.map((value) =>
+                    value ? "green" : "red"
                   ),
                 },
-              ]}
-              layout={{
-                xaxis: {
-                  title: { text: "Time", standoff: 20 },
-                  tickformat: "%I:%M %p",
-                  nticks: 10,
-                },
-                yaxis: {
-                  tickvals: [0, 1],
-                  ticktext: ["NO", "YES"], // Display YES/NO instead of 0/1
-                  range: [-0.1, 1.1], // Extend range to avoid cutoff
-                },
-                hovermode: "x", // Hovermode 'x' for hover over x-axis
-                hoverdistance: 100,
-                height: 200,
-                margin: { t: 40, b: 60, l: 40, r: 40 },
-              }}
-              className={classes.plot}
-            />
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
+                hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Button Pushed:</b> %{customdata}<extra></extra>`,
+                customdata: historyData.data.button_pushed.y.map((value) =>
+                  value ? "YES" : "NO"
+                ),
+              },
+            ]}
+            config={{
+              responsive: true,
+            }}
+            layout={{
+              autosize: true,
+              xaxis: {
+                title: { text: "Time", standoff: 20 },
+                tickformat: "%I:%M %p",
+                nticks: 10,
+              },
+              yaxis: {
+                tickvals: [0, 1],
+                ticktext: ["NO", "YES"], // Display YES/NO instead of 0/1
+                range: [-0.1, 1.1], // Extend range to avoid cutoff
+              },
+              hovermode: "x", // Hovermode 'x' for hover over x-axis
+              hoverdistance: 100,
+              margin: { t: 40, b: 60, l: 40, r: 40 },
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: graphChartHeight,
+            }}
           />
+        </Grid>
 
-          {/* Button Pushed */}
-          <Grid item xs={12} md={3} className={classes.statusContainer}>
-            <div>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Button Pushed
-              </Typography>
-              <Typography
-                variant="body1"
-                className={`${classes.largeText} ${
-                  custom_data.button_pushed ? classes.pushed : classes.notPushed
-                }`}
-                align="center" // Center align the "YES"/"NO" status
-              >
-                {custom_data.button_pushed ? "YES" : "NO"}
-              </Typography>
-            </div>
-          </Grid>
+        {/* Button Pushed */}
+        <Grid
+          item
+          xs={12}
+          md={3}
+          className={`${classes.statusContainer} ${classes.borderRight}`}
+        >
+          <div>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Button Pushed
+            </Typography>
+            <Typography
+              variant="body1"
+              className={`${classes.largeText} ${
+                custom_data.button_pushed ? classes.pushed : classes.notPushed
+              }`}
+              align="center" // Center align the "YES"/"NO" status
+            >
+              {custom_data.button_pushed ? "YES" : "NO"}
+            </Typography>
+          </div>
+        </Grid>
 
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
-          />
-
-          {/* Button Pushed Stats */}
-          <Grid item xs={12} md={4} className={classes.statusContainer}>
-            <div>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Button Stats
-              </Typography>
-              <table className={classes.statsTable}>
-                <tbody>
-                  <tr>
-                    <td className={classes.statLabel}>Count</td>
-                    <td>{buttonPushedCount}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Grid>
+        {/* Button Pushed Stats */}
+        <Grid item xs={12} md={4} className={classes.statusContainer}>
+          <div>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Button Stats
+            </Typography>
+            <table className={classes.statsTable}>
+              <tbody>
+                <tr>
+                  <td className={classes.statLabel}>Count</td>
+                  <td>{buttonPushedCount}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </Grid>
       </Grid>
     </Card>

@@ -1,8 +1,5 @@
 import { RelativeOrAbsoluteRange } from "./types";
 
-export * from "./constants";
-export * from "./colorThresholds";
-
 export function getTimeRangeParametersForPlot(
   timeRange: RelativeOrAbsoluteRange
 ): { startDate: string; endDate: string } {
