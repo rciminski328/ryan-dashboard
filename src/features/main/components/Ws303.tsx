@@ -32,10 +32,10 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   detected: {
-    color: "green",
+    color: "red",
   },
   notDetected: {
-    color: "red",
+    color: "green",
   },
   statsTable: {
     marginTop: theme.spacing(1),

@@ -32,12 +32,12 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   open: {
-    color: "green",
+    color: "red",
     fontWeight: 'bold',
     fontSize: '1.5rem',
   },
   closed: {
-    color: "red",
+    color: "green",
     fontWeight: 'bold',
     fontSize: '1.5rem',
   },
