@@ -12,7 +12,6 @@ import {
 import { Axis, Data } from "plotly.js";
 import React from "react";
 import Plot from "react-plotly.js";
-import { getStats } from "../../../utils/getStats"; // import the existing utility function
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
@@ -183,9 +182,8 @@ const Em300Th: React.FC<{
   const custom_data = assetQuery.data.custom_data;
   const label = assetQuery.data.label;
 
-  // Calculate statistics for temperature and humidity
-  const temperatureStats = getStats(historyData.data.temperature.y);
-  const humidityStats = getStats(historyData.data.humidity.y);
+  const temperatureStats = historyData.stats.temperature;
+  const humidityStats = historyData.stats.humidity;
 
   return (
     <Card className={classes.card}>

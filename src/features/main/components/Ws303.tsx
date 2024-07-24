@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
+import { graphChartHeight } from "../../../utils";
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
@@ -23,19 +24,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontFamily: "Arial, sans-serif",
   },
-  container: {
-    width: "100%",
-  },
-  plot: {
-    width: "100%",
-    height: 200,
+  borderRight: {
+    [theme.breakpoints.up("md")]: {
+      borderRight: `1px solid ${theme.palette.divider}`,
+    },
   },
   statusContainer: {
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "column",
-    height: "100%",
   },
   detected: {
     color: "green",
@@ -146,115 +142,104 @@ const Ws303: React.FC<{
 
   return (
     <Card className={classes.card}>
-      <Grid container spacing={1}>
-        {/* Leak Detection Section */}
-        <Grid item xs={12} className={classes.container}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography className={classes.sectionTitle} noWrap>
-              {`${label} - Leak Detection Audit`}
-            </Typography>
-          </Box>
-        </Grid>
+      {/* Leak Detection Section */}
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography className={classes.sectionTitle} noWrap>
+          {`${label} - Leak Detection Audit`}
+        </Typography>
+      </Box>
 
-        <Grid container item xs={12} spacing={1}>
-          {/* Leak Detection Chart */}
-          <Grid item xs={12} md={4} className={classes.container}>
-            <Plot
-              data={[
-                {
-                  x: leakDetectedData.x,
-                  y: leakDetectedData.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  line: { shape: "hv", width: 4 }, // step line and increased width
-                  marker: {
-                    color: leakDetectedData.y.map((value) =>
-                      value ? "green" : "red"
-                    ),
-                  },
-                  hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Leak Detected:</b> %{customdata}<extra></extra>`,
-                  customdata: leakDetectedData.y.map((value) =>
-                    value ? "YES" : "NO"
+      <Grid container item xs={12} spacing={1}>
+        {/* Leak Detection Chart */}
+        <Grid item xs={12} md={6} className={classes.borderRight}>
+          <Plot
+            data={[
+              {
+                x: leakDetectedData.x,
+                y: leakDetectedData.y,
+                type: "scatter",
+                mode: "lines+markers",
+                line: { shape: "hv", width: 4 }, // step line and increased width
+                marker: {
+                  color: leakDetectedData.y.map((value) =>
+                    value ? "green" : "red"
                   ),
                 },
-              ]}
-              layout={{
-                xaxis: {
-                  title: { text: "Time", standoff: 20 },
-                  tickformat: "%I:%M %p",
-                  nticks: 10,
-                },
-                yaxis: {
-                  tickvals: [0, 1],
-                  ticktext: ["NO", "YES"],
-                  range: [-0.1, 1.1], // Extend range to avoid cutoff
-                },
-                hovermode: "x", // Hovermode 'x' for hover over x-axis
-                hoverdistance: 100,
-                height: 200,
-                margin: { t: 40, b: 60, l: 40, r: 40 },
-              }}
-              className={classes.plot}
-            />
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
+                hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Leak Detected:</b> %{customdata}<extra></extra>`,
+                customdata: leakDetectedData.y.map((value) =>
+                  value ? "YES" : "NO"
+                ),
+              },
+            ]}
+            config={{
+              responsive: true,
+            }}
+            layout={{
+              xaxis: {
+                title: { text: "Time", standoff: 20 },
+                tickformat: "%I:%M %p",
+                nticks: 10,
+              },
+              yaxis: {
+                tickvals: [0, 1],
+                ticktext: ["NO", "YES"],
+                range: [-0.1, 1.1], // Extend range to avoid cutoff
+              },
+              hovermode: "x", // Hovermode 'x' for hover over x-axis
+              hoverdistance: 100,
+              margin: { t: 40, b: 60, l: 40, r: 40 },
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: graphChartHeight,
+            }}
           />
+        </Grid>
 
-          {/* Leak Detected */}
-          <Grid item xs={12} md={3} className={classes.statusContainer}>
-            <div>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Leak Detected
-              </Typography>
-              <Typography
-                variant="body1"
-                className={`${classes.largeText} ${
-                  custom_data.leak_detected
-                    ? classes.detected
-                    : classes.notDetected
-                }`}
-                align="center" // Center align the "YES"/"NO" status
-              >
-                {custom_data.leak_detected ? "YES" : "NO"}
-              </Typography>
+        {/* Leak Detected */}
+        <Grid
+          item
+          xs={12}
+          md={3}
+          className={`${classes.statusContainer} ${classes.borderRight}`}
+        >
+          <div>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Leak Detected
+            </Typography>
+            <Typography
+              variant="body1"
+              className={`${classes.largeText} ${
+                custom_data.leak_detected
+                  ? classes.detected
+                  : classes.notDetected
+              }`}
+              align="center" // Center align the "YES"/"NO" status
+            >
+              {custom_data.leak_detected ? "YES" : "NO"}
+            </Typography>
+          </div>
+        </Grid>
+
+        {/* Leak Stats */}
+        <Grid item xs={12} md={3} className={classes.statusContainer}>
+          <div>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Leak Stats
+            </Typography>
+            <div className={classes.tableRow}>
+              <Typography className={classes.statLabel}>Count</Typography>
+              <Typography>{timesLeaked}</Typography>
             </div>
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
-          />
-
-          {/* Leak Stats */}
-          <Grid item xs={12} md={4} className={classes.statusContainer}>
-            <div>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Leak Stats
+            <Divider className={classes.divider} />
+            <div className={classes.tableRow}>
+              <Typography className={classes.statLabel}>
+                Average Duration
               </Typography>
-              <div className={classes.tableRow}>
-                <Typography className={classes.statLabel}>Count</Typography>
-                <Typography>{timesLeaked}</Typography>
-              </div>
-              <Divider className={classes.divider} />
-              <div className={classes.tableRow}>
-                <Typography className={classes.statLabel}>
-                  Average Duration
-                </Typography>
-                <Typography>{averageDuration} sec</Typography>
-              </div>
+              <Typography>{averageDuration} sec</Typography>
             </div>
-          </Grid>
+          </div>
         </Grid>
       </Grid>
     </Card>

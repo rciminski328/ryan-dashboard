@@ -2,7 +2,6 @@
 import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
-import { getStats } from "../../../utils/getStats"; // import the existing utility function
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import {
   Am103LAsset,
@@ -69,10 +68,9 @@ const Am103L: React.FC<{
   const custom_data = assetQuery.data.custom_data;
   const label = assetQuery.data.label;
 
-  // Calculate statistics for temperature, humidity, and CO2
-  const temperatureStats = getStats(historyData.data.temperature.y);
-  const humidityStats = getStats(historyData.data.humidity.y);
-  const co2Stats = getStats(historyData.data.co2.y);
+  const temperatureStats = historyData.stats.temperature;
+  const humidityStats = historyData.stats.humidity;
+  const co2Stats = historyData.stats.co2;
 
   return (
     <Card>

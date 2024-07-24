@@ -10,7 +10,6 @@ import {
 import React from "react";
 import Plot from "react-plotly.js";
 import { graphChartHeight } from "../../../utils";
-import { getStats } from "../../../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
@@ -106,16 +105,12 @@ const Ws202: React.FC<{
   const custom_data = assetData.custom_data;
   const label = assetData.label;
 
-  // Ensure historyData and its properties are defined before accessing them
-  const motionData = historyData?.motion || { x: [], y: [], count: 0 };
-  const daylightData = historyData?.daylight || { x: [], y: [], count: 0 };
-
-  // Map 1 and 2 to 0 and 1 for display purposes
-  const mappedMotionData = motionData.y.map((value) => (value === 2 ? 1 : 0));
+  const motionData = historyData.data.motion;
+  const daylightData = historyData.data.daylight;
 
   // Calculate statistics for motion and daylight
-  const motionStats = getStats(mappedMotionData);
-  const daylightStats = getStats(daylightData.y);
+  const motionStats = historyData.stats.motion;
+  const daylightStats = historyData.stats.daylight;
 
   return (
     <Card className={classes.card}>
@@ -133,20 +128,16 @@ const Ws202: React.FC<{
             data={[
               {
                 x: motionData.x,
-                y: mappedMotionData,
+                y: motionData.y,
                 type: "scatter",
                 mode: "lines+markers",
                 line: { shape: "hv", width: 4 }, // smooth line and increased width
                 marker: {
-                  color: mappedMotionData.map((value) =>
-                    value ? "green" : "red"
-                  ),
+                  color: motionData.y.map((value) => (value ? "green" : "red")),
                 },
                 hoverinfo: "x+y", // Show x and y information on hover
                 hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Motion Detected:</b> %{customdata}<extra></extra>`,
-                customdata: mappedMotionData.map((value) =>
-                  value ? "YES" : "NO"
-                ),
+                customdata: motionData.y.map((value) => (value ? "YES" : "NO")),
               },
             ]}
             config={{

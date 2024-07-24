@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useQuery, useQueryClient } from "react-query";
 import { getAuthInfo } from "../../../utils/authInfo";
 import { getPlatformInfo } from "../../../utils/getPlatformInfo";
+import { getStats } from "../../../utils/getStats";
 import { getTimeRangeParametersForPlot } from "../../../utils/getTimeRangeParametersForPlot";
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { assetsQueryKeys } from "./assetsQuery";
@@ -111,15 +112,21 @@ export function useWs202HistoryQuery({
       };
     },
     select: (data) => ({
-      daylight: {
-        x: data.daylight.x.map((timestamp) => new Date(timestamp)),
-        y: data.daylight.y,
-        count: data.daylight.count,
+      data: {
+        daylight: {
+          x: data.daylight.x.map((timestamp) => new Date(timestamp)),
+          y: data.daylight.y,
+          count: data.daylight.count,
+        },
+        motion: {
+          x: data.motion.x.map((timestamp) => new Date(timestamp)),
+          y: data.motion.y.map((value) => (value === 2 ? 1 : 0)),
+          count: data.motion.count,
+        },
       },
-      motion: {
-        x: data.motion.x.map((timestamp) => new Date(timestamp)),
-        y: data.motion.y,
-        count: data.motion.count,
+      stats: {
+        daylight: getStats(data.daylight ? data.daylight.y : []),
+        motion: getStats(data.motion ? data.motion.y : []),
       },
     }),
     refetchOnWindowFocus: false,
