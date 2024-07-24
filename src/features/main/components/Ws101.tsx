@@ -123,7 +123,7 @@ const Ws101: React.FC<{
         <Grid
           item
           xs={12}
-          md={5}
+          md={6}
           className={`${classes.plotContainer} ${classes.borderRight}`}
         >
           <Plot
@@ -196,7 +196,7 @@ const Ws101: React.FC<{
         </Grid>
 
         {/* Button Pushed Stats */}
-        <Grid item xs={12} md={4} className={classes.statusContainer}>
+        <Grid item xs={12} md={3} className={classes.statusContainer}>
           <div>
             <Typography className={classes.sectionTitle} gutterBottom>
               Button Stats
