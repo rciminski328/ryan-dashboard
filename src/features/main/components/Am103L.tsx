@@ -1,5 +1,12 @@
 // Am103L.tsx
-import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
+import {
+  Box,
+  Card,
+  Divider,
+  Grid,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
@@ -11,18 +18,17 @@ import {
 import { useAsset } from "../api/assetsQuery";
 
 const useStyles = makeStyles((theme) => ({
-  container: {
-    width: "100%",
+  borderRight: {
+    [theme.breakpoints.up("md")]: {
+      borderRight: `1px solid ${theme.palette.divider}`,
+    },
   },
-  section: {
-    borderRight: `1px solid ${theme.palette.divider}`,
+  statusContainer: {
+    display: "flex",
+    justifyContent: "center",
   },
   table: {
     width: "100%",
-  },
-  plot: {
-    width: "100%",
-    height: 300,
   },
   label: {
     marginBottom: theme.spacing(2),
@@ -34,6 +40,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 }));
+
+const chartHeight = 300;
 
 const Am103L: React.FC<{
   assetId: string;
@@ -74,10 +82,10 @@ const Am103L: React.FC<{
 
   return (
     <Card>
-      <Grid container spacing={1} className={classes.container}>
+      <Grid container spacing={3}>
         {/* Temperature Section */}
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6} className={classes.borderRight}>
             <Typography variant="subtitle1">
               <strong>{`${label} - Temperature Trend (°C)`}</strong>
             </Typography>
@@ -91,7 +99,11 @@ const Am103L: React.FC<{
                   marker: { color: "blue" },
                 },
               ]}
+              config={{
+                responsive: true,
+              }}
               layout={{
+                autosize: true,
                 title: "Temperature Trend",
                 xaxis: {
                   title: { text: "Time", standoff: 20 }, // Move 'Time' label down
@@ -99,14 +111,22 @@ const Am103L: React.FC<{
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
                 yaxis: { title: "Temperature (°C)" },
-                height: 300,
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
               }}
-              className={classes.plot}
+              style={{
+                width: "100%",
+                height: "100%",
+                minHeight: chartHeight,
+              }}
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid
+            item
+            xs={12}
+            md={3}
+            className={`${classes.borderRight} ${classes.statusContainer}`}
+          >
             <Typography variant="subtitle1">
               <strong>Current Temperature</strong>
             </Typography>
@@ -136,7 +156,7 @@ const Am103L: React.FC<{
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={12} md={3} className={classes.statusContainer}>
             <Typography variant="subtitle1">
               <strong>Temperature Stats</strong>
             </Typography>
@@ -173,9 +193,16 @@ const Am103L: React.FC<{
           </Grid>
         </Grid>
 
+        {/* Horizontal Divider */}
+        <Grid item xs={12}>
+          <Box pt={0.5}>
+            <Divider />
+          </Box>
+        </Grid>
+
         {/* Humidity Section */}
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.borderRight}>
             <Typography variant="subtitle1">
               <strong>{`${label} - Humidity Trend (%)`}</strong>
             </Typography>
@@ -189,7 +216,11 @@ const Am103L: React.FC<{
                   marker: { color: "green" },
                 },
               ]}
+              config={{
+                responsive: true,
+              }}
               layout={{
+                autosize: true,
                 title: "Humidity Trend",
                 xaxis: {
                   title: { text: "Time", standoff: 20 }, // Move 'Time' label down
@@ -197,14 +228,17 @@ const Am103L: React.FC<{
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
                 yaxis: { title: "Humidity (%)" },
-                height: 300,
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
               }}
-              className={classes.plot}
+              style={{
+                width: "100%",
+                height: "100%",
+                minHeight: chartHeight,
+              }}
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={3} className={classes.borderRight}>
             <Typography variant="subtitle1">
               <strong>Current Humidity</strong>
             </Typography>
@@ -271,11 +305,18 @@ const Am103L: React.FC<{
           </Grid>
         </Grid>
 
+        {/* Horizontal Divider */}
+        <Grid item xs={12}>
+          <Box pt={0.5}>
+            <Divider />
+          </Box>
+        </Grid>
+
         {/* CO2 Section */}
         <Grid container item xs={12} spacing={1}>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.borderRight}>
             <Typography variant="subtitle1">
-              <strong>{`${label} - CO2 Trend (ppm)`}</strong>
+              <strong>{`${label} - CO22 Trend (ppm)`}</strong>
             </Typography>
             <Plot
               data={[
@@ -287,7 +328,11 @@ const Am103L: React.FC<{
                   marker: { color: "red" },
                 },
               ]}
+              config={{
+                responsive: true,
+              }}
               layout={{
+                autosize: true,
                 title: "CO2 Trend",
                 xaxis: {
                   title: { text: "Time", standoff: 20 }, // Move 'Time' label down
@@ -295,14 +340,17 @@ const Am103L: React.FC<{
                   nticks: 10, // Adjust the number of ticks to make it more readable
                 },
                 yaxis: { title: "CO2 (ppm)" },
-                height: 300,
                 margin: { t: 40, b: 60, l: 40, r: 40 }, // Increase bottom margin
               }}
-              className={classes.plot}
+              style={{
+                width: "100%",
+                height: "100%",
+                minHeight: chartHeight,
+              }}
             />
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={3} className={classes.borderRight}>
             <Typography variant="subtitle1">
               <strong>Current CO2</strong>
             </Typography>

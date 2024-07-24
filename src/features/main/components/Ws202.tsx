@@ -213,7 +213,9 @@ const Ws202: React.FC<{
 
       {/* Horizontal Divider */}
       <Grid item xs={12}>
-        <Divider className={classes.divider} />
+        <Box pt={0.5}>
+          <Divider className={classes.divider} />
+        </Box>
       </Grid>
 
       {/* Daylight Detection Section */}
