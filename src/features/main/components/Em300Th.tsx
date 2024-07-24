@@ -12,6 +12,7 @@ import {
 import { Axis, Data } from "plotly.js";
 import React from "react";
 import Plot from "react-plotly.js";
+import { graphChartHeight } from "../../../utils";
 import { RelativeOrAbsoluteRange } from "../../../utils/types";
 import { useAsset } from "../api/assetsQuery";
 import {
@@ -26,12 +27,10 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontFamily: "Arial, sans-serif",
   },
-  container: {
-    width: "100%",
-  },
-  plot: {
-    width: "100%",
-    height: 200,
+  borderRight: {
+    [theme.breakpoints.up("md")]: {
+      borderRight: `1px solid ${theme.palette.divider}`,
+    },
   },
   statusContainer: {
     display: "flex",
@@ -187,261 +186,243 @@ const Em300Th: React.FC<{
 
   return (
     <Card className={classes.card}>
-      <Grid container spacing={1}>
-        {/* Temperature Section */}
-        <Grid item xs={12} className={classes.container}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography className={classes.sectionTitle} noWrap>
-              {`${label} - Temperature Trend (°F)`}
+      {/* Temperature Section */}
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography className={classes.sectionTitle} noWrap>
+          {`${label} - Temperature Trend (°F)`}
+        </Typography>
+      </Box>
+
+      <Grid container item xs={12} spacing={1}>
+        {/* Temperature Trend Chart */}
+        <Grid item xs={12} md={6} className={classes.borderRight}>
+          <Plot
+            data={[
+              {
+                x: historyData.data.temperature.x,
+                y: historyData.data.temperature.y,
+                type: "scatter",
+                mode: "lines+markers",
+                line: { shape: "spline", width: 4 }, // smooth line and increased width
+                marker: { color: "blue" },
+                hoverinfo: "x+y", // Show x and y information on hover
+                hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Temperature:</b> %{y}°F<extra></extra>`,
+              },
+            ]}
+            config={{
+              responsive: true,
+            }}
+            layout={{
+              autosize: true,
+              xaxis: {
+                title: { text: "Time", standoff: 20 },
+                tickformat: "%I:%M %p",
+                nticks: 10,
+              },
+              yaxis: {
+                title: { text: "" },
+              },
+              hovermode: "closest", // Show hover tool regardless of xy point
+              hoverdistance: 100, // Increase hover distance
+              margin: { t: 40, b: 60, l: 40, r: 40 },
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: graphChartHeight,
+            }}
+          />
+        </Grid>
+
+        {/* Current Temperature */}
+        <Grid
+          item
+          xs={12}
+          md={3}
+          className={`${classes.statusContainer} ${classes.borderRight}`}
+        >
+          <GaugeChart
+            title={<strong>Current Temperature</strong>}
+            value={custom_data.temperature}
+            units="°F"
+            minHeight={300} // Enlarge the gauge
+            minWidth={300}
+            gaugeAxis={{ range: [-10, 120] }}
+          />
+        </Grid>
+
+        {/* Temperature Stats */}
+        <Grid item xs={12} md={3} className={classes.statusContainer}>
+          <div>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Temperature Stats
             </Typography>
-          </Box>
+            <table className={classes.statsTable}>
+              <tbody>
+                <tr>
+                  <td className={classes.statLabel}>Min</td>
+                  <td>{temperatureStats.min.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Max</td>
+                  <td>{temperatureStats.max.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Average</td>
+                  <td>{temperatureStats.average.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Median</td>
+                  <td>{temperatureStats.median.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Std Dev</td>
+                  <td>{temperatureStats.stdDev.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </Grid>
+      </Grid>
+
+      <Divider className={classes.divider} />
+
+      {/* Humidity Section */}
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography className={classes.sectionTitle} noWrap>
+          {`${label} - Humidity Trend (%)`}
+        </Typography>
+      </Box>
+
+      <Grid container item xs={12} spacing={1}>
+        {/* Humidity Trend Chart */}
+        <Grid item xs={12} md={6} className={classes.borderRight}>
+          <Plot
+            data={[
+              {
+                x: historyData.data.humidity.x,
+                y: historyData.data.humidity.y,
+                type: "scatter",
+                mode: "lines+markers",
+                line: { shape: "spline", width: 4 }, // smooth line and increased width
+                marker: { color: "green" },
+                hoverinfo: "x+y", // Show x and y information on hover
+                hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Humidity:</b> %{y}%<extra></extra>`,
+              },
+            ]}
+            config={{
+              responsive: true,
+            }}
+            layout={{
+              autosize: true,
+              xaxis: {
+                title: { text: "Time", standoff: 20 },
+                tickformat: "%I:%M %p",
+                nticks: 10,
+              },
+              yaxis: {
+                title: { text: "" },
+              },
+              hovermode: "closest", // Show hover tool regardless of xy point
+              hoverdistance: 100, // Increase hover distance
+              margin: { t: 40, b: 60, l: 40, r: 40 },
+            }}
+            style={{
+              width: "100%",
+              height: "100%",
+              minHeight: graphChartHeight,
+            }}
+          />
         </Grid>
 
-        <Grid container item xs={12} spacing={1}>
-          {/* Temperature Trend Chart */}
-          <Grid item xs={12} md={4} className={classes.container}>
-            <Plot
-              data={[
-                {
-                  x: historyData.data.temperature.x,
-                  y: historyData.data.temperature.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  line: { shape: "spline", width: 4 }, // smooth line and increased width
-                  marker: { color: "blue" },
-                  hoverinfo: "x+y", // Show x and y information on hover
-                  hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Temperature:</b> %{y}°F<extra></extra>`,
-                },
-              ]}
-              layout={{
-                xaxis: {
-                  title: { text: "Time", standoff: 20 },
-                  tickformat: "%I:%M %p",
-                  nticks: 10,
-                },
-                yaxis: {
-                  title: { text: "" },
-                },
-                hovermode: "closest", // Show hover tool regardless of xy point
-                hoverdistance: 100, // Increase hover distance
-                height: 200,
-                margin: { t: 40, b: 60, l: 40, r: 40 },
-              }}
-              className={classes.plot}
-            />
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
+        {/* Current Humidity */}
+        <Grid
+          item
+          xs={12}
+          md={3}
+          className={`${classes.statusContainer} ${classes.borderRight}`}
+        >
+          <GaugeChart
+            title={<strong>Current Humidity</strong>}
+            value={custom_data.humidity}
+            units="%"
+            minHeight={300} // Enlarge the gauge
+            minWidth={300}
+            gaugeAxis={{ range: [0, 100] }}
           />
-
-          {/* Current Temperature */}
-          <Grid item xs={12} md={3} className={classes.statusContainer}>
-            <GaugeChart
-              title={<strong>Current Temperature</strong>}
-              value={custom_data.temperature}
-              units="°F"
-              minHeight={300} // Enlarge the gauge
-              minWidth={300}
-              gaugeAxis={{ range: [-10, 120] }}
-            />
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
-          />
-
-          {/* Temperature Stats */}
-          <Grid item xs={12} md={4} className={classes.statusContainer}>
-            <div>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Temperature Stats
-              </Typography>
-              <table className={classes.statsTable}>
-                <tbody>
-                  <tr>
-                    <td className={classes.statLabel}>Min</td>
-                    <td>{temperatureStats.min.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Max</td>
-                    <td>{temperatureStats.max.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Average</td>
-                    <td>{temperatureStats.average.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Median</td>
-                    <td>{temperatureStats.median.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Std Dev</td>
-                    <td>{temperatureStats.stdDev.toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Grid>
         </Grid>
 
-        <Divider className={classes.divider} />
-
-        {/* Humidity Section */}
-        <Grid item xs={12} className={classes.container}>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <Typography className={classes.sectionTitle} noWrap>
-              {`${label} - Humidity Trend (%)`}
+        {/* Humidity Stats */}
+        <Grid item xs={12} md={3} className={classes.statusContainer}>
+          <div>
+            <Typography className={classes.sectionTitle} gutterBottom>
+              Humidity Stats
             </Typography>
-          </Box>
-        </Grid>
-
-        <Grid container item xs={12} spacing={1}>
-          {/* Humidity Trend Chart */}
-          <Grid item xs={12} md={4} className={classes.container}>
-            <Plot
-              data={[
-                {
-                  x: historyData.data.humidity.x,
-                  y: historyData.data.humidity.y,
-                  type: "scatter",
-                  mode: "lines+markers",
-                  line: { shape: "spline", width: 4 }, // smooth line and increased width
-                  marker: { color: "green" },
-                  hoverinfo: "x+y", // Show x and y information on hover
-                  hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Humidity:</b> %{y}%<extra></extra>`,
-                },
-              ]}
-              layout={{
-                xaxis: {
-                  title: { text: "Time", standoff: 20 },
-                  tickformat: "%I:%M %p",
-                  nticks: 10,
-                },
-                yaxis: {
-                  title: { text: "" },
-                },
-                hovermode: "closest", // Show hover tool regardless of xy point
-                hoverdistance: 100, // Increase hover distance
-                height: 200,
-                margin: { t: 40, b: 60, l: 40, r: 40 },
-              }}
-              className={classes.plot}
-            />
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
-          />
-
-          {/* Current Humidity */}
-          <Grid item xs={12} md={3} className={classes.statusContainer}>
-            <GaugeChart
-              title={<strong>Current Humidity</strong>}
-              value={custom_data.humidity}
-              units="%"
-              minHeight={300} // Enlarge the gauge
-              minWidth={300}
-              gaugeAxis={{ range: [0, 100] }}
-            />
-          </Grid>
-
-          {/* Vertical Divider */}
-          <Divider
-            orientation="vertical"
-            flexItem
-            className={classes.verticalDivider}
-          />
-
-          {/* Humidity Stats */}
-          <Grid item xs={12} md={4} className={classes.statusContainer}>
-            <div>
-              <Typography className={classes.sectionTitle} gutterBottom>
-                Humidity Stats
-              </Typography>
-              <table className={classes.statsTable}>
-                <tbody>
-                  <tr>
-                    <td className={classes.statLabel}>Min</td>
-                    <td>{humidityStats.min.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Max</td>
-                    <td>{humidityStats.max.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Average</td>
-                    <td>{humidityStats.average.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Median</td>
-                    <td>{humidityStats.median.toFixed(2)}</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={2}>
-                      <Divider className={classes.divider} />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className={classes.statLabel}>Std Dev</td>
-                    <td>{humidityStats.stdDev.toFixed(2)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </Grid>
+            <table className={classes.statsTable}>
+              <tbody>
+                <tr>
+                  <td className={classes.statLabel}>Min</td>
+                  <td>{humidityStats.min.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Max</td>
+                  <td>{humidityStats.max.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Average</td>
+                  <td>{humidityStats.average.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Median</td>
+                  <td>{humidityStats.median.toFixed(2)}</td>
+                </tr>
+                <tr>
+                  <td colSpan={2}>
+                    <Divider className={classes.divider} />
+                  </td>
+                </tr>
+                <tr>
+                  <td className={classes.statLabel}>Std Dev</td>
+                  <td>{humidityStats.stdDev.toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </Grid>
       </Grid>
     </Card>
