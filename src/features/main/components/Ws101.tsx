@@ -17,11 +17,6 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     fontFamily: "Arial, sans-serif",
   },
-  plotContainer: {
-    [theme.breakpoints.up("md")]: {
-      borderRight: `1px solid ${theme.palette.divider}`,
-    },
-  },
   borderRight: {
     [theme.breakpoints.up("md")]: {
       borderRight: `1px solid ${theme.palette.divider}`,
@@ -120,12 +115,7 @@ const Ws101: React.FC<{
 
       <Grid container item xs={12} spacing={1}>
         {/* Button Pushed Chart */}
-        <Grid
-          item
-          xs={12}
-          md={6}
-          className={`${classes.plotContainer} ${classes.borderRight}`}
-        >
+        <Grid item xs={12} md={6} className={classes.borderRight}>
           <Plot
             data={[
               {
