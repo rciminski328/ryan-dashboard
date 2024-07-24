@@ -1,21 +1,27 @@
 // Ws101.tsx
-// @ts-nocheck
+import {
+  Box,
+  Card,
+  Divider,
+  Grid,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
 import React from "react";
-import { Card, Grid, Typography, makeStyles, Box, Divider } from "@material-ui/core";
 import Plot from "react-plotly.js";
+import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { useAsset } from "../api/assetsQuery";
 import {
   Ws101Asset,
-  useWs101HistoryQuery,
   useLiveDataForWs101,
+  useWs101HistoryQuery,
 } from "../api/ws101_history";
-import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "Arial, sans-serif",
   },
   container: {
     width: "100%",
@@ -33,20 +39,20 @@ const useStyles = makeStyles((theme) => ({
   },
   pushed: {
     color: "green",
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
+    fontWeight: "bold",
+    fontSize: "1.5rem",
   },
   notPushed: {
     color: "red",
-    fontWeight: 'bold',
-    fontSize: '1.5rem',
+    fontWeight: "bold",
+    fontSize: "1.5rem",
   },
   statsTable: {
     marginTop: theme.spacing(1),
-    '& th, & td': {
+    "& th, & td": {
       padding: theme.spacing(0.5),
-      textAlign: 'left',
-      fontSize: '1rem',
+      textAlign: "left",
+      fontSize: "1rem",
     },
   },
   largeText: {
@@ -66,9 +72,9 @@ const useStyles = makeStyles((theme) => ({
     fontSize: "1rem",
   },
   tableRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: theme.spacing(1),
   },
   statLabel: {
@@ -76,10 +82,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
-  assetId,
-  timeRange,
-}) => {
+const Ws101: React.FC<{
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}> = ({ assetId, timeRange }) => {
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws101Asset>(assetId);
@@ -114,7 +120,11 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
       <Grid container spacing={1}>
         {/* Button Pushed Section */}
         <Grid item xs={12} className={classes.container}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography className={classes.sectionTitle} noWrap>
               {`${label} - Button Pushed Audit`}
             </Typography>
@@ -132,9 +142,15 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   type: "scatter",
                   mode: "lines+markers",
                   line: { shape: "hv", width: 4 }, // step line and increased width
-                  marker: { color: historyData.data.button_pushed.y.map((value) => (value ? "green" : "red")) },
+                  marker: {
+                    color: historyData.data.button_pushed.y.map((value) =>
+                      value ? "green" : "red"
+                    ),
+                  },
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Button Pushed:</b> %{customdata}<extra></extra>`,
-                  customdata: historyData.data.button_pushed.y.map(value => value ? "YES" : "NO"),
+                  customdata: historyData.data.button_pushed.y.map((value) =>
+                    value ? "YES" : "NO"
+                  ),
                 },
               ]}
               layout={{
@@ -143,12 +159,12 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   tickformat: "%I:%M %p",
                   nticks: 10,
                 },
-                yaxis: { 
+                yaxis: {
                   tickvals: [0, 1],
                   ticktext: ["NO", "YES"], // Display YES/NO instead of 0/1
                   range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                hovermode: 'x', // Hovermode 'x' for hover over x-axis
+                hovermode: "x", // Hovermode 'x' for hover over x-axis
                 hoverdistance: 100,
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
@@ -158,15 +174,23 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Button Pushed */}
           <Grid item xs={12} md={3} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Button Pushed</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Button Pushed
+              </Typography>
               <Typography
                 variant="body1"
-                className={`${classes.largeText} ${custom_data.button_pushed ? classes.pushed : classes.notPushed}`}
+                className={`${classes.largeText} ${
+                  custom_data.button_pushed ? classes.pushed : classes.notPushed
+                }`}
                 align="center" // Center align the "YES"/"NO" status
               >
                 {custom_data.button_pushed ? "YES" : "NO"}
@@ -175,12 +199,18 @@ const Ws101: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Button Pushed Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Button Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Button Stats
+              </Typography>
               <table className={classes.statsTable}>
                 <tbody>
                   <tr>
