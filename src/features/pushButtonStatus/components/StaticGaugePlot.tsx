@@ -1,12 +1,12 @@
-// @ts-nocheck
 import { Box, Typography, useTheme } from "@material-ui/core";
+import { Data } from "plotly.js";
 import React from "react";
 import Plot from "react-plotly.js";
 
 const StaticGaugePlot: React.FC = () => {
   const theme = useTheme();
 
-  const data = [
+  const data: Data[] = [
     {
       type: "indicator",
       mode: "gauge+number",
