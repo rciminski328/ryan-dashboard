@@ -1,21 +1,27 @@
 // Ws303.tsx
-// @ts-nocheck
+import {
+  Box,
+  Card,
+  Divider,
+  Grid,
+  Typography,
+  makeStyles,
+} from "@material-ui/core";
 import React from "react";
-import { Card, Grid, Typography, makeStyles, Box, Divider } from "@material-ui/core";
 import Plot from "react-plotly.js";
+import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { useAsset } from "../api/assetsQuery";
 import {
   Ws303Asset,
-  useWs303HistoryQuery,
   useLiveDataForWs303,
+  useWs303HistoryQuery,
 } from "../api/ws303_history";
-import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
 
 const useStyles = makeStyles((theme) => ({
   card: {
     padding: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: "Arial, sans-serif",
   },
   container: {
     width: "100%",
@@ -39,9 +45,9 @@ const useStyles = makeStyles((theme) => ({
   },
   statsTable: {
     marginTop: theme.spacing(1),
-    '& th, & td': {
+    "& th, & td": {
       padding: theme.spacing(0.5),
-      textAlign: 'left',
+      textAlign: "left",
     },
   },
   largeText: {
@@ -65,9 +71,9 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center", // Center align the section title
   },
   tableRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: theme.spacing(1), // Add padding for more spacing
   },
   statLabel: {
@@ -75,10 +81,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
-  assetId,
-  timeRange,
-}) => {
+const Ws303: React.FC<{
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}> = ({ assetId, timeRange }) => {
   const classes = useStyles();
 
   const assetQuery = useAsset<Ws303Asset>(assetId);
@@ -107,36 +113,47 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
   const leakDetectedData = historyData?.data?.leak_detected || { x: [], y: [] };
 
   // Calculate the number of times the leak was detected
-  const timesLeaked = leakDetectedData.y.reduce((count, value, index, arr) => {
-    if (index > 0 && value === 1 && arr[index - 1] === 0) {
-      return count + 1;
-    }
-    return count;
-  }, 0);
+  const timesLeaked = leakDetectedData.y.reduce<number>(
+    (count, value, index, arr) => {
+      if (index > 0 && value === 1 && arr[index - 1] === 0) {
+        return count + 1;
+      }
+      return count;
+    },
+    0
+  );
 
   // Calculate duration of each leak period
-  const durations = [];
-  let leakStartTime = null;
+  const durations: number[] = [];
+  let leakStartTime: Date | null = null;
   leakDetectedData.y.forEach((value, index) => {
     if (value === 1 && leakStartTime === null) {
       leakStartTime = new Date(leakDetectedData.x[index]);
     } else if (value === 0 && leakStartTime !== null) {
       const leakEndTime = new Date(leakDetectedData.x[index]);
-      durations.push((leakEndTime - leakStartTime) / 1000); // Duration in seconds
+      durations.push((leakEndTime.getTime() - leakStartTime.getTime()) / 1000); // Duration in seconds
       leakStartTime = null;
     }
   });
 
-  const averageDuration = durations.length > 0
-    ? (durations.reduce((sum, duration) => sum + duration, 0) / durations.length).toFixed(2)
-    : 0;
+  const averageDuration =
+    durations.length > 0
+      ? (
+          durations.reduce((sum, duration) => sum + duration, 0) /
+          durations.length
+        ).toFixed(2)
+      : 0;
 
   return (
     <Card className={classes.card}>
       <Grid container spacing={1}>
         {/* Leak Detection Section */}
         <Grid item xs={12} className={classes.container}>
-          <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Typography className={classes.sectionTitle} noWrap>
               {`${label} - Leak Detection Audit`}
             </Typography>
@@ -153,10 +170,16 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   y: leakDetectedData.y,
                   type: "scatter",
                   mode: "lines+markers",
-                  line: { shape: 'hv', width: 4 }, // step line and increased width
-                  marker: { color: leakDetectedData.y.map((value) => (value ? "green" : "red")) },
+                  line: { shape: "hv", width: 4 }, // step line and increased width
+                  marker: {
+                    color: leakDetectedData.y.map((value) =>
+                      value ? "green" : "red"
+                    ),
+                  },
                   hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Leak Detected:</b> %{customdata}<extra></extra>`,
-                  customdata: leakDetectedData.y.map(value => value ? "YES" : "NO"),
+                  customdata: leakDetectedData.y.map((value) =>
+                    value ? "YES" : "NO"
+                  ),
                 },
               ]}
               layout={{
@@ -165,12 +188,12 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
                   tickformat: "%I:%M %p",
                   nticks: 10,
                 },
-                yaxis: { 
+                yaxis: {
                   tickvals: [0, 1],
                   ticktext: ["NO", "YES"],
                   range: [-0.1, 1.1], // Extend range to avoid cutoff
                 },
-                hovermode: 'x', // Hovermode 'x' for hover over x-axis
+                hovermode: "x", // Hovermode 'x' for hover over x-axis
                 hoverdistance: 100,
                 height: 200,
                 margin: { t: 40, b: 60, l: 40, r: 40 },
@@ -180,15 +203,25 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Leak Detected */}
           <Grid item xs={12} md={3} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Leak Detected</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Leak Detected
+              </Typography>
               <Typography
                 variant="body1"
-                className={`${classes.largeText} ${custom_data.leak_detected ? classes.detected : classes.notDetected}`}
+                className={`${classes.largeText} ${
+                  custom_data.leak_detected
+                    ? classes.detected
+                    : classes.notDetected
+                }`}
                 align="center" // Center align the "YES"/"NO" status
               >
                 {custom_data.leak_detected ? "YES" : "NO"}
@@ -197,19 +230,27 @@ const Ws303: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> =
           </Grid>
 
           {/* Vertical Divider */}
-          <Divider orientation="vertical" flexItem className={classes.verticalDivider} />
+          <Divider
+            orientation="vertical"
+            flexItem
+            className={classes.verticalDivider}
+          />
 
           {/* Leak Stats */}
           <Grid item xs={12} md={4} className={classes.statusContainer}>
             <div>
-              <Typography className={classes.sectionTitle} gutterBottom>Leak Stats</Typography>
+              <Typography className={classes.sectionTitle} gutterBottom>
+                Leak Stats
+              </Typography>
               <div className={classes.tableRow}>
                 <Typography className={classes.statLabel}>Count</Typography>
                 <Typography>{timesLeaked}</Typography>
               </div>
               <Divider className={classes.divider} />
               <div className={classes.tableRow}>
-                <Typography className={classes.statLabel}>Average Duration</Typography>
+                <Typography className={classes.statLabel}>
+                  Average Duration
+                </Typography>
                 <Typography>{averageDuration} sec</Typography>
               </div>
             </div>

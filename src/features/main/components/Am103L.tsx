@@ -1,16 +1,15 @@
 // Am103L.tsx
-// @ts-nocheck
 import { Card, Grid, Typography, makeStyles } from "@material-ui/core";
 import React from "react";
 import Plot from "react-plotly.js";
+import { getStats } from "../../../utils/getStats"; // import the existing utility function
+import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
 import {
   Am103LAsset,
   useAm103LHistoryQuery,
   useLiveDataForAm103L,
 } from "../api/am103l_history";
 import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
-import { getStats } from "../../../utils/getStats"; // import the existing utility function
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -31,16 +30,16 @@ const useStyles = makeStyles((theme) => ({
   },
   statsTable: {
     marginTop: theme.spacing(2),
-    '& th, & td': {
+    "& th, & td": {
       padding: theme.spacing(1),
     },
   },
 }));
 
-const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> = ({
-  assetId,
-  timeRange,
-}) => {
+const Am103L: React.FC<{
+  assetId: string;
+  timeRange: RelativeOrAbsoluteRange;
+}> = ({ assetId, timeRange }) => {
   const classes = useStyles();
 
   const assetQuery = useAsset<Am103LAsset>(assetId);
@@ -63,6 +62,10 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
     return <div>Error loading data</div>;
   }
 
+  if (!assetQuery.isSuccess) {
+    return null;
+  }
+
   const custom_data = assetQuery.data.custom_data;
   const label = assetQuery.data.label;
 
@@ -77,7 +80,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
         {/* Temperature Section */}
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - Temperature Trend (°C)`}</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>{`${label} - Temperature Trend (°C)`}</strong>
+            </Typography>
             <Plot
               data={[
                 {
@@ -104,7 +109,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Current Temperature</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>Current Temperature</strong>
+            </Typography>
             <Plot
               data={[
                 {
@@ -132,7 +139,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Temperature Stats</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>Temperature Stats</strong>
+            </Typography>
             <table className={classes.statsTable}>
               <thead>
                 <tr>
@@ -169,7 +178,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
         {/* Humidity Section */}
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - Humidity Trend (%)`}</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>{`${label} - Humidity Trend (%)`}</strong>
+            </Typography>
             <Plot
               data={[
                 {
@@ -196,7 +207,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Current Humidity</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>Current Humidity</strong>
+            </Typography>
             <Plot
               data={[
                 {
@@ -224,7 +237,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Humidity Stats</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>Humidity Stats</strong>
+            </Typography>
             <table className={classes.statsTable}>
               <thead>
                 <tr>
@@ -261,10 +276,12 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
         {/* CO2 Section */}
         <Grid container item xs={12} spacing={1}>
           <Grid item xs={6}>
-            <Typography variant="subtitle1"><strong>{`${label} - CO2 Trend (ppm)`}</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>{`${label} - CO2 Trend (ppm)`}</strong>
+            </Typography>
             <Plot
               data={[
-                { 
+                {
                   x: historyData.data.co2.x,
                   y: historyData.data.co2.y,
                   type: "scatter",
@@ -288,7 +305,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>Current CO2</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>Current CO2</strong>
+            </Typography>
             <Plot
               data={[
                 {
@@ -316,7 +335,9 @@ const Am103L: React.FC<{ assetId: string; timeRange: RelativeOrAbsoluteRange }> 
           </Grid>
 
           <Grid item xs={3}>
-            <Typography variant="subtitle1"><strong>CO2 Stats</strong></Typography>
+            <Typography variant="subtitle1">
+              <strong>CO2 Stats</strong>
+            </Typography>
             <table className={classes.statsTable}>
               <thead>
                 <tr>

@@ -1,23 +1,22 @@
 // Ws202.tsx
-// @ts-nocheck
-import React from "react";
 import {
+  Box,
   Card,
+  Divider,
   Grid,
   Typography,
   makeStyles,
-  Box,
-  Divider,
 } from "@material-ui/core";
+import React from "react";
 import Plot from "react-plotly.js";
-import {
-  Ws202Asset,
-  useWs202HistoryQuery,
-  useLiveDataForWs202,
-} from "../api/ws202_history";
-import { useAsset } from "../api/assetsQuery";
 import { getStats } from "../../../utils/getStats";
 import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { useAsset } from "../api/assetsQuery";
+import {
+  Ws202Asset,
+  useLiveDataForWs202,
+  useWs202HistoryQuery,
+} from "../api/ws202_history";
 
 const useStyles = makeStyles((theme) => ({
   card: {
