@@ -1,25 +1,25 @@
 // Em300Th.tsx
-// @ts-nocheck
-import React from "react";
+
 import {
+  Box,
   Card,
+  Divider,
   Grid,
   Typography,
   makeStyles,
-  Box,
-  Divider,
   useTheme,
 } from "@material-ui/core";
+import { Axis, Data } from "plotly.js";
+import React from "react";
 import Plot from "react-plotly.js";
-import { Axis, GaugeData } from "plotly.js";
+import { getStats } from "../../../utils/getStats"; // import the existing utility function
+import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { useAsset } from "../api/assetsQuery";
 import {
   Em300ThAsset,
   useEm300ThHistoryQuery,
   useLiveDataForEm300Th,
 } from "../api/em300_th_history";
-import { useAsset } from "../api/assetsQuery";
-import { RelativeOrAbsoluteRange } from "../utils/types";
-import { getStats } from "../../../utils/getStats"; // import the existing utility function
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -85,7 +85,7 @@ const GaugeChart = ({
   minWidth,
   gaugeAxis,
 }: {
-  title: string;
+  title: React.ReactElement;
   value: number;
   units: string;
   minHeight?: number;
@@ -101,7 +101,7 @@ const GaugeChart = ({
   else if (value > 82) color = "red";
   else if (value > 78) color = "yellow";
 
-  const data: Partial<GaugeData>[] = [
+  const data: Data[] = [
     {
       type: "indicator",
       mode: "gauge+number",
@@ -125,7 +125,7 @@ const GaugeChart = ({
     <Box textAlign={"center"}>
       <Typography>{title}</Typography>
       <Plot
-        data={data as any} // Casting as any to avoid type mismatch
+        data={data}
         config={{
           responsive: true,
           displayModeBar: false,
@@ -174,6 +174,10 @@ const Em300Th: React.FC<{
 
   if (assetQuery.isError) {
     return <div>Error loading data</div>;
+  }
+
+  if (!assetQuery.isSuccess) {
+    return null;
   }
 
   const custom_data = assetQuery.data.custom_data;
