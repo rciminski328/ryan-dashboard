@@ -238,7 +238,7 @@ const Ws301: React.FC<{
             <table className={classes.statsTable}>
               <tbody>
                 <tr>
-                  <td className={classes.statLabel}>Times</td>
+                  <td className={classes.statLabel}>Count</td>
                   <td>{timesOpened}</td>
                 </tr>
                 <tr>

@@ -1,5 +1,5 @@
 import { Asset } from "@clearblade/ia-mfe-core";
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 export type Am103LAsset = Omit<Asset["frontend"], "custom_data"> & {
     custom_data: {
         temperature: number;

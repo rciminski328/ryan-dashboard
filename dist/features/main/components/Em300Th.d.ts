@@ -1,5 +1,5 @@
 import React from "react";
-import { RelativeOrAbsoluteRange } from "../../refrigeratorStatus/utils/types";
+import { RelativeOrAbsoluteRange } from "../../../utils/types";
 declare const Em300Th: React.FC<{
     assetId: string;
     timeRange: RelativeOrAbsoluteRange;

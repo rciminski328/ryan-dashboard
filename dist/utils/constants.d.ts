@@ -1,1 +1,1 @@
-export declare const graphChartHeight = 140;
+export declare const graphChartHeight = 200;
