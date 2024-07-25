@@ -205,7 +205,7 @@ const Ws202: React.FC<{
               <Typography className={classes.statLabel}>
                 Average Duration
               </Typography>
-              <Typography>{isNaN(motionStats.average) ? 0 : motionStats.average.toFixed(2)} sec</Typography>
+              <Typography>{isNaN(motionStats.average) ? "0" : motionStats.average.toFixed(2).replace(/\.00$/, '')} sec</Typography>
             </div>
           </div>
         </Grid>
@@ -314,7 +314,7 @@ const Ws202: React.FC<{
               <Typography className={classes.statLabel}>
                 Average Duration
               </Typography>
-              <Typography>{isNaN(daylightStats.average) ? 0 : daylightStats.average.toFixed(2)} sec</Typography>
+              <Typography>{isNaN(daylightStats.average) ? "0" : daylightStats.average.toFixed(2).replace(/\.00$/, '')} sec</Typography>
             </div>
           </div>
         </Grid>
