@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sectionTitle: {
     fontWeight: "bold",
-    fontSize: "1rem",
+    fontSize: "1.2rem",
   },
   tableRow: {
     display: "flex",
