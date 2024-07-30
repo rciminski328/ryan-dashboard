@@ -61,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
   },
   sectionTitle: {
     fontWeight: "bold",
-    fontSize: "1rem", // Enlarged font size for section title
+    fontSize: "1.2rem", // Enlarged font size for section title
     textAlign: "center", // Center align the section title
   },
   tableRow: {
