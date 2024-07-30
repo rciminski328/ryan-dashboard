@@ -19,7 +19,14 @@ export function useAssetsQuery<TData = Asset["frontend"][]>({
       return data.DATA;
     },
     refetchOnWindowFocus: false,
-    select,
+    select: (data) => {
+      const sortedData = data.sort((a, b) => {
+        const labelA = a.label || a.id;
+        const labelB = b.label || b.id;
+        return labelA.localeCompare(labelB);
+      });
+      return select ? select(sortedData) : sortedData;
+    },
   });
 }
 
