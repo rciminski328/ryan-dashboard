@@ -11,12 +11,17 @@ export function useAssetsQuery<TData = Asset["frontend"][]>({
   return useQuery({
     queryKey: assetsQueryKeys.all,
     queryFn: async () => {
-      const data = await fetchAssets(new AbortController(), {
-        filters: {
-          types: ["EM300-TH", "WS202", "WS101", "WS303", "AM103L", "WS301"],
-        },
-      });
-      return data.DATA;
+      try {
+        const data = await fetchAssets(new AbortController(), {
+          filters: {
+            types: ["EM300-TH", "WS202", "WS101", "WS303", "AM103L", "WS301"],
+          },
+        });
+        return data.DATA || [];
+      } catch (error) {
+        console.error("Error fetching assets:", error);
+        return []; // Return an empty array in case of error
+      }
     },
     refetchOnWindowFocus: false,
     select: (data) => {
