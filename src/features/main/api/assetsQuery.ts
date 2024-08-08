@@ -30,6 +30,17 @@ export function useAssetsQuery<TData = Asset["frontend"][]>({
         const labelB = b.label?.toLowerCase() || b.id?.toLowerCase() || "";
         return labelA.localeCompare(labelB);
       });
+
+      // Ensure assets with no data reporting are included
+      sortedData.forEach((asset) => {
+        if (!asset.custom_data) {
+          asset.custom_data = {};
+        }
+        if (!asset.custom_data.Reporting) {
+          asset.custom_data.Reporting = "No data reporting";
+        }
+      });
+
       return select ? select(sortedData) : sortedData;
     },
   });
