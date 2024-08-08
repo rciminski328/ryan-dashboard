@@ -26,8 +26,8 @@ export function useAssetsQuery<TData = Asset["frontend"][]>({
     refetchOnWindowFocus: false,
     select: (data) => {
       const sortedData = data.sort((a, b) => {
-        const labelA = a.label || a.id;
-        const labelB = b.label || b.id;
+        const labelA = a.label?.toLowerCase() || a.id?.toLowerCase() || "";
+        const labelB = b.label?.toLowerCase() || b.id?.toLowerCase() || "";
         return labelA.localeCompare(labelB);
       });
       return select ? select(sortedData) : sortedData;
