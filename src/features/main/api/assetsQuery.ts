@@ -17,6 +17,7 @@ export function useAssetsQuery<TData = Asset["frontend"][]>({
             types: ["EM300-TH", "WS202", "WS101", "WS303", "AM103L", "WS301"],
           },
         });
+        console.log(data.DATA)
         return data.DATA || [];
       } catch (error) {
         console.error("Error fetching assets:", error);
@@ -25,12 +26,13 @@ export function useAssetsQuery<TData = Asset["frontend"][]>({
     },
     refetchOnWindowFocus: false,
     select: (data) => {
+      console.log('This is within function:' , data);
       const sortedData = data.sort((a, b) => {
-        const labelA = a.label?.toLowerCase() || a.id?.toLowerCase() || "";
-        const labelB = b.label?.toLowerCase() || b.id?.toLowerCase() || "";
+        const labelA = a.label?.toLowerCase().trim() || a.id?.toLowerCase().trim() || "";
+        const labelB = b.label?.toLowerCase().trim() || b.id?.toLowerCase().trim() || "";
         return labelA.localeCompare(labelB);
       });
-
+      console.log('this is sorted data:', sortedData);
       // Ensure assets with no data reporting are included
       sortedData.forEach((asset) => {
         if (!asset.custom_data) {
