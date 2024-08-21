@@ -1,5 +1,3 @@
-// Em300Th.tsx
-
 import {
   Box,
   Card,
@@ -201,7 +199,7 @@ const Em300Th: React.FC<{
                 line: { shape: "spline", width: 4 }, // smooth line and increased width
                 marker: { color: "blue" },
                 hoverinfo: "x+y", // Show x and y information on hover
-                hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Temperature:</b> %{y}°F<extra></extra>`,
+                hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Temperature:</b> %{y}°F<extra></extra>`,
               },
             ]}
             config={{
@@ -319,7 +317,7 @@ const Em300Th: React.FC<{
                 line: { shape: "spline", width: 4 }, // smooth line and increased width
                 marker: { color: "green" },
                 hoverinfo: "x+y", // Show x and y information on hover
-                hovertemplate: `<b>Time:</b> %{x|%I:%M %p}<br><b>Humidity:</b> %{y}%<extra></extra>`,
+                hovertemplate: `<b>Date:</b> %{x|%m/%d/%y}, %{x|%I:%M %p}<br><b>Humidity:</b> %{y}%<extra></extra>`,
               },
             ]}
             config={{
@@ -403,11 +401,6 @@ const Em300Th: React.FC<{
                 <tr>
                   <td className={classes.statLabel}>Median</td>
                   <td>{humidityStats.median.toFixed(2)}</td>
-                </tr>
-                <tr>
-                  <td colSpan={2}>
-                    <Divider className={classes.divider} />
-                  </td>
                 </tr>
               </tbody>
             </table>
